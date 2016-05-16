@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="map"
+    android:orientation="vertical">
+
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight=".1"
+            android:maxLines="2"
+            android:text="Strategic Map"
+            android:textSize="20dp"
+            android:gravity="center"
+            android:textColor="#E1F5FE"
+            android:background="#03A9F4"
+            android:textAllCaps="true"
+            android:textStyle="bold"
+            />
+        <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/map_fragment"
+            xmlns:map_fragment="http://schemas.android.com/apk/res-auto"
+            class="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            map_fragment:cameraZoom="13"
+            map_fragment:mapType="normal"
+            map_fragment:uiCompass="false"
+            map_fragment:uiRotateGestures="true"
+            map_fragment:uiScrollGestures="false"
+            map_fragment:uiTiltGestures="true"
+            map_fragment:uiZoomControls="false"
+            map_fragment:uiZoomGestures="true"
+            />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight=".1"
+            android:background="#03A9F4"
+            android:weightSum="2"
+            >
+
+
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp"
+                android:text="Shoot"
+                android:textColor="#E3F2FD"
+                android:background="#0097A7"
+                android:textStyle="bold"
+                />
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp"
+                android:textColor="#E3F2FD"
+                android:background="#0097A7"
+                android:textStyle="bold"
+                android:text="Test"
+                />
+
+    </LinearLayout>
+
+</LinearLayout>
