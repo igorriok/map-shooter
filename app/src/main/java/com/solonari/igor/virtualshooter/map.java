@@ -42,8 +42,20 @@ public abstract class map extends AppCompatActivity implements
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map_fragment);
         mapFragment.getMapAsync(this);
+        
+        if (mGoogleApiClient == null) {
+            mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+        }
     }
 
+        protected void onStart() {
+            mGoogleApiClient.connect();
+            super.onStart();
+        }
 
     public void onMapReady(GoogleMap googleMap) {
 
@@ -61,27 +73,10 @@ public abstract class map extends AppCompatActivity implements
                 return;
             }
             mMap.setMyLocationEnabled(true);
-            mGoogleApiClient = new GoogleApiClient.Builder(this)
-                    .addApi(LocationServices.API)
-                    .addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(this).build();
-            connectClient();
+        
         }
     }
 
-    protected void connectClient() {
-        // Connect the client.
-        if (mGoogleApiClient != null) {
-            mGoogleApiClient.connect();
-        }
-    }
-
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        connectClient();
-    }
 
     @Override
     public void onConnected(Bundle dataBundle) {
