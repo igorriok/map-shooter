@@ -29,8 +29,8 @@ public abstract class map extends AppCompatActivity implements
     private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
-    private long UPDATE_INTERVAL = 60000;  /* 60 secs */
-    private long FASTEST_INTERVAL = 5000; /* 5 secs */
+    private long UPDATE_INTERVAL = 5000;  /* 5 secs */
+    private long FASTEST_INTERVAL = 1000; /* 1 secs */
 
 
     @Override
