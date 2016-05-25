@@ -1,13 +1,22 @@
 package com.solonari.igor.virtualshooter;
 
 import android.Manifest;
+import android.app.Activity;
+import android.app.Dialog;
+import android.content.Intent;
+import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
@@ -20,7 +29,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 
 
-public abstract class map extends AppCompatActivity implements
+public class map extends AppCompatActivity implements
         OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
@@ -29,9 +38,14 @@ public abstract class map extends AppCompatActivity implements
     private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
-    private long UPDATE_INTERVAL = 5000;  /* 5 secs */
-    private long FASTEST_INTERVAL = 1000; /* 1 secs */
+    private long UPDATE_INTERVAL = 60000;  /* 60 secs */
+    private long FASTEST_INTERVAL = 5000; /* 5 secs */
 
+    /*
+	 * Define a request code to send to Google Play services This code is
+	 * returned in Activity.onActivityResult
+	 */
+    private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,50 +56,8 @@ public abstract class map extends AppCompatActivity implements
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map_fragment);
         mapFragment.getMapAsync(this);
-        
-        if (mGoogleApiClient == null) {
-            mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
-        }
-        
-        updateValuesFromBundle(savedInstanceState);
     }
 
-        private void updateValuesFromBundle(Bundle savedInstanceState) {
-            if (savedInstanceState != null) {
-                // Update the value of mRequestingLocationUpdates from the Bundle, and
-                // make sure that the Start Updates and Stop Updates buttons are
-                // correctly enabled or disabled.
-                if (savedInstanceState.keySet().contains(REQUESTING_LOCATION_UPDATES_KEY)) {
-                    mRequestingLocationUpdates = savedInstanceState.getBoolean(
-                            REQUESTING_LOCATION_UPDATES_KEY);
-                    setButtonsEnabledState();
-                }
-        
-                // Update the value of mCurrentLocation from the Bundle and update the
-                // UI to show the correct latitude and longitude.
-                if (savedInstanceState.keySet().contains(LOCATION_KEY)) {
-                    // Since LOCATION_KEY was found in the Bundle, we can be sure that
-                    // mCurrentLocationis not null.
-                    mCurrentLocation = savedInstanceState.getParcelable(LOCATION_KEY);
-                }
-        
-                // Update the value of mLastUpdateTime from the Bundle and update the UI.
-                if (savedInstanceState.keySet().contains(LAST_UPDATED_TIME_STRING_KEY)) {
-                    mLastUpdateTime = savedInstanceState.getString(
-                            LAST_UPDATED_TIME_STRING_KEY);
-                }
-                updateUI();
-            }
-        }
-
-        protected void onStart() {
-            mGoogleApiClient.connect();
-            super.onStart();
-        }
 
     public void onMapReady(GoogleMap googleMap) {
 
@@ -103,7 +75,73 @@ public abstract class map extends AppCompatActivity implements
                 return;
             }
             mMap.setMyLocationEnabled(true);
-        
+            mGoogleApiClient = new GoogleApiClient.Builder(this)
+                    .addApi(LocationServices.API)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this).build();
+            connectClient();
+        }
+    }
+
+    protected void connectClient() {
+        // Connect the client.
+        if (mGoogleApiClient != null) {
+            mGoogleApiClient.connect();
+        }
+    }
+
+    /*
+     * Called when the Activity becomes visible.
+    */
+    @Override
+    protected void onStart() {
+        super.onStart();
+        connectClient();
+    }
+
+    /*
+	 * Handle results returned to the FragmentActivity by Google Play services
+	 */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // Decide what to do based on the original request code
+        switch (requestCode) {
+
+            case CONNECTION_FAILURE_RESOLUTION_REQUEST:
+			/*
+			 * If the result code is Activity.RESULT_OK, try to connect again
+			 */
+                switch (resultCode) {
+                    case Activity.RESULT_OK:
+                        mGoogleApiClient.connect();
+                        break;
+                }
+
+        }
+    }
+
+    private boolean isGooglePlayServicesAvailable() {
+        // Check that Google Play services is available
+        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+        // If Google Play services is available
+        if (ConnectionResult.SUCCESS == resultCode) {
+            // In debug mode, log the status
+            Log.d("Location Updates", "Google Play services is available.");
+            return true;
+        } else {
+            // Get the error dialog from Google Play services
+            Dialog errorDialog = GooglePlayServicesUtil.getErrorDialog(resultCode, this,
+                    CONNECTION_FAILURE_RESOLUTION_REQUEST);
+
+            // If Google Play services can provide an error dialog
+            if (errorDialog != null) {
+                // Create a new DialogFragment for the error dialog
+                ErrorDialogFragment errorFragment = new ErrorDialogFragment();
+                errorFragment.setDialog(errorDialog);
+                errorFragment.show(getSupportFragmentManager(), "Location Updates");
+            }
+
+            return false;
         }
     }
 
@@ -161,13 +199,72 @@ public abstract class map extends AppCompatActivity implements
 
     }
 
-        public void onSaveInstanceState(Bundle savedInstanceState) {
-            savedInstanceState.putBoolean(REQUESTING_LOCATION_UPDATES_KEY,
-                    mRequestingLocationUpdates);
-            savedInstanceState.putParcelable(LOCATION_KEY, mCurrentLocation);
-            savedInstanceState.putString(LAST_UPDATED_TIME_STRING_KEY, mLastUpdateTime);
-            super.onSaveInstanceState(savedInstanceState);
+    /*
+     * Called by Location Services if the connection to the location client
+     * drops because of an error.
+     */
+    @Override
+    public void onConnectionSuspended(int i) {
+        if (i == CAUSE_SERVICE_DISCONNECTED) {
+            Toast.makeText(this, "Disconnected. Please re-connect.", Toast.LENGTH_SHORT).show();
+        } else if (i == CAUSE_NETWORK_LOST) {
+            Toast.makeText(this, "Network lost. Please re-connect.", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    /*
+     * Called by Location Services if the attempt to Location Services fails.
+     */
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+		/*
+		 * Google Play services can resolve some errors it detects. If the error
+		 * has a resolution, try sending an Intent to start a Google Play
+		 * services activity that can resolve error.
+		 */
+        if (connectionResult.hasResolution()) {
+            try {
+                // Start an Activity that tries to resolve the error
+                connectionResult.startResolutionForResult(this,
+                        CONNECTION_FAILURE_RESOLUTION_REQUEST);
+				/*
+				 * Thrown if Google Play services canceled the original
+				 * PendingIntent
+				 */
+            } catch (IntentSender.SendIntentException e) {
+                // Log the error
+                e.printStackTrace();
+            }
+        } else {
+            Toast.makeText(getApplicationContext(),
+                    "Sorry. Location services not available to you", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    // Define a DialogFragment that displays the error dialog
+    public static class ErrorDialogFragment extends DialogFragment {
+
+        // Global field to contain the error dialog
+        private Dialog mDialog;
+
+        // Default constructor. Sets the dialog field to null
+        public ErrorDialogFragment() {
+            super();
+            mDialog = null;
+        }
+
+        // Set the dialog to display
+        public void setDialog(Dialog dialog) {
+            mDialog = dialog;
+        }
+
+        // Return a Dialog to the DialogFragment.
+        @NonNull
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            return mDialog;
+        }
+    }
 
 }
 
