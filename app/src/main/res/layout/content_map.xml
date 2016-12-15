@@ -45,11 +45,12 @@
             >
 
             <Button
+                android:id="@+id/shoot_button"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:layout_marginLeft="20dp"
-                android:layout_marginRight="10dp"
+                android:layout_marginRight="20dp"
                 android:layout_marginBottom="5dp"
                 android:layout_marginTop="5dp"
                 style="?android:attr/borderlessButtonStyle"
@@ -59,20 +60,7 @@
                 android:textStyle="bold"
                 />
 
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="20dp"
-                android:layout_marginBottom="5dp"
-                android:layout_marginTop="5dp"
-                style="?android:attr/borderlessButtonStyle"
-                android:textColor="#E3F2FD"
-                android:background="#0097A7"
-                android:textStyle="bold"
-                android:text="Test"
-                />
+
 
     </LinearLayout>
 
