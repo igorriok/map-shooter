@@ -44,8 +44,8 @@
             android:weightSum="2"
             >
 
-            <Button
-                android:id="@+id/shoot_button"
+            <TextView
+                android:id="@+id/shootButton"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"

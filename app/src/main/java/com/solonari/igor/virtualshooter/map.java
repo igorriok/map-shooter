@@ -13,6 +13,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -57,18 +59,18 @@ public class map extends AppCompatActivity implements
                 .findFragmentById(R.id.map_fragment);
         mapFragment.getMapAsync(this);
 	    
-	// Find the View that shows the numbers category
-	TextView shootButtton = (TextView) findViewById(R.id.shootButton);
+	    // Find the View that shows the numbers category
+	    TextView Compass = (TextView) findViewById(R.id.shootButton);
 
-	// Set a click listener on that View
-	shootButton.setOnClickListener(new View.OnClickListener() {
-   		// The code in this method will be executed when the numbers View is clicked on.
-   		@Override
-   		public void onClick(View view) {
-       		Intent shootIntent = new Intent(MainActivity.this, NumbersActivity.class);
-       		startActivity(numbersIntent);
-   		}
-	});
+	    // Set a click listener on that View
+	    Compass.setOnClickListener(new View.OnClickListener() {
+            // The code in this method will be executed when the numbers View is clicked on.
+            @Override
+            public void onClick(View view) {
+                Intent shootIntent = new Intent(map.this, Compass.class);
+                startActivity(shootIntent);
+            }
+	    });
     }
 
 
