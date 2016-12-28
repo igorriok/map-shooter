@@ -93,7 +93,6 @@ public class map extends AppCompatActivity implements
         mMap = googleMap;
         if (mMap != null) {
             // Now that map has loaded, let's get our location
-            mMap.setMyLocationEnabled(true);
             enableMyLocation();
         }
     }
@@ -146,8 +145,7 @@ public class map extends AppCompatActivity implements
      * Displays a dialog with error message explaining that the location permission is missing.
      */
     private void showMissingPermissionError() {
-        PermissionUtils.PermissionDeniedDialog
-                .newInstance(true).show(getSupportFragmentManager(), "dialog");
+        PermissionUtils.PermissionDeniedDialog.newInstance(true).show(getSupportFragmentManager(), "dialog");
     }
 
     protected void connectClient() {
