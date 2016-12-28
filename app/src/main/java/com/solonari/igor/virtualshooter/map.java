@@ -51,7 +51,8 @@ public class map extends AppCompatActivity implements
 	 * returned in Activity.onActivityResult
 	 */
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
-    private final static int MY_PERMISSIONS_LOCATION = 0;
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
+    private boolean mPermissionDenied = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,11 +94,41 @@ public class map extends AppCompatActivity implements
         if (mMap != null) {
             // Now that map has loaded, let's get our location
             mMap.setMyLocationEnabled(true);
-            mGoogleApiClient = new GoogleApiClient.Builder(this)
+            enableMyLocation();
+        }
+    }
+
+    private void enableMyLocation() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Permission to access the location is missing.
+            PermissionUtils.requestPermission(this, LOCATION_PERMISSION_REQUEST_CODE,
+                    Manifest.permission.ACCESS_FINE_LOCATION, true);
+        } else if (mMap != null) {
+            // Access to the location has been granted to the app.
+            mMap.setMyLocationEnabled(true);
+	    mGoogleApiClient = new GoogleApiClient.Builder(this)
                     .addApi(LocationServices.API)
                     .addConnectionCallbacks(this)
                     .addOnConnectionFailedListener(this).build();
             connectClient();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+            @NonNull int[] grantResults) {
+        if (requestCode != LOCATION_PERMISSION_REQUEST_CODE) {
+            return;
+        }
+
+        if (PermissionUtils.isPermissionGranted(permissions, grantResults,
+                Manifest.permission.ACCESS_FINE_LOCATION)) {
+            // Enable the my location layer if the permission has been granted.
+            enableMyLocation();
+        } else {
+            // Display the missing permission error dialog when the fragments resume.
+            mPermissionDenied = true;
         }
     }
 
