@@ -70,18 +70,18 @@ public class map extends AppCompatActivity implements
                 .findFragmentById(R.id.map_fragment);
         mapFragment.getMapAsync(this);
 	    
-	    // Find the View that shows the numbers category
-	    TextView Compass = (TextView) findViewById(R.id.shootButton);
+	// Find the View that shows the compass category
+	TextView Compass = (TextView) findViewById(R.id.shootButton);
 
-	    // Set a click listener on that View
-	    Compass.setOnClickListener(new View.OnClickListener() {
-            // The code in this method will be executed when the shoot View is clicked on.
-            @Override
-            public void onClick(View view) {
-                Intent shootIntent = new Intent(map.this, Compass.class);
-                startActivity(shootIntent);
-            }
-	    });
+	// Set a click listener on that View
+	Compass.setOnClickListener(new View.OnClickListener() {
+		// The code in this method will be executed when the shoot View is clicked on.
+		@Override
+		public void onClick(View view) {
+			Intent shootIntent = new Intent(map.this, Compass.class);
+			startActivity(shootIntent);
+			}
+	});
 
     }
 
@@ -100,6 +100,7 @@ public class map extends AppCompatActivity implements
                 // to handle the case where the user grants the permission. See the documentation
                 // for ActivityCompat#requestPermissions for more details.
             }
+	    
             mMap.setMyLocationEnabled(true);
             mGoogleApiClient = new GoogleApiClient.Builder(this)
                     .addApi(LocationServices.API)
@@ -175,16 +176,6 @@ public class map extends AppCompatActivity implements
     @Override
     public void onConnected(Bundle dataBundle) {
         // Display the connection status
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
         Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (location != null) {
             Toast.makeText(this, "GPS location was found!", Toast.LENGTH_SHORT).show();
@@ -202,16 +193,6 @@ public class map extends AppCompatActivity implements
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         mLocationRequest.setInterval(UPDATE_INTERVAL);
         mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,
                 mLocationRequest, this);
     }
