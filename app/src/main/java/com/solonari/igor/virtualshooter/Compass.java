@@ -80,36 +80,19 @@ public class Compass extends Activity {
         setContentView(R.layout.activity_main);
 
         mDrawView = (DrawSurfaceView) findViewById(R.id.drawSurfaceView);
-
-        locMgr = (LocationManager) this.getSystemService(LOCATION_SERVICE); // <2>
-        LocationProvider high = locMgr.getProvider(locMgr.getBestProvider(
-                LocationUtils.createFineCriteria(), true));
-
-        // using high accuracy provider... to listen for updates
-        locMgr.requestLocationUpdates(high.getName(), 0, 0f, new LocationListener() {
-            public void onLocationChanged(Location location) {
-                // do something here to save this new location
-                Log.d(TAG, "Location Changed");
-                mDrawView.setMyLocation(location.getLatitude(), location.getLongitude());
-                mDrawView.invalidate();
-                mLocation = location;
-                updateGeomagneticField();
-
-            }
-
-            public void onStatusChanged(String s, int i, Bundle bundle) {
-
-            }
-
-            public void onProviderEnabled(String s) {
-                // try switching to a different provider
-            }
-
-            public void onProviderDisabled(String s) {
-                // try switching to a different provider
-            }
-        });
-
+    }
+    
+    public void setLocation(Location location){
+            mLocation = location;
+    }
+    
+    // using high accuracy provider... to listen for updates
+    public void onLocationChanged(Location mlocation) {
+        // do something here to save this new location
+        Log.d(TAG, "Location Changed");
+        mDrawView.setMyLocation(location.getLatitude(), location.getLongitude());
+        mDrawView.invalidate();
+        updateGeomagneticField();
     }
 
     @Override
