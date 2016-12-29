@@ -86,16 +86,6 @@ public class Compass extends Activity {
                 LocationUtils.createFineCriteria(), true));
 
         // using high accuracy provider... to listen for updates
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
         locMgr.requestLocationUpdates(high.getName(), 0, 0f, new LocationListener() {
             public void onLocationChanged(Location location) {
                 // do something here to save this new location
