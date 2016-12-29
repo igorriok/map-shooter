@@ -234,6 +234,7 @@ public class map extends AppCompatActivity implements
     }
 
     public void onLocationChanged(Location location) {
+	setLocation(location);
         // Report to the UI that the location was updated
         String msg = "Updated Location: " +
                 Double.toString(location.getLatitude()) + "," +
