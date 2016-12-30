@@ -80,11 +80,11 @@ public class Compass extends Activity {
         setContentView(R.layout.activity_main);
 
         mDrawView = (DrawSurfaceView) findViewById(R.id.drawSurfaceView);
+        
+        startLocationUpdates();
+        getLocation();
     }
     
-    public void setLocation(Location location){
-            mLocation = location;
-    }
     
     // using high accuracy provider... to listen for updates
     public void onLocationChanged(Location mlocation) {
