@@ -1,6 +1,5 @@
 package com.solonari.igor.virtualshooter;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.hardware.GeomagneticField;
@@ -9,26 +8,41 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
+import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 
-public class Compass extends Activity {
+
+
+public class Compass extends AppCompatActivity implements ConnectionCallbacks, OnConnectionFailedListener, LocationListener {
 
     private static final String TAG = "Compass";
     private static boolean DEBUG = false;
     private SensorManager mSensorManager;
     private Sensor mSensor;
     private DrawSurfaceView mDrawView;
-    LocationManager locMgr;
     private final float[] mRotationMatrix = new float[16];
     private final float[] mOrientation = new float[9];
     private float mHeading;
     private GeomagneticField mGeomagneticField;
     private Location mLocation;
     private static final int ARM_DISPLACEMENT_DEGREES = 6;
+    protected GoogleApiClient mGoogleApiClient;
+    protected LocationRequest mLocationRequest;
+    private long UPDATE_INTERVAL = 5000;  /* 5 secs */
+    private long FASTEST_INTERVAL = 1000; /* 1 secs */
+    protected Location location;
 
 
     private SensorEventListener mListener = new SensorEventListener() {
@@ -59,65 +73,97 @@ public class Compass extends Activity {
     }
 
     private void updateGeomagneticField() {
-        mGeomagneticField = new GeomagneticField((float) mLocation.getLatitude(),
-                (float) mLocation.getLongitude(), (float) mLocation.getAltitude(),
-                mLocation.getTime());
+        mGeomagneticField = new GeomagneticField((float) location.getLatitude(),
+                (float) location.getLongitude(), (float) location.getAltitude(),
+                location.getTime());
     }
 
-    @SuppressWarnings("deprecation")
+    //@SuppressWarnings("deprecation")
     @Override
-    protected void onCreate(Bundle icicle) {
-        super.onCreate(icicle);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
         setContentView(R.layout.activity_main);
 
         mDrawView = (DrawSurfaceView) findViewById(R.id.drawSurfaceView);
-        
-        startLocationUpdates();
-        getLocation();
-    }
-    
-<<<<<<< Updated upstream
-=======
-    public void setLocation(Location location){
 
-        mLocation = location;
+        buildGoogleApiClient();
     }
->>>>>>> Stashed changes
-    
-    // using high accuracy provider... to listen for updates
-    public void onLocationChanged(Location mlocation) {
+
+    protected synchronized void buildGoogleApiClient() {
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mGoogleApiClient.connect();
+    }
+
+    @Override
+    public void onConnected(Bundle dataBundle) {
+        // Display the connection status
+        startLocationUpdates();
+    }
+
+    protected void startLocationUpdates() {
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setInterval(UPDATE_INTERVAL);
+        mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
+        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+    }
+
+    public void onLocationChanged(Location location) {
         // do something here to save this new location
+        this.location = location;
         Log.d(TAG, "Location Changed");
-        mDrawView.setMyLocation(mLocation.getLatitude(), mLocation.getLongitude());
+        mDrawView.setMyLocation(location.getLatitude(), location.getLongitude());
         mDrawView.invalidate();
         updateGeomagneticField();
-        
+
         String msg = "Updated Location: " +
-                Double.toString(mLocation.getLatitude()) + "," +
-                Double.toString(mLocation.getLongitude());
+                Double.toString(location.getLatitude()) + "," +
+                Double.toString(location.getLongitude());
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
     @Override
     protected void onResume() {
-        if (DEBUG)
-            Log.d(TAG, "onResume");
         super.onResume();
-
-        mSensorManager.registerListener(mListener, mSensor,
-                SensorManager.SENSOR_DELAY_GAME);
     }
 
     @Override
     protected void onStop() {
-        if (DEBUG)
-            Log.d(TAG, "onStop");
-        mSensorManager.unregisterListener(mListener);
         super.onStop();
+        if (mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.disconnect();
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int cause) {
+        // The connection to Google Play services was lost for some reason. We call connect() to
+        // attempt to re-establish the connection.
+        Log.i(TAG, "Connection suspended");
+        mGoogleApiClient.connect();
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult result) {
+        // Refer to the javadoc for ConnectionResult to see what error codes might be returned in
+        // onConnectionFailed.
+        Log.i(TAG, "Connection failed: ConnectionResult.getErrorCode() = " + result.getErrorCode());
     }
 }

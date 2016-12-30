@@ -41,19 +41,18 @@ public class map extends AppCompatActivity implements
         LocationListener {
 
     private GoogleMap mMap;
-    private GoogleApiClient mGoogleApiClient;
+    protected GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
     private long UPDATE_INTERVAL = 60000;  /* 60 secs */
     private long FASTEST_INTERVAL = 5000; /* 5 secs */
-    private Compass compass;
 
     /*
 	 * Define a request code to send to Google Play services This code is
 	 * returned in Activity.onActivityResult
 	 */
-    private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
-    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
-    private boolean mPermissionDenied = false;
+    protected final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
+    protected static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
+    protected boolean mPermissionDenied = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,7 +97,7 @@ public class map extends AppCompatActivity implements
         }
     }
 
-    private void enableMyLocation() {
+    protected void enableMyLocation() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
             // Permission to access the location is missing.
