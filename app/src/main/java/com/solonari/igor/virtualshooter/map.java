@@ -242,6 +242,7 @@ public class map extends AppCompatActivity implements
     }
     
     public Location getLocation() {
+	    startLocationUpdates();
 	    return location;
     }
 
