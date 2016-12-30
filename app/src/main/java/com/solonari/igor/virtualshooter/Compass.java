@@ -1,22 +1,18 @@
 package com.solonari.igor.virtualshooter;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
-import android.content.pm.PackageManager;
 import android.hardware.GeomagneticField;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
-import android.location.LocationProvider;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
 import android.util.Log;
+import android.widget.Toast;
 
 
 public class Compass extends Activity {
@@ -85,18 +81,25 @@ public class Compass extends Activity {
         getLocation();
     }
     
+<<<<<<< Updated upstream
+=======
+    public void setLocation(Location location){
+
+        mLocation = location;
+    }
+>>>>>>> Stashed changes
     
     // using high accuracy provider... to listen for updates
     public void onLocationChanged(Location mlocation) {
         // do something here to save this new location
         Log.d(TAG, "Location Changed");
-        mDrawView.setMyLocation(location.getLatitude(), location.getLongitude());
+        mDrawView.setMyLocation(mLocation.getLatitude(), mLocation.getLongitude());
         mDrawView.invalidate();
         updateGeomagneticField();
         
         String msg = "Updated Location: " +
-                Double.toString(location.getLatitude()) + "," +
-                Double.toString(location.getLongitude());
+                Double.toString(mLocation.getLatitude()) + "," +
+                Double.toString(mLocation.getLongitude());
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 

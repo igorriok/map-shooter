@@ -45,6 +45,7 @@ public class map extends AppCompatActivity implements
     private LocationRequest mLocationRequest;
     private long UPDATE_INTERVAL = 60000;  /* 60 secs */
     private long FASTEST_INTERVAL = 5000; /* 5 secs */
+    private Compass compass;
 
     /*
 	 * Define a request code to send to Google Play services This code is
@@ -240,11 +241,7 @@ public class map extends AppCompatActivity implements
                 Double.toString(location.getLongitude());
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
-    
-    public Location getLocation() {
-	    startLocationUpdates();
-	    return location;
-    }
+
 
     /*
      * Called by Location Services if the connection to the location client
