@@ -241,7 +241,7 @@ public class map extends AppCompatActivity implements
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
     
-    public getLocation() {
+    public Location getLocation() {
 	    return location;
     }
 
