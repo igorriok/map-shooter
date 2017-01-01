@@ -80,8 +80,8 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks, O
 
     //@SuppressWarnings("deprecation")
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void onCreate(Bundle icicle) {
+        super.onCreate(icicle);
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -142,6 +142,7 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks, O
     @Override
     protected void onResume() {
         super.onResume();
+        mSensorManager.registerListener(mListener, mSensor, SensorManager.SENSOR_DELAY_GAME);
     }
 
     @Override
@@ -150,6 +151,8 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks, O
         if (mGoogleApiClient.isConnected()) {
             mGoogleApiClient.disconnect();
         }
+        mSensorManager.unregisterListener(mListener);
+        super.onStop();
     }
 
     @Override
