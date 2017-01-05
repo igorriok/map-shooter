@@ -3,7 +3,6 @@ package com.solonari.igor.virtualshooter;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.ImageFormat;
 import android.graphics.Matrix;
@@ -20,7 +19,7 @@ import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.ImageReader;
 import android.support.annotation.NonNull;
 import android.support.v13.app.FragmentCompat;
-import android.support.v4.app.ActivityCompat;
+import android.util.AttributeSet;
 import android.util.Size;
 import android.view.Surface;
 import android.view.TextureView;
@@ -29,7 +28,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
-public class CameraTextureView extends TextureView {
+public class CameraTextureView extends TextureView implements TextureView.SurfaceTextureListener{
     private Size mPreviewSize;
     private CameraDevice mCameraDevice;
     private String mCameraId;
@@ -42,10 +41,10 @@ public class CameraTextureView extends TextureView {
         this.setSurfaceTextureListener(this);
     }
     
-    public CameraTextureView(Context context, AttributeSet attrs) {  
+    public CameraTextureView(Context context, AttributeSet attrs) {
         super(context, attrs);  
         mContext = context;
-        this.setSurfaceTextureListener(this);
+        this.setSurfaceTextureListener((SurfaceTextureListener) this);
     }
 
     @Override
@@ -63,7 +62,7 @@ public class CameraTextureView extends TextureView {
         setUpCameraOutputs(width, height);
         configureTransform(width, height);
 
-        CameraManager manager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
+        CameraManager manager = (CameraManager) mContext.getSystemService(Context.CAMERA_SERVICE);
         try {
             if (!mCameraOpenCloseLock.tryAcquire(2500, TimeUnit.MILLISECONDS)) {
                 throw new RuntimeException("Time out waiting to lock camera opening.");
