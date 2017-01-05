@@ -34,14 +34,22 @@ public class CameraTextureView extends TextureView {
     private CameraDevice mCameraDevice;
     private String mCameraId;
     private AutoFitTextureView mTextureView;
+    Context mContext;
 
     public CameraTextureView(Context context) {
         super(context);
+        mContext = context;
+        init();
+    }
+    
+    public CameraTextureView(Context context, AttributeSet attrs) {  
+        super(context, attrs);  
+        mContext = context;
         init();
     }
 
     private void init() {
-        setSurfaceTextureListener(new SurfaceTextureListener);
+        this.setSurfaceTextureListener(this);
     }
 
     @Override
