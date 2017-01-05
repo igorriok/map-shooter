@@ -18,7 +18,6 @@ import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.ImageReader;
 import android.support.annotation.NonNull;
-import android.support.v13.app.FragmentCompat;
 import android.util.AttributeSet;
 import android.util.Size;
 import android.view.Surface;
@@ -26,6 +25,7 @@ import android.view.TextureView;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
 public class CameraTextureView extends TextureView implements TextureView.SurfaceTextureListener{
@@ -34,6 +34,7 @@ public class CameraTextureView extends TextureView implements TextureView.Surfac
     private String mCameraId;
     private AutoFitTextureView mTextureView;
     Context mContext;
+    private Semaphore mCameraOpenCloseLock = new Semaphore(1);
 
     public CameraTextureView(Context context) {
         super(context);
@@ -44,7 +45,7 @@ public class CameraTextureView extends TextureView implements TextureView.Surfac
     public CameraTextureView(Context context, AttributeSet attrs) {
         super(context, attrs);  
         mContext = context;
-        this.setSurfaceTextureListener((SurfaceTextureListener) this);
+        this.setSurfaceTextureListener(this);
     }
 
     @Override
@@ -55,6 +56,15 @@ public class CameraTextureView extends TextureView implements TextureView.Surfac
     @Override
     public void onSurfaceTextureSizeChanged(SurfaceTexture texture, int width, int height) {
         configureTransform(width, height);
+    }
+
+    @Override
+    public boolean onSurfaceTextureDestroyed(SurfaceTexture texture) {
+        return true;
+    }
+
+    @Override
+    public void onSurfaceTextureUpdated(SurfaceTexture texture) {
     }
 
     private void openCamera(int width, int height) {
@@ -211,8 +221,7 @@ public class CameraTextureView extends TextureView implements TextureView.Surfac
             Surface surface = new Surface(texture);
 
             // We set up a CaptureRequest.Builder with the output Surface.
-            mPreviewRequestBuilder
-                    = mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
+            mPreviewRequestBuilder = mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
             mPreviewRequestBuilder.addTarget(surface);
 
             // Here, we create a CameraCaptureSession for camera preview.
