@@ -39,16 +39,12 @@ public class CameraTextureView extends TextureView {
     public CameraTextureView(Context context) {
         super(context);
         mContext = context;
-        init();
+        this.setSurfaceTextureListener(this);
     }
     
     public CameraTextureView(Context context, AttributeSet attrs) {  
         super(context, attrs);  
         mContext = context;
-        init();
-    }
-
-    private void init() {
         this.setSurfaceTextureListener(this);
     }
 
