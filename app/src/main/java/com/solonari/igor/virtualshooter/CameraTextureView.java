@@ -124,17 +124,11 @@ public class CameraTextureView extends TextureView implements TextureView.Surfac
                     continue;
                 }
 
-                StreamConfigurationMap map = characteristics.get(
-                        CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
+                StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
                 if (map == null) {
                     continue;
                 }
-
-                // For still image captures, we use the largest available size.
-                Size largest = Collections.max(Arrays.asList(map.getOutputSizes(ImageFormat.JPEG)), new CompareSizesByArea());
-                mImageReader = ImageReader.newInstance(largest.getWidth(), largest.getHeight(), ImageFormat.JPEG, /*maxImages*/2);
-                mImageReader.setOnImageAvailableListener(mOnImageAvailableListener);
-
+                
                 Point displaySize = new Point();
                 activity.getWindowManager().getDefaultDisplay().getSize(displaySize);
                 int rotatedPreviewWidth = width;
