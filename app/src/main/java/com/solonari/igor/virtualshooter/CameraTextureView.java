@@ -230,46 +230,7 @@ public class CameraTextureView extends TextureView implements TextureView.Surfac
 
             // This is the output Surface we need to start preview.
             Surface surface = new Surface(texture);
-
-            // We set up a CaptureRequest.Builder with the output Surface.
-            mPreviewRequestBuilder = mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
-            mPreviewRequestBuilder.addTarget(surface);
-
-            // Here, we create a CameraCaptureSession for camera preview.
-            mCameraDevice.createCaptureSession(Arrays.asList(surface, mImageReader.getSurface()),
-                    new CameraCaptureSession.StateCallback() {
-
-                        @Override
-                        public void onConfigured(@NonNull CameraCaptureSession cameraCaptureSession) {
-                            // The camera is already closed
-                            if (null == mCameraDevice) {
-                                return;
-                            }
-
-                            // When the session is ready, we start displaying the preview.
-
-                            try {
-                                // Auto focus should be continuous for camera preview.
-                                mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE,
-                                        CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
-                                // Flash is automatically enabled when necessary.
-                                setAutoFlash(mPreviewRequestBuilder);
-
-                                // Finally, we start displaying the camera preview.
-                                mPreviewRequest = mPreviewRequestBuilder.build();
-
-                            } catch (CameraAccessException e) {
-                                e.printStackTrace();
-                            }
-                        }
-
-                        @Override
-                        public void onConfigureFailed(
-                                @NonNull CameraCaptureSession cameraCaptureSession) {
-                            showToast("Failed");
-                        }
-                    }, null
-            );
+            
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
@@ -298,12 +259,6 @@ public class CameraTextureView extends TextureView implements TextureView.Surfac
             matrix.postRotate(180, centerX, centerY);
         }
         mTextureView.setTransform(matrix);
-    }
-
-    @Override
-    public void onPause() {
-        closeCamera();
-        super.onPause();
     }
     
     /**
