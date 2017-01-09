@@ -37,6 +37,8 @@ public class CameraTextureView extends TextureView implements TextureView.Surfac
     private AutoFitTextureView mTextureView;
     Context mContext;
     private Semaphore mCameraOpenCloseLock = new Semaphore(1);
+    private static final int MAX_PREVIEW_WIDTH = 1920;
+    private static final int MAX_PREVIEW_HEIGHT = 1080;
 
     public CameraTextureView(Context context) {
         super(context);
