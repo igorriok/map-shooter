@@ -1,10 +1,8 @@
 package com.solonari.igor.virtualshooter;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
-import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.Point;
 import android.graphics.RectF;
@@ -16,15 +14,19 @@ import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.params.StreamConfigurationMap;
-import android.media.ImageReader;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.Size;
+import android.view.Display;
 import android.view.Surface;
 import android.view.TextureView;
+import android.view.WindowManager;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
@@ -60,6 +62,7 @@ public class CameraTextureView extends TextureView implements TextureView.Surfac
 
     @Override
     public boolean onSurfaceTextureDestroyed(SurfaceTexture texture) {
+        closeCamera();
         return true;
     }
 
@@ -130,7 +133,10 @@ public class CameraTextureView extends TextureView implements TextureView.Surfac
                 }
                 
                 Point displaySize = new Point();
-                activity.getWindowManager().getDefaultDisplay().getSize(displaySize);
+                WindowManager wm = (WindowManager) mContext.getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
+                Display display = wm.getDefaultDisplay();
+                display.getSize(displaySize);
+
                 int rotatedPreviewWidth = width;
                 int rotatedPreviewHeight = height;
                 int maxPreviewWidth = displaySize.x;
@@ -168,9 +174,6 @@ public class CameraTextureView extends TextureView implements TextureView.Surfac
                             mPreviewSize.getHeight(), mPreviewSize.getWidth());
                 }
 
-                // Check if the flash is supported.
-                Boolean available = characteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE);
-                mFlashSupported = available == null ? false : available;
 
                 mCameraId = cameraId;
                 return;
@@ -274,8 +277,8 @@ public class CameraTextureView extends TextureView implements TextureView.Surfac
     }
 
     private void configureTransform(int viewWidth, int viewHeight) {
-        Activity activity = getActivity();
-        if (null == mTextureView || null == mPreviewSize || null == activity) {
+
+        if (null == mTextureView || null == mPreviewSize) {
             return;
         }
         int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
@@ -301,28 +304,23 @@ public class CameraTextureView extends TextureView implements TextureView.Surfac
     @Override
     public void onPause() {
         closeCamera();
-        stopBackgroundThread();
         super.onPause();
     }
 
-    private void closeCamera() {
+    protected void closeCamera() {
         try {
             mCameraOpenCloseLock.acquire();
 
+            if (null != mCameraDevice) {
+                mCameraDevice.close();
+                mCameraDevice = null;
+            }
+
+        } catch (InterruptedException e) {
+            throw new RuntimeException("Interrupted while trying to lock camera closing.", e);
+        } finally {
+            mCameraOpenCloseLock.release();
         }
-        if (null != mCameraDevice) {
-            mCameraDevice.close();
-            mCameraDevice = null;
-        }
-        if (null != mImageReader) {
-            mImageReader.close();
-            mImageReader = null;
-        }
-    } catch (InterruptedException e) {
-        throw new RuntimeException("Interrupted while trying to lock camera closing.", e);
-    } finally {
-        mCameraOpenCloseLock.release();
     }
-}
 
 }
