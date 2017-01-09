@@ -38,6 +38,7 @@ public class CameraTextureView extends TextureView implements TextureView.Surfac
     private Semaphore mCameraOpenCloseLock = new Semaphore(1);
     private static final int MAX_PREVIEW_WIDTH = 1920;
     private static final int MAX_PREVIEW_HEIGHT = 1080;
+    private static final String TAG = "Camera2BasicFragment";
 
     public CameraTextureView(Context context) {
         super(context);
@@ -165,11 +166,9 @@ public class CameraTextureView extends TextureView implements TextureView.Surfac
                 // We fit the aspect ratio of TextureView to the size of preview we picked.
                 int orientation = getResources().getConfiguration().orientation;
                 if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                    mTextureView.setAspectRatio(
-                            mPreviewSize.getWidth(), mPreviewSize.getHeight());
+                    mTextureView.setAspectRatio(mPreviewSize.getWidth(), mPreviewSize.getHeight());
                 } else {
-                    mTextureView.setAspectRatio(
-                            mPreviewSize.getHeight(), mPreviewSize.getWidth());
+                    mTextureView.setAspectRatio(mPreviewSize.getHeight(), mPreviewSize.getWidth());
                 }
 
 
@@ -178,11 +177,6 @@ public class CameraTextureView extends TextureView implements TextureView.Surfac
             }
         } catch (CameraAccessException e) {
             e.printStackTrace();
-        } catch (NullPointerException e) {
-            // Currently an NPE is thrown when the Camera2API is used but not supported on the
-            // device this code runs.
-            ErrorDialog.newInstance(getString(R.string.camera_error))
-                    .show(getChildFragmentManager(), FRAGMENT_DIALOG);
         }
     }
 
@@ -220,7 +214,7 @@ public class CameraTextureView extends TextureView implements TextureView.Surfac
     }
 
     private void createCameraPreviewSession() {
-        try {
+
             SurfaceTexture texture = mTextureView.getSurfaceTexture();
             assert texture != null;
 
@@ -230,9 +224,7 @@ public class CameraTextureView extends TextureView implements TextureView.Surfac
             // This is the output Surface we need to start preview.
             Surface surface = new Surface(texture);
             
-        } catch (CameraAccessException e) {
-            e.printStackTrace();
-        }
+
     }
 
     private void configureTransform(int viewWidth, int viewHeight) {
