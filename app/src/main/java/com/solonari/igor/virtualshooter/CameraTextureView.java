@@ -1,8 +1,8 @@
 package com.solonari.igor.virtualshooter;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.Point;
 import android.graphics.RectF;
@@ -133,6 +133,10 @@ public class CameraTextureView extends TextureView implements TextureView.Surfac
                 if (map == null) {
                     continue;
                 }
+
+                Size largest = Collections.max(
+                        Arrays.asList(map.getOutputSizes(ImageFormat.JPEG)),
+                        new CompareSizesByArea());
                 
                 Point displaySize = new Point();
                 WindowManager wm = (WindowManager) mContext.getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
