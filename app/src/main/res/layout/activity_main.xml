@@ -5,8 +5,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <com.solonari.igor.virtualshooter.CameraSurfaceView
-        android:id="@+id/cameraSurfaceView"
+    <com.solonari.igor.virtualshooter.CameraTextureView
+        android:id="@+id/cameraTextureView"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" />
 
