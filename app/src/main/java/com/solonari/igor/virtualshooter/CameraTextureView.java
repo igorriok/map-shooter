@@ -71,7 +71,14 @@ public class CameraTextureView extends TextureView implements TextureView.Surfac
     @Override
     public void onSurfaceTextureUpdated(SurfaceTexture texture) {
     }
-
+    
+    @Override
+    public void onViewCreated(final View view, Bundle savedInstanceState) {
+        view.findViewById(R.id.picture).setOnClickListener(this);
+        view.findViewById(R.id.info).setOnClickListener(this);
+        mTextureView = (AutoFitTextureView) view.findViewById(R.id.texture);
+    }
+    
     private void openCamera(int width, int height) {
 
         setUpCameraOutputs(width, height);
