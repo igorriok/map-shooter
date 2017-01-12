@@ -33,7 +33,6 @@ public class CameraTextureView extends TextureView implements TextureView.Surfac
     private Size mPreviewSize;
     private CameraDevice mCameraDevice;
     private String mCameraId;
-    private AutoFitTextureView mTextureView;
     Context mContext;
     private Semaphore mCameraOpenCloseLock = new Semaphore(1);
     private static final int MAX_PREVIEW_WIDTH = 1920;
@@ -50,6 +49,31 @@ public class CameraTextureView extends TextureView implements TextureView.Surfac
         super(context, attrs);  
         mContext = context;
         this.setSurfaceTextureListener(this);
+    }
+    
+    public void setAspectRatio(int width, int height) {
+        if (width < 0 || height < 0) {
+            throw new IllegalArgumentException("Size cannot be negative.");
+        }
+        mRatioWidth = width;
+        mRatioHeight = height;
+        requestLayout();
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        int width = MeasureSpec.getSize(widthMeasureSpec);
+        int height = MeasureSpec.getSize(heightMeasureSpec);
+        if (0 == mRatioWidth || 0 == mRatioHeight) {
+            setMeasuredDimension(width, height);
+        } else {
+            if (width < height * mRatioWidth / mRatioHeight) {
+                setMeasuredDimension(width, width * mRatioHeight / mRatioWidth);
+            } else {
+                setMeasuredDimension(height * mRatioWidth / mRatioHeight, height);
+            }
+        }
     }
 
     @Override
