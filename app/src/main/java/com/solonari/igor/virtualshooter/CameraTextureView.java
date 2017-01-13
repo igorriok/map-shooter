@@ -55,6 +55,12 @@ public class CameraTextureView extends TextureView implements TextureView.Surfac
         this.setSurfaceTextureListener(this);
     }
     
+    public CameraTextureView(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+        mContext = context;
+        this.setSurfaceTextureListener(this);
+    }
+    
     public void setAspectRatio(int width, int height) {
         if (width < 0 || height < 0) {
             throw new IllegalArgumentException("Size cannot be negative.");
