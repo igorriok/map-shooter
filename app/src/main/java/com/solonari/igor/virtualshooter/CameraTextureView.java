@@ -12,6 +12,7 @@ import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.params.StreamConfigurationMap;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -19,6 +20,7 @@ import android.util.Size;
 import android.view.Display;
 import android.view.Surface;
 import android.view.TextureView;
+import android.view.View;
 import android.view.WindowManager;
 
 import java.util.ArrayList;
@@ -38,6 +40,8 @@ public class CameraTextureView extends TextureView implements TextureView.Surfac
     private static final int MAX_PREVIEW_WIDTH = 1920;
     private static final int MAX_PREVIEW_HEIGHT = 1080;
     private static final String TAG = "Camera2BasicFragment";
+    private int mRatioWidth = 0;
+    private int mRatioHeight = 0;
 
     public CameraTextureView(Context context) {
         super(context);
@@ -96,12 +100,7 @@ public class CameraTextureView extends TextureView implements TextureView.Surfac
     public void onSurfaceTextureUpdated(SurfaceTexture texture) {
     }
     
-    @Override
-    public void onViewCreated(final View view, Bundle savedInstanceState) {
-        view.findViewById(R.id.picture).setOnClickListener(this);
-        view.findViewById(R.id.info).setOnClickListener(this);
-        mTextureView = (AutoFitTextureView) view.findViewById(R.id.texture);
-    }
+
     
     private void openCamera(int width, int height) {
 
@@ -197,9 +196,9 @@ public class CameraTextureView extends TextureView implements TextureView.Surfac
                 // We fit the aspect ratio of TextureView to the size of preview we picked.
                 int orientation = getResources().getConfiguration().orientation;
                 if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                    mTextureView.setAspectRatio(mPreviewSize.getWidth(), mPreviewSize.getHeight());
+                    this.setAspectRatio(mPreviewSize.getWidth(), mPreviewSize.getHeight());
                 } else {
-                    mTextureView.setAspectRatio(mPreviewSize.getHeight(), mPreviewSize.getWidth());
+                    this.setAspectRatio(mPreviewSize.getHeight(), mPreviewSize.getWidth());
                 }
 
 
@@ -246,7 +245,7 @@ public class CameraTextureView extends TextureView implements TextureView.Surfac
 
     private void createCameraPreviewSession() {
 
-            SurfaceTexture texture = mTextureView.getSurfaceTexture();
+            SurfaceTexture texture = this.getSurfaceTexture();
             assert texture != null;
 
             // We configure the size of default buffer to be the size of camera preview we want.
@@ -260,7 +259,7 @@ public class CameraTextureView extends TextureView implements TextureView.Surfac
 
     private void configureTransform(int viewWidth, int viewHeight) {
 
-        if (null == mTextureView || null == mPreviewSize) {
+        if (null == this || null == mPreviewSize) {
             return;
         }
         WindowManager wm = (WindowManager) mContext.getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
@@ -282,7 +281,7 @@ public class CameraTextureView extends TextureView implements TextureView.Surfac
         } else if (Surface.ROTATION_180 == rotation) {
             matrix.postRotate(180, centerX, centerY);
         }
-        mTextureView.setTransform(matrix);
+        this.setTransform(matrix);
     }
     
     /**
