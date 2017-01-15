@@ -8,11 +8,13 @@ import android.graphics.Point;
 import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
+import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
+import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.params.StreamConfigurationMap;
-import android.os.Bundle;
+import android.media.ImageReader;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -20,8 +22,8 @@ import android.util.Size;
 import android.view.Display;
 import android.view.Surface;
 import android.view.TextureView;
-import android.view.View;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,9 +41,13 @@ public class CameraTextureView extends TextureView implements TextureView.Surfac
     private Semaphore mCameraOpenCloseLock = new Semaphore(1);
     private static final int MAX_PREVIEW_WIDTH = 1920;
     private static final int MAX_PREVIEW_HEIGHT = 1080;
-    private static final String TAG = "Camera2BasicFragment";
+    private static final String TAG = "CameraTextureVIew";
     private int mRatioWidth = 0;
     private int mRatioHeight = 0;
+    private CaptureRequest.Builder mPreviewRequestBuilder;
+    private CaptureRequest mPreviewRequest;
+    private CameraCaptureSession mCaptureSession;
+    private ImageReader mImageReader;
 
     public CameraTextureView(Context context) {
         super(context);
@@ -105,7 +111,7 @@ public class CameraTextureView extends TextureView implements TextureView.Surfac
     @Override
     public void onSurfaceTextureUpdated(SurfaceTexture texture) {
     }
-    
+
 
     
     private void openCamera(int width, int height) {
@@ -120,7 +126,7 @@ public class CameraTextureView extends TextureView implements TextureView.Surfac
             }
             manager.openCamera(mCameraId, mStateCallback, null);
         } catch (CameraAccessException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Camera access", e);
         } catch (InterruptedException e) {
             throw new RuntimeException("Interrupted while trying to lock camera opening.", e);
         }
@@ -170,9 +176,10 @@ public class CameraTextureView extends TextureView implements TextureView.Surfac
                     continue;
                 }
 
-                Size largest = Collections.max(
-                        Arrays.asList(map.getOutputSizes(ImageFormat.JPEG)),
-                        new CompareSizesByArea());
+                Size largest = Collections.max(Arrays.asList(map.getOutputSizes(ImageFormat.JPEG)), new CompareSizesByArea());
+
+                mImageReader = ImageReader.newInstance(largest.getWidth(), largest.getHeight(), ImageFormat.JPEG, /*maxImages*/2);
+
                 
                 Point displaySize = new Point();
                 WindowManager wm = (WindowManager) mContext.getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
@@ -212,7 +219,7 @@ public class CameraTextureView extends TextureView implements TextureView.Surfac
                 return;
             }
         } catch (CameraAccessException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Camera access", e);
         }
     }
 
@@ -249,8 +256,11 @@ public class CameraTextureView extends TextureView implements TextureView.Surfac
         }
     }
 
+    /**
+     * Creates a new {@link CameraCaptureSession} for camera preview.
+     */
     private void createCameraPreviewSession() {
-
+        try {
             SurfaceTexture texture = this.getSurfaceTexture();
             assert texture != null;
 
@@ -259,13 +269,50 @@ public class CameraTextureView extends TextureView implements TextureView.Surfac
 
             // This is the output Surface we need to start preview.
             Surface surface = new Surface(texture);
-            
 
+            // We set up a CaptureRequest.Builder with the output Surface.
+            mPreviewRequestBuilder = mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
+            mPreviewRequestBuilder.addTarget(surface);
+
+            // Here, we create a CameraCaptureSession for camera preview.
+            mCameraDevice.createCaptureSession(Arrays.asList(surface, mImageReader.getSurface()),
+                    new CameraCaptureSession.StateCallback() {
+
+                        @Override
+                        public void onConfigured(@NonNull CameraCaptureSession cameraCaptureSession) {
+                            // The camera is already closed
+                            if (null == mCameraDevice) {
+                                return;
+                            }
+
+                            // When the session is ready, we start displaying the preview.
+                            mCaptureSession = cameraCaptureSession;
+
+                                // Auto focus should be continuous for camera preview.
+                                mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE,
+                                        CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
+
+                                // Finally, we start displaying the camera preview.
+                                mPreviewRequest = mPreviewRequestBuilder.build();
+
+
+                        }
+
+                        @Override
+                        public void onConfigureFailed(
+                                @NonNull CameraCaptureSession cameraCaptureSession) {
+                            Toast.makeText(mContext, "Failed", Toast.LENGTH_SHORT).show();
+                        }
+                    }, null
+            );
+        } catch (CameraAccessException e) {
+            e.printStackTrace();
+        }
     }
 
     private void configureTransform(int viewWidth, int viewHeight) {
 
-        if (null == this || null == mPreviewSize) {
+        if (null == mPreviewSize) {
             return;
         }
         WindowManager wm = (WindowManager) mContext.getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
@@ -319,5 +366,6 @@ public class CameraTextureView extends TextureView implements TextureView.Surfac
             mCameraOpenCloseLock.release();
         }
     }
+
 
 }
