@@ -288,13 +288,17 @@ public class CameraTextureView extends TextureView implements TextureView.Surfac
                             // When the session is ready, we start displaying the preview.
                             mCaptureSession = cameraCaptureSession;
 
-                                // Auto focus should be continuous for camera preview.
-                                mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE,
-                                        CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
+                            try {
+                            // Auto focus should be continuous for camera preview.
+                            mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
 
-                                // Finally, we start displaying the camera preview.
-                                mPreviewRequest = mPreviewRequestBuilder.build();
+                            // Finally, we start displaying the camera preview.
+                            mPreviewRequest = mPreviewRequestBuilder.build();
+                            mCaptureSession.setRepeatingRequest(mPreviewRequest, null, null);
 
+                            } catch (CameraAccessException e) {
+                                Log.e(TAG, "Camera access exception", e);
+                            }
 
                         }
 
