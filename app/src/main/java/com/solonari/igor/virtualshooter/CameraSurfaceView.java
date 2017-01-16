@@ -185,14 +185,14 @@ public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Call
 
         Log.d("Test", "SurfaceChanged");
 
-
     }
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
         // Surface will be destroyed when replaced with a new screen
         // Always make sure to release the Camera instance
-
+        mCameraOpenCloseLock.release();
+        mCameraDevice = null;
     }
 
 }

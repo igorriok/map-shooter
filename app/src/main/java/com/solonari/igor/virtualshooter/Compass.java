@@ -2,6 +2,7 @@ package com.solonari.igor.virtualshooter;
 
 import android.content.Context;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.hardware.GeomagneticField;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -9,8 +10,11 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
@@ -43,6 +47,7 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks, O
     private long UPDATE_INTERVAL = 5000;  /* 5 secs */
     private long FASTEST_INTERVAL = 1000; /* 1 secs */
     protected Location location;
+    protected static final int REQUEST_CAMERA_PERMISSION = 2;
 
 
     private SensorEventListener mListener = new SensorEventListener() {
@@ -83,8 +88,21 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks, O
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
 
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        //Set activity with no title
         requestWindowFeature(Window.FEATURE_NO_TITLE);
+        //Keep screen on
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        //Set full-screen
+        getWindow().getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
