@@ -169,4 +169,30 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks, O
         // onConnectionFailed.
         Log.i(TAG, "Connection failed: ConnectionResult.getErrorCode() = " + result.getErrorCode());
     }
+    
+    private void requestCameraPermission() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Permission to access camera is missing.
+            PermissionUtils.requestPermission(this, REQUEST_CAMERA_PERMISSION,
+                    Manifest.permission.CAMERA, true);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode != REQUEST_CAMERA_PERMISSION) {
+            return;
+        }
+
+        if (PermissionUtils.isPermissionGranted(permissions, grantResults,
+                Manifest.permission.CAMERA)) {
+            // Enable the my location layer if the permission has been granted.
+            return;
+        } else {
+            // Display the missing permission error dialog when the fragments resume.
+            
+        }
+    }
+
 }
