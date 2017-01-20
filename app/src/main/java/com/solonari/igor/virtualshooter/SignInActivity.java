@@ -128,7 +128,7 @@ public class SignInActivity extends AppCompatActivity implements
     // [END signIn]
 
     // [START signOut]
-    private void signOut() {
+    protected void signOut() {
         Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
                 new ResultCallback<Status>() {
                     @Override
