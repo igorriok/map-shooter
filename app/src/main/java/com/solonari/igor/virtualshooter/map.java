@@ -85,7 +85,7 @@ public class map extends AppCompatActivity implements
 	// Find the View that shows the compass category
 	TextView Compass = (TextView) findViewById(R.id.shootButton);
 
-	// Set a click listener on that View
+	// Set a click listener on shoot button
 	Compass.setOnClickListener(new View.OnClickListener() {
 		// The code in this method will be executed when the shoot View is clicked on.
 		@Override
@@ -94,7 +94,17 @@ public class map extends AppCompatActivity implements
 			startActivity(shootIntent);
 			}
 	});
-
+	
+	// Set a click listener on signOut button
+	Compass.setOnClickListener(new View.OnClickListener() {
+		// The code in this method will be executed when the shoot View is clicked on.
+		@Override
+		public void onClick(View view) {
+			SignInActivity.signOut();
+			Intent signInIntent = new Intent(map.this, SignInActivity.class);
+			startActivity(signInIntent);
+			}
+	});
     }
 
 
