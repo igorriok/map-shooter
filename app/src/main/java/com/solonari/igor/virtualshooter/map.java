@@ -83,7 +83,7 @@ public class map extends AppCompatActivity implements
 	mapFragment.getMapAsync(this);
 	    
 	// Find the View that shows the compass category
-	TextView Compass = (TextView) findViewById(R.id.shootButton);
+	Button Compass = (Button) findViewById(R.id.shootButton);
 
 	// Set a click listener on shoot button
 	Compass.setOnClickListener(new View.OnClickListener() {
@@ -95,8 +95,11 @@ public class map extends AppCompatActivity implements
 			}
 	});
 	
+	// Find the View that shows the compass category
+	final Button signOut = (Button) findViewById(R.id.signOutButton);
+	
 	// Set a click listener on signOut button
-	Compass.setOnClickListener(new View.OnClickListener() {
+	singOut.setOnClickListener(new View.OnClickListener() {
 		// The code in this method will be executed when the shoot View is clicked on.
 		@Override
 		public void onClick(View view) {
