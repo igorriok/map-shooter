@@ -25,7 +25,7 @@ public class SignInActivity extends AppCompatActivity implements
     private static final String TAG = "SignInActivity";
     private static final int RC_SIGN_IN = 9001;
 
-    private GoogleApiClient mGoogleApiClient;
+    private GoogleApiClient sGoogleApiClient;
     private TextView mStatusTextView;
     private ProgressDialog mProgressDialog;
 
@@ -53,11 +53,12 @@ public class SignInActivity extends AppCompatActivity implements
         // [START build_client]
         // Build a GoogleApiClient with access to the Google Sign-In API and the
         // options specified by gso.
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
+        sGoogleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
         // [END build_client]
+
 
         // [START customize_button]
         // Set the dimensions of the sign-in button.
@@ -70,7 +71,7 @@ public class SignInActivity extends AppCompatActivity implements
     public void onStart() {
         super.onStart();
 
-        OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(mGoogleApiClient);
+        OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(sGoogleApiClient);
         if (opr.isDone()) {
             // If the user's cached credentials are valid, the OptionalPendingResult will be "done"
             // and the GoogleSignInResult will be available instantly.
@@ -112,6 +113,8 @@ public class SignInActivity extends AppCompatActivity implements
             // Signed in successfully, show authenticated UI.
             GoogleSignInAccount acct = result.getSignInAccount();
             mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
+            Intent map = new Intent(SignInActivity.this, map.class);
+            startActivity(map);
             updateUI(true);
         } else {
             // Signed out, show unauthenticated UI.
@@ -122,14 +125,14 @@ public class SignInActivity extends AppCompatActivity implements
 
     // [START signIn]
     private void signIn() {
-        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(sGoogleApiClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
     // [END signIn]
 
     // [START signOut]
     protected void signOut() {
-        Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
+        Auth.GoogleSignInApi.signOut(sGoogleApiClient).setResultCallback(
                 new ResultCallback<Status>() {
                     @Override
                     public void onResult(Status status) {
@@ -143,7 +146,7 @@ public class SignInActivity extends AppCompatActivity implements
 
     // [START revokeAccess]
     private void revokeAccess() {
-        Auth.GoogleSignInApi.revokeAccess(mGoogleApiClient).setResultCallback(
+        Auth.GoogleSignInApi.revokeAccess(sGoogleApiClient).setResultCallback(
                 new ResultCallback<Status>() {
                     @Override
                     public void onResult(Status status) {

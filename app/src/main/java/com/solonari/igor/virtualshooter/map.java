@@ -17,12 +17,16 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.TextView;
+import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
@@ -45,6 +49,7 @@ public class map extends AppCompatActivity implements
     private LocationRequest mLocationRequest;
     private long UPDATE_INTERVAL = 60000;  /* 60 secs */
     private long FASTEST_INTERVAL = 5000; /* 5 secs */
+    private GoogleApiClient sGoogleApiClient;
 
     /*
 	 * Define a request code to send to Google Play services This code is
@@ -58,56 +63,70 @@ public class map extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     
-    //Set activity with no title
-    requestWindowFeature(Window.FEATURE_NO_TITLE);
-    //getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-    
-    //Keep screen on
-    getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-    //Set full-screen
-    getWindow().getDecorView().setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
-                | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
-                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+        //Set activity with no title
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        //getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-    setContentView(R.layout.content_map);
+        //Keep screen on
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        //Set full-screen
+        getWindow().getDecorView().setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
+                    | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
+                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
 
-    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        setContentView(R.layout.content_map);
 
-    // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-    SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_fragment);
-        
-	mapFragment.getMapAsync(this);
-	    
-	// Find the View that shows the compass category
-	Button Compass = (Button) findViewById(R.id.shootButton);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
-	// Set a click listener on shoot button
-	Compass.setOnClickListener(new View.OnClickListener() {
-		// The code in this method will be executed when the shoot View is clicked on.
-		@Override
-		public void onClick(View view) {
-			Intent shootIntent = new Intent(map.this, Compass.class);
-			startActivity(shootIntent);
-			}
-	});
-	
-	// Find the View that shows the compass category
-	final Button signOut = (Button) findViewById(R.id.signOutButton);
-	
-	// Set a click listener on signOut button
-	singOut.setOnClickListener(new View.OnClickListener() {
-		// The code in this method will be executed when the shoot View is clicked on.
-		@Override
-		public void onClick(View view) {
-			SignInActivity.signOut();
-			Intent signInIntent = new Intent(map.this, SignInActivity.class);
-			startActivity(signInIntent);
-			}
-	});
+        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_fragment);
+
+        mapFragment.getMapAsync(this);
+
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+
+        sGoogleApiClient = new GoogleApiClient.Builder(this)
+                .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
+
+        // Find the View that shows the compass category
+        Button Compass = (Button) findViewById(R.id.shootButton);
+
+        // Set a click listener on shoot button
+        Compass.setOnClickListener(new View.OnClickListener() {
+            // The code in this method will be executed when the shoot View is clicked on.
+            @Override
+            public void onClick(View view) {
+                Intent shootIntent = new Intent(map.this, Compass.class);
+                startActivity(shootIntent);
+                }
+        });
+
+        // Find the View that shows the compass category
+        Button signOut = (Button) findViewById(R.id.signOutButton);
+
+        // Set a click listener on signOut button
+        signOut.setOnClickListener(new View.OnClickListener() {
+            // The code in this method will be executed when the shoot View is clicked on.
+            @Override
+            public void onClick(View view) {
+                Auth.GoogleSignInApi.signOut(sGoogleApiClient).setResultCallback(
+                        new ResultCallback<Status>() {
+                            @Override
+                            public void onResult(Status status) {
+                            Intent signInIntent = new Intent(map.this, SignInActivity.class);
+                            startActivity(signInIntent);
+                            }
+                        });
+                }
+        });
     }
 
 
@@ -129,7 +148,7 @@ public class map extends AppCompatActivity implements
         } else if (mMap != null) {
             // Access to the location has been granted to the app.
             mMap.setMyLocationEnabled(true);
-	        mGoogleApiClient = new GoogleApiClient.Builder(this)
+            mGoogleApiClient = new GoogleApiClient.Builder(this)
                     .addApi(LocationServices.API)
                     .addConnectionCallbacks(this)
                     .addOnConnectionFailedListener(this).build();
@@ -206,32 +225,6 @@ public class map extends AppCompatActivity implements
                 }
         }
     }
-
-    private boolean isGooglePlayServicesAvailable() {
-        // Check that Google Play services is available
-        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
-        // If Google Play services is available
-        if (ConnectionResult.SUCCESS == resultCode) {
-            // In debug mode, log the status
-            Log.d("Location Updates", "Google Play services is available.");
-            return true;
-        } else {
-            // Get the error dialog from Google Play services
-            Dialog errorDialog = GooglePlayServicesUtil.getErrorDialog(resultCode, this,
-                    CONNECTION_FAILURE_RESOLUTION_REQUEST);
-
-            // If Google Play services can provide an error dialog
-            if (errorDialog != null) {
-                // Create a new DialogFragment for the error dialog
-                ErrorDialogFragment errorFragment = new ErrorDialogFragment();
-                errorFragment.setDialog(errorDialog);
-                errorFragment.show(getSupportFragmentManager(), "Location Updates");
-            }
-
-            return false;
-        }
-    }
-
 
     @Override
     public void onConnected(Bundle dataBundle) {

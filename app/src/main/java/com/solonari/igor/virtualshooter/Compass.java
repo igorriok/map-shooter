@@ -103,7 +103,7 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks, O
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
-        if (this.checkSelfPermission(getActivity(), Manifest.permission.CAMERA)
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
             requestCameraPermission();
             return;
