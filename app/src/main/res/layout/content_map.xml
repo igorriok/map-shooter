@@ -45,7 +45,7 @@
             android:weightSum="2"
             >
 
-            <TextView
+            <Button
                 android:id="@+id/shootButton"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -60,7 +60,7 @@
                 android:background="#0097A7"
                 android:textStyle="bold"
                 />
-            <TextView
+            <Button
                 android:id="@+id/signOutButton"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -70,7 +70,7 @@
                 android:layout_marginBottom="5dp"
                 android:layout_marginTop="5dp"
                 style="?android:attr/borderlessButtonStyle"
-                android:text="Shoot"
+                android:text="Sign Out"
                 android:textColor="#E3F2FD"
                 android:background="#0097A7"
                 android:textStyle="bold"
