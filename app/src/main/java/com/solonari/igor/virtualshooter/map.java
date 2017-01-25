@@ -37,6 +37,11 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.InetAddress;
+import java.net.Socket;
+
 
 public class map extends AppCompatActivity implements
         OnMapReadyCallback,
@@ -50,6 +55,7 @@ public class map extends AppCompatActivity implements
     private long UPDATE_INTERVAL = 60000;  /* 60 secs */
     private long FASTEST_INTERVAL = 5000; /* 5 secs */
     private GoogleApiClient sGoogleApiClient;
+    private static String TAG = "Map";
 
     /*
 	 * Define a request code to send to Google Play services This code is
@@ -255,6 +261,31 @@ public class map extends AppCompatActivity implements
                 Double.toString(location.getLatitude()) + "," +
                 Double.toString(location.getLongitude());
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+
+        //Creat a new socket and send location to server
+        try {
+            int portNumber = 57349;
+            InetAddress ip = InetAddress.getByName("192.168.1.154");
+            Socket socket1 = new Socket(ip, portNumber);
+            ObjectInputStream ois = new ObjectInputStream(socket1.getInputStream());
+            ObjectOutputStream oos = new ObjectOutputStream(socket1.getOutputStream());
+            oos.writeObject("location update");
+
+            String str = "";
+            while ((str = (String) ois.readObject()) != null) {
+                System.out.println(str);
+                oos.writeObject("bye");
+
+                if (str.equals("bye"))
+                    break;
+            }
+
+            ois.close();
+            oos.close();
+            socket1.close();
+        } catch (Exception e){
+            Log.e(TAG,"Client not created", e);
+        }
     }
 
 
