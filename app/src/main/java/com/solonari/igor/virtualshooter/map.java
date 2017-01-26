@@ -37,6 +37,8 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 
+import java.io.EOFException;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
@@ -56,6 +58,9 @@ public class map extends AppCompatActivity implements
     private long FASTEST_INTERVAL = 5000; /* 5 secs */
     private GoogleApiClient sGoogleApiClient;
     private static String TAG = "Map";
+    private Socket socket1;
+    private ObjectInputStream ois;
+    private ObjectOutputStream oos;
 
     /*
 	 * Define a request code to send to Google Play services This code is
@@ -143,6 +148,7 @@ public class map extends AppCompatActivity implements
             // Now that map has loaded, let's get our location
             enableMyLocation();
         }
+        createSocket();
     }
 
     protected void enableMyLocation() {
@@ -262,35 +268,13 @@ public class map extends AppCompatActivity implements
                 Double.toString(location.getLongitude());
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
 
-        //Creat a new socket and send location to server
+        String comp = "location update";
         try {
-            int portNumber = 57349;
-            InetAddress ip = InetAddress.getByName("192.168.1.154");
-            Socket socket1 = new Socket(ip, portNumber);
-            ObjectInputStream ois = new ObjectInputStream(socket1.getInputStream());
-            ObjectOutputStream oos = new ObjectOutputStream(socket1.getOutputStream());
-            
-	    String comp = "location update";
-	    try {
-		oos.writeObject(comp);
-	    } catch (Exception e){
-		    Log.e(TAG,"Client can't send", e);
-	    }
-            String str = "";
-            while ((str = (String) ois.readObject()) != null) {
-                System.out.println(str);
-                oos.writeObject("bye");
-
-                if (str.equals("bye"))
-                    break;
-            }
-
-            ois.close();
-            oos.close();
-            socket1.close();
-        } catch (Exception e){
-            Log.e(TAG,"Client not created", e);
+            oos.writeObject(comp);
+        } catch (Exception e) {
+            Log.e(TAG, "Client can't send", e);
         }
+
     }
 
 
@@ -361,6 +345,46 @@ public class map extends AppCompatActivity implements
         }
     }
 
+    protected void createSocket(){
+        try {
+            int portNumber = 57349;
+            InetAddress ip = InetAddress.getByName("192.168.1.154");
+            socket1 = new Socket(ip, portNumber);
 
+            ois = new ObjectInputStream(socket1.getInputStream());
+            oos = new ObjectOutputStream(socket1.getOutputStream());
+
+            String comp = "location update";
+            try {
+                oos.writeObject(comp);
+            } catch (Exception e) {
+                Log.e(TAG, "Client can't send", e);
+            }
+            String str = "";
+            try{
+            while ((str = (String) ois.readObject()) != null) {
+                System.out.println(str);
+                oos.writeObject("bye");
+                if (str.equals("bye"))
+                    closeSocket();
+            }
+            } catch (ClassNotFoundException e){
+                Log.e(TAG, "class not found", e);
+            }
+
+        } catch (IOException e){
+            Log.e(TAG,"Client not created", e);
+        }
+    }
+
+    private void closeSocket(){
+        try {
+            ois.close();
+            oos.close();
+            socket1.close();
+        } catch (IOException e){
+            Log.e(TAG, "cant close socket1", e);
+        }
+    }
 }
 
