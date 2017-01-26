@@ -269,8 +269,13 @@ public class map extends AppCompatActivity implements
             Socket socket1 = new Socket(ip, portNumber);
             ObjectInputStream ois = new ObjectInputStream(socket1.getInputStream());
             ObjectOutputStream oos = new ObjectOutputStream(socket1.getOutputStream());
-            oos.writeObject("location update");
-
+            
+	    String comp = "location update";
+	    try {
+		oos.writeObject(comp);
+	    } catch (Exception e){
+		    Log.e(TAG,"Client can't send", e);
+	    }
             String str = "";
             while ((str = (String) ois.readObject()) != null) {
                 System.out.println(str);
