@@ -2,8 +2,8 @@ package com.solonari.igor.virtualshooter;
 
 class ClientThread implements Runnable {
 
-  int portNumber = 57349;
-  InetAddress ip = InetAddress.getByName("192.168.1.154");
+  private static final int portNumber = 57349;
+  private static final InetAddress ip = InetAddress.getByName("192.168.1.154");
 
 		@Override
 		public void run() {
