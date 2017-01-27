@@ -116,6 +116,7 @@ public class SignInActivity extends AppCompatActivity implements
             Intent map = new Intent(SignInActivity.this, map.class);
             startActivity(map);
             String idToken = result.getSignInAccount().getIdToken();
+            Singleton.getInstance().setString(idToken);
             updateUI(true);
         } else {
             // Signed out, show unauthenticated UI.
