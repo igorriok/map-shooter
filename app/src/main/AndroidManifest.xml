@@ -59,7 +59,7 @@
             android:value="@integer/google_play_services_version" />
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyA5ZNJd7bNcUYpHFp7E-7lHu52VSpv7jUI" />
+            android:value="AIzaSyDfk8Hctp8GZB-IKDHRTKsR0tMzUm0fjb4" />
 
         <activity android:name=".SignInActivity">
             <intent-filter>

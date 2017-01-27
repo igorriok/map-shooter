@@ -8,6 +8,7 @@ import android.content.IntentSender;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -20,6 +21,9 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
@@ -37,12 +41,16 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 
+import java.io.BufferedWriter;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.UnknownHostException;
 
 
 public class map extends AppCompatActivity implements
@@ -63,17 +71,22 @@ public class map extends AppCompatActivity implements
     private ObjectOutputStream oos;
 
     /*
-	 * Define a request code to send to Google Play services This code is
+     * Define a request code to send to Google Play services This code is
 	 * returned in Activity.onActivityResult
 	 */
     protected final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     protected static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     protected boolean mPermissionDenied = false;
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-    
+
         //Set activity with no title
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         //getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -82,16 +95,18 @@ public class map extends AppCompatActivity implements
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         //Set full-screen
         getWindow().getDecorView().setSystemUiVisibility(
-                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
-                    | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
-                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
 
         setContentView(R.layout.content_map);
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+
+        //new Thread(new ClientThread()).start();
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_fragment);
@@ -117,7 +132,7 @@ public class map extends AppCompatActivity implements
             public void onClick(View view) {
                 Intent shootIntent = new Intent(map.this, Compass.class);
                 startActivity(shootIntent);
-                }
+            }
         });
 
         // Find the View that shows the compass category
@@ -132,14 +147,16 @@ public class map extends AppCompatActivity implements
                         new ResultCallback<Status>() {
                             @Override
                             public void onResult(Status status) {
-                            Intent signInIntent = new Intent(map.this, SignInActivity.class);
-                            startActivity(signInIntent);
+                                Intent signInIntent = new Intent(map.this, SignInActivity.class);
+                                startActivity(signInIntent);
                             }
                         });
-                }
+            }
         });
-	
-	new Thread(new ClientThread()).start();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
 
@@ -150,7 +167,6 @@ public class map extends AppCompatActivity implements
             // Now that map has loaded, let's get our location
             enableMyLocation();
         }
-        createSocket();
     }
 
     protected void enableMyLocation() {
@@ -172,7 +188,7 @@ public class map extends AppCompatActivity implements
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-            @NonNull int[] grantResults) {
+                                           @NonNull int[] grantResults) {
         if (requestCode != LOCATION_PERMISSION_REQUEST_CODE) {
             return;
         }
@@ -186,7 +202,7 @@ public class map extends AppCompatActivity implements
             mPermissionDenied = true;
         }
     }
-		
+
     @Override
     protected void onResumeFragments() {
         super.onResumeFragments();
@@ -216,8 +232,13 @@ public class map extends AppCompatActivity implements
     */
     @Override
     protected void onStart() {
-        super.onStart();
+        super.onStart();// ATTENTION: This was auto-generated to implement the App Indexing API.
+// See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.connect();
         connectClient();
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        AppIndex.AppIndexApi.start(client, getIndexApiAction());
     }
 
     /*
@@ -271,18 +292,18 @@ public class map extends AppCompatActivity implements
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
 
         try {
-		String str = Double.toString(location.getLatitude());
-		PrintWriter out = new PrintWriter(new BufferedWriter(
-				new OutputStreamWriter(socket1.getOutputStream())),
-				true);
-		out.println(str);
-	} catch (UnknownHostException e) {
-		e.printStackTrace();
-	} catch (IOException e) {
-		e.printStackTrace();
-	} catch (Exception e) {
-		e.printStackTrace();
-	}
+            String str = Double.toString(location.getLatitude());
+            PrintWriter out = new PrintWriter(new BufferedWriter(
+                    new OutputStreamWriter(socket1.getOutputStream())),
+                    true);
+            out.println(str);
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -329,6 +350,32 @@ public class map extends AppCompatActivity implements
         }
     }
 
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    public Action getIndexApiAction() {
+        Thing object = new Thing.Builder()
+                .setName("map Page") // TODO: Define a title for the content shown.
+                // TODO: Make sure this auto-generated URL is correct.
+                .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
+                .build();
+        return new Action.Builder(Action.TYPE_VIEW)
+                .setObject(object)
+                .setActionStatus(Action.STATUS_TYPE_COMPLETED)
+                .build();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        AppIndex.AppIndexApi.end(client, getIndexApiAction());
+        client.disconnect();
+    }
+
     // Define a DialogFragment that displays the error dialog
     public static class ErrorDialogFragment extends DialogFragment {
 
@@ -354,7 +401,7 @@ public class map extends AppCompatActivity implements
         }
     }
 
-    protected void createSocket(){
+    protected void createSocket() {
         try {
             int portNumber = 57349;
             InetAddress ip = InetAddress.getByName("192.168.1.154");
@@ -370,48 +417,47 @@ public class map extends AppCompatActivity implements
                 Log.e(TAG, "Client can't send", e);
             }
             String str = "";
-            try{
-            while ((str = (String) ois.readObject()) != null) {
-                System.out.println(str);
-                oos.writeObject("bye");
-                if (str.equals("bye"))
-                    closeSocket();
-            }
-            } catch (ClassNotFoundException e){
+            try {
+                while ((str = (String) ois.readObject()) != null) {
+                    System.out.println(str);
+                    oos.writeObject("bye");
+                    if (str.equals("bye"))
+                        closeSocket();
+                }
+            } catch (ClassNotFoundException e) {
                 Log.e(TAG, "class not found", e);
             }
 
-        } catch (IOException e){
-            Log.e(TAG,"Client not created", e);
+        } catch (IOException e) {
+            Log.e(TAG, "Client not created", e);
         }
     }
 
-    private void closeSocket(){
+    private void closeSocket() {
         try {
             socket1.close();
-        } catch (IOException e){
+        } catch (IOException e) {
             Log.e(TAG, "cant close socket1", e);
         }
     }
-		
+
     class ClientThread implements Runnable {
 
-	  private static final int portNumber = 57349;
-	  private static final InetAddress ip = InetAddress.getByName("192.168.1.154");
+        @Override
+        public void run() {
 
-			@Override
-			public void run() {
+            try {
+                int portNumber = 57349;
+                InetAddress ip = InetAddress.getByName("192.168.1.154");
+                socket1 = new Socket(ip, portNumber);
 
-				try {
-					socket1 = new Socket(ip, portNumber);
+            } catch (UnknownHostException e) {
+                Log.e(TAG, "cant create socket unknown exc", e);
+            } catch (IOException e) {
+                Log.e(TAG, "cant create socket", e);
+            }
 
-				} catch (UnknownHostException e1) {
-					e1.printStackTrace();
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
-
-			}
+        }
     }
 }
 
