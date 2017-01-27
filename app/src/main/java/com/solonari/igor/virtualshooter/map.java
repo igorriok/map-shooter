@@ -138,6 +138,8 @@ public class map extends AppCompatActivity implements
                         });
                 }
         });
+	
+	new Thread(new ClientThread()).start();
     }
 
 
@@ -268,12 +270,19 @@ public class map extends AppCompatActivity implements
                 Double.toString(location.getLongitude());
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
 
-        String comp = "location update";
         try {
-            oos.writeObject(comp);
-        } catch (Exception e) {
-            Log.e(TAG, "Client can't send", e);
-        }
+		String str = Double.toString(location.getLatitude());
+		PrintWriter out = new PrintWriter(new BufferedWriter(
+				new OutputStreamWriter(socket1.getOutputStream())),
+				true);
+		out.println(str);
+	} catch (UnknownHostException e) {
+		e.printStackTrace();
+	} catch (IOException e) {
+		e.printStackTrace();
+	} catch (Exception e) {
+		e.printStackTrace();
+	}
 
     }
 
@@ -379,12 +388,30 @@ public class map extends AppCompatActivity implements
 
     private void closeSocket(){
         try {
-            ois.close();
-            oos.close();
             socket1.close();
         } catch (IOException e){
             Log.e(TAG, "cant close socket1", e);
         }
+    }
+		
+    class ClientThread implements Runnable {
+
+	  private static final int portNumber = 57349;
+	  private static final InetAddress ip = InetAddress.getByName("192.168.1.154");
+
+			@Override
+			public void run() {
+
+				try {
+					socket1 = new Socket(ip, portNumber);
+
+				} catch (UnknownHostException e1) {
+					e1.printStackTrace();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+
+			}
     }
 }
 
