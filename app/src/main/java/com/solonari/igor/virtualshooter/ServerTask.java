@@ -3,6 +3,7 @@ package com.solonari.igor.virtualshooter;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Log;
+import android.widget.Toast;
 
 /**
  * Created by isolo on 1/28/2017.
@@ -35,10 +36,7 @@ public class ServerTask extends AsyncTask<String, String, TCPClient> {
         Log.d(TAG, "In do in background");
 
         try{
-            tcpClient = new TCPClient(mHandler,
-                    COMMAND,
-                    "178.168.41.5",
-                    new TCPClient.MessageCallback() {
+            tcpClient = new TCPClient(mHandler, COMMAND, "178.168.41.5", new TCPClient.MessageCallback() {
                         @Override
                         public void callbackMessageReceiver(String message) {
                             publishProgress(message);
@@ -62,14 +60,14 @@ public class ServerTask extends AsyncTask<String, String, TCPClient> {
     protected void onProgressUpdate(String... values) {
         super.onProgressUpdate(values);
         Log.d(TAG, "In progress update, values: " + values.toString());
-        if(values[0].equals("shutdown")){
+        if(values[0].equals("test")){
             tcpClient.sendMessage(COMMAND);
             tcpClient.stopClient();
-            mHandler.sendEmptyMessageDelayed(map.SHUTDOWN, 2000);
+            //mHandler.sendEmptyMessageDelayed(map.SHUTDOWN, 2000);
 
         }else{
             tcpClient.sendMessage("wrong");
-            mHandler.sendEmptyMessageDelayed(map.ERROR, 2000);
+            //mHandler.sendEmptyMessageDelayed(map.ERROR, 2000);
             tcpClient.stopClient();
         }
     }
@@ -81,7 +79,7 @@ public class ServerTask extends AsyncTask<String, String, TCPClient> {
         if(result != null){
             result.stopClient();
         }
-        mHandler.sendEmptyMessageDelayed(map.SENT, 4000);
+        //mHandler.sendEmptyMessageDelayed(map.SENT, 4000);
 
     }
 }

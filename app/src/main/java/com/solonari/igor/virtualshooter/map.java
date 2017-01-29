@@ -60,7 +60,6 @@ public class map extends AppCompatActivity implements
     public final static int SENDING = 4;
     public final static int CONNECTING = 5;
     private Handler mHandler;
-    private ServerTask mServerTask;
 
     /*
      * Define a request code to send to Google Play services This code is
@@ -149,7 +148,9 @@ public class map extends AppCompatActivity implements
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
 
         mHandler = new Handler() {};
-        mServerTask = new ServerTask(mHandler);
+        if (mHandler != null) {
+        new ServerTask(mHandler).execute("");
+        }
     }
 
 
