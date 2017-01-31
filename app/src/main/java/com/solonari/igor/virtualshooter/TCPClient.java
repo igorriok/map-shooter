@@ -51,7 +51,7 @@ public class TCPClient {
         if (out != null && !out.checkError()) {
             out.println(message);
             out.flush();
-            //mHandler.sendEmptyMessageDelayed(map.SENDING, 1000);
+            mHandler.sendEmptyMessageDelayed(map.SENDING, 1000);
             Log.d(TAG, "Sent Message: " + message);
 
         }
@@ -81,7 +81,7 @@ public class TCPClient {
              *
              * @see com.example.turnmeoff.MainActivity.CONNECTING
              */
-            //mHandler.sendEmptyMessageDelayed(map.CONNECTING, 1000);
+            mHandler.sendEmptyMessageDelayed(map.CONNECTING, 1000);
 
             /**
              * Here the socket is created with hardcoded port.
@@ -105,7 +105,7 @@ public class TCPClient {
                 this.sendMessage(command);
 
                 //
-                //mHandler.sendEmptyMessageDelayed(map.SENDING, 2000);
+                mHandler.sendEmptyMessageDelayed(map.SENDING, 2000);
 
                 //Listen for the incoming messages while mRun = true
                 while (mRun) {
@@ -129,7 +129,7 @@ public class TCPClient {
             } catch (Exception e) {
 
                 Log.d(TAG, "Error on streamers", e);
-                //mHandler.sendEmptyMessageDelayed(map.ERROR, 2000);
+                mHandler.sendEmptyMessageDelayed(map.ERROR, 2000);
 
             } finally {
 
@@ -144,7 +144,7 @@ public class TCPClient {
         } catch (Exception e) {
 
             Log.d(TAG, "Error on socket", e);
-            //mHandler.sendEmptyMessageDelayed(map.ERROR, 2000);
+            mHandler.sendEmptyMessageDelayed(map.ERROR, 2000);
 
         }
 
