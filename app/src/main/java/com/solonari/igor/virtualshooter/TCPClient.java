@@ -27,11 +27,8 @@ public class TCPClient {
     private boolean mRun = false;
 
     /**
-     * TCPClient class constructor, which is created in AsyncTasks after the button click.
-     *
-     * @param mHandler Handler passed as an argument for updating the UI with sent messages
-     * @param command  Command passed as an argument, e.g. "shutdown -r" for restarting computer
-     * @param ipNumber String retrieved from IpGetter class that is looking for ip number.
+     * TCPClient class constructor, which is created in AsyncTasks
+     * @param mHandler Handler passed as an argument for updating the UI with sent message
      * @param listener Callback interface object
      */
     public TCPClient(Handler mHandler, String command, String ipNumber, MessageCallback listener) {
@@ -48,12 +45,9 @@ public class TCPClient {
         if (out != null && !out.checkError()) {
             out.println(message);
             out.flush();
-            mHandler.sendEmptyMessageDelayed(map.SENDING, 1000);
             Log.d(TAG, "Sent Message: " + message);
-
         }
     }
-
     /**
      * Public method for stopping the TCPClient object ( and finalizing it after that ) from AsyncTask
      */
@@ -68,17 +62,8 @@ public class TCPClient {
             // Creating InetAddress object from ipNumber passed via constructor from IpGetter class.
             InetAddress serverAddress = InetAddress.getByName(ipNumber);
             Log.d(TAG, "Connecting...");
-            /**Sending empty message with static int value from MainActivity
-             * to update UI ( 'Connecting...' ).
-             * @see com.example.turnmeoff.MainActivity.CONNECTING
-             */
-            mHandler.sendEmptyMessageDelayed(map.CONNECTING, 1000);
-            /** Here the socket is created with hardcoded port.
-             * Also the port is given in IpGetter class.
-             * @see com.example.turnmeoff.IpGetter
-             */
+            //Here the socket is created with hardcoded port.
             Socket socket = new Socket(serverAddress, 57349);
-
             try {
                 // Create PrintWriter object for sending messages to server.
                 out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
@@ -87,7 +72,6 @@ public class TCPClient {
                 Log.d(TAG, "In/Out created");
                 //Sending message with command specified by AsyncTask
                 this.sendMessage(command);
-                mHandler.sendEmptyMessageDelayed(map.SENDING, 2000);
                 //Listen for the incoming messages while mRun = true
                 while (mRun) {
                     incomingMessage = in.readLine();
@@ -102,20 +86,16 @@ public class TCPClient {
                 Log.d(TAG, "Received Message: " + incomingMessage);
             } catch (Exception e) {
                 Log.d(TAG, "Error on streamers", e);
-                mHandler.sendEmptyMessageDelayed(map.ERROR, 2000);
             } finally {
                 out.flush();
                 out.close();
                 in.close();
                 socket.close();
-                mHandler.sendEmptyMessageDelayed(map.SENT, 3000);
                 Log.d(TAG, "Socket Closed");
             }
         } catch (Exception e) {
             Log.d(TAG, "Error on socket", e);
-            mHandler.sendEmptyMessageDelayed(map.ERROR, 2000);
         }
-
     }
     /**Callback Interface for sending received messages to 'onPublishProgress' method in AsyncTask.
      */
