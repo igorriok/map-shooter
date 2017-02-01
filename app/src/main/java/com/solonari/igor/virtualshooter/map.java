@@ -153,8 +153,8 @@ public class map extends AppCompatActivity implements
        final String mTag = "Handler";
           mHandler = new Handler(){
 	     public void handleMessage(Message msg) {
-		//to add setText
-		//views.setTextViewText(R.id.state, "Shutting PC...");
+		//set Points to view
+		views.setTextViewText(R.id.Points, msg);
 	     }
        };
        return mHandler;
