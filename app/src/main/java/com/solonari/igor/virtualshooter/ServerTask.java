@@ -11,7 +11,6 @@ import android.widget.Toast;
  */
 public class ServerTask extends AsyncTask<String, String, TCPClient> {
 
-    private static final String COMMAND = "test";
     private TCPClient tcpClient;
     private Handler mHandler;
     private static final String TAG = "ServerTask";
@@ -30,7 +29,6 @@ public class ServerTask extends AsyncTask<String, String, TCPClient> {
     protected void onPreExecute(){
         this.idToken = Singleton.getInstance().getString(idToken);
     }
-
     /**
      * Overriden method from AsyncTask class. There the TCPClient object is created.
      * @param params From MainActivity class empty string is passed.
@@ -39,21 +37,22 @@ public class ServerTask extends AsyncTask<String, String, TCPClient> {
     @Override
     protected TCPClient doInBackground(String... params) {
         Log.d(TAG, "In doInBackground");
+        if (tcpClient == null) {
+            try{
+                tcpClient = new TCPClient(mHandler, idToken, "192.168.1.154", new TCPClient.MessageCallback() {
+                            @Override
+                            public void callbackMessageReceiver(String message) {
+                                publishProgress(message);
+                            }
+                        });
 
-        try{
-            tcpClient = new TCPClient(mHandler, idToken, "192.168.1.154", new TCPClient.MessageCallback() {
-                        @Override
-                        public void callbackMessageReceiver(String message) {
-                            publishProgress(message);
-                        }
-                    });
-
-        }catch (NullPointerException e){
-            Log.d(TAG, "Caught null pointer exception");
-            e.printStackTrace();
+            }catch (NullPointerException e){
+                Log.d(TAG, "Caught null pointer exception");
+                e.printStackTrace();
+            }
+            tcpClient.run();
+            return null;
         }
-        tcpClient.run();
-        return null;
     }
 
     /**
