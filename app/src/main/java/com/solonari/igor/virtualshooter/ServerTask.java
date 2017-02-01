@@ -64,17 +64,11 @@ public class ServerTask extends AsyncTask<String, String, TCPClient> {
     @Override
     protected void onProgressUpdate(String... values) {
         super.onProgressUpdate(values);
-        Log.d(TAG, "In progress update");
-        if(values[0].equals("test")){
-            tcpClient.sendMessage(COMMAND);
-            tcpClient.stopClient();
-            mHandler.sendEmptyMessageDelayed(map.SHUTDOWN, 2000);
-
-        }else{
-            tcpClient.sendMessage("wrong");
-            mHandler.sendEmptyMessageDelayed(map.ERROR, 2000);
-            tcpClient.stopClient();
-        }
+        Log.d(TAG, "In onProgressUpdate");
+        do {
+            mHandler.sendEmptyMessageDelayed(values[0], 0);
+        } while (value[0] != "Stop");
+        
     }
 
     @Override
