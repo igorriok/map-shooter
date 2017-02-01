@@ -72,9 +72,6 @@ public class ServerTask extends AsyncTask<String, String, TCPClient> {
     protected void onPostExecute(TCPClient result){
         super.onPostExecute(result);
         Log.d(TAG, "In on post execute");
-        if(result != null){
-            result.stopClient();
-        }
         //mHandler.sendEmptyMessageDelayed(map.SENT, 4000);
 
     }
