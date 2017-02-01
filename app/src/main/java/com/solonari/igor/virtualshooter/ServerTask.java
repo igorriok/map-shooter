@@ -64,7 +64,7 @@ public class ServerTask extends AsyncTask<String, String, TCPClient> {
     protected void onProgressUpdate(String... values) {
         super.onProgressUpdate(values);
         Log.d(TAG, "In onProgressUpdate");
-        mHandler.sendMessage(values[0]);
+        mHandler.sendMessage(values);
     }
 
     @Override
