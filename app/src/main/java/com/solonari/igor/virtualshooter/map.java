@@ -146,13 +146,24 @@ public class map extends AppCompatActivity implements
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
-
-        mHandler = new Handler() {};
-        if (mHandler != null) {
-        new ServerTask(mHandler).execute("");
-        }
+        
     }
+    
+    private Handler getmHandler(){
+       final String mTag = "Handler";
+        mHandler = new Handler(){
+            public void handleMessage(Message msg) {
+                switch(msg.what){
+                    case SHUTDOWN:
+                        Log.d(mTag, "In Handler's shutdown");
+			//to add textView set
+                        break;
+		}
+            }
 
+        };
+        return mHandler;
+    }
 
     public void onMapReady(GoogleMap googleMap) {
 
@@ -226,13 +237,16 @@ public class map extends AppCompatActivity implements
     */
     @Override
     protected void onStart() {
-        super.onStart();// ATTENTION: This was auto-generated to implement the App Indexing API.
-// See https://g.co/AppIndexing/AndroidStudio for more information.
+        super.onStart();
+	// ATTENTION: This was auto-generated to implement the App Indexing API.
+	// See https://g.co/AppIndexing/AndroidStudio for more information.
         client.connect();
         connectClient();
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         AppIndex.AppIndexApi.start(client, getIndexApiAction());
+	//Create AsyncTask to make connection with server
+	new ServerTask(getmHandler()).execute("");
     }
 
     /*
@@ -244,9 +258,7 @@ public class map extends AppCompatActivity implements
         switch (requestCode) {
 
             case CONNECTION_FAILURE_RESOLUTION_REQUEST:
-			/*
-			 * If the result code is Activity.RESULT_OK, try to connect again
-			 */
+			//If the result code is Activity.RESULT_OK, try to connect again
                 switch (resultCode) {
                     case Activity.RESULT_OK:
                         mGoogleApiClient.connect();
