@@ -151,18 +151,13 @@ public class map extends AppCompatActivity implements
     
     private Handler getmHandler(){
        final String mTag = "Handler";
-        mHandler = new Handler(){
-            public void handleMessage(Message msg) {
-                switch(msg.what){
-                    case SHUTDOWN:
-                        Log.d(mTag, "In Handler's shutdown");
-			//to add textView set
-                        break;
-		}
-            }
-
-        };
-        return mHandler;
+          mHandler = new Handler(){
+	     public void handleMessage(Message msg) {
+		//to add setText
+		//views.setTextViewText(R.id.state, "Shutting PC...");
+	     }
+       };
+       return mHandler;
     }
 
     public void onMapReady(GoogleMap googleMap) {
@@ -256,9 +251,8 @@ public class map extends AppCompatActivity implements
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // Decide what to do based on the original request code
         switch (requestCode) {
-
             case CONNECTION_FAILURE_RESOLUTION_REQUEST:
-			//If the result code is Activity.RESULT_OK, try to connect again
+		//If the result code is Activity.RESULT_OK, try to connect again
                 switch (resultCode) {
                     case Activity.RESULT_OK:
                         mGoogleApiClient.connect();
