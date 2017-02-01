@@ -15,6 +15,7 @@ public class ServerTask extends AsyncTask<String, String, TCPClient> {
     private TCPClient tcpClient;
     private Handler mHandler;
     private static final String TAG = "ServerTask";
+    private static final String idToken;
 
     /**
      * ShutdownAsyncTask constructor with handler passed as argument. The UI is updated via handler.
@@ -25,6 +26,10 @@ public class ServerTask extends AsyncTask<String, String, TCPClient> {
     public ServerTask(Handler mHandler){
         this.mHandler = mHandler;
     }
+    
+    protected void onPreExecute(){
+        this.idToken = Singleton.getInstance().getString(idToken);
+    }
 
     /**
      * Overriden method from AsyncTask class. There the TCPClient object is created.
@@ -33,10 +38,10 @@ public class ServerTask extends AsyncTask<String, String, TCPClient> {
      */
     @Override
     protected TCPClient doInBackground(String... params) {
-        Log.d(TAG, "In do in background");
+        Log.d(TAG, "In doInBackground");
 
         try{
-            tcpClient = new TCPClient(mHandler, COMMAND, "192.168.1.154", new TCPClient.MessageCallback() {
+            tcpClient = new TCPClient(mHandler, idToken, "192.168.1.154", new TCPClient.MessageCallback() {
                         @Override
                         public void callbackMessageReceiver(String message) {
                             publishProgress(message);
@@ -54,7 +59,7 @@ public class ServerTask extends AsyncTask<String, String, TCPClient> {
     /**
      * Overriden method from AsyncTask class. Here we're checking if server answered properly.
      * @param values If "restart" message came, the client is stopped and computer should be restarted.
-     *               Otherwise "wrong" message is sent and 'Error' message is shown in UI.
+     * Otherwise "wrong" message is sent and 'Error' message is shown in UI.
      */
     @Override
     protected void onProgressUpdate(String... values) {
@@ -79,7 +84,7 @@ public class ServerTask extends AsyncTask<String, String, TCPClient> {
         if(result != null){
             result.stopClient();
         }
-        mHandler.sendEmptyMessageDelayed(map.SENT, 4000);
+        //mHandler.sendEmptyMessageDelayed(map.SENT, 4000);
 
     }
 }
