@@ -54,11 +54,6 @@ public class map extends AppCompatActivity implements
     private long FASTEST_INTERVAL = 5000; /* 5 secs */
     private GoogleApiClient sGoogleApiClient;
     private static String TAG = "Map";
-    public final static int SHUTDOWN = 1;
-    public final static int ERROR = 2;
-    public final static int SENT = 3;
-    public final static int SENDING = 4;
-    public final static int CONNECTING = 5;
     private Handler mHandler;
 
     /*
