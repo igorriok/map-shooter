@@ -10,11 +10,11 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -27,7 +27,6 @@ import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
@@ -40,17 +39,6 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-
-import java.io.BufferedWriter;
-import java.io.EOFException;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.net.InetAddress;
-import java.net.Socket;
-import java.net.UnknownHostException;
 
 
 public class map extends AppCompatActivity implements
@@ -66,9 +54,12 @@ public class map extends AppCompatActivity implements
     private long FASTEST_INTERVAL = 5000; /* 5 secs */
     private GoogleApiClient sGoogleApiClient;
     private static String TAG = "Map";
-    private Socket socket1;
-    private ObjectInputStream ois;
-    private ObjectOutputStream oos;
+    public final static int SHUTDOWN = 1;
+    public final static int ERROR = 2;
+    public final static int SENT = 3;
+    public final static int SENDING = 4;
+    public final static int CONNECTING = 5;
+    private Handler mHandler;
 
     /*
      * Define a request code to send to Google Play services This code is
@@ -105,8 +96,6 @@ public class map extends AppCompatActivity implements
         setContentView(R.layout.content_map);
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-
-        //new Thread(new ClientThread()).start();
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_fragment);
@@ -157,8 +146,24 @@ public class map extends AppCompatActivity implements
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+        
     }
+    
+    private Handler getmHandler(){
+       final String mTag = "Handler";
+        mHandler = new Handler(){
+            public void handleMessage(Message msg) {
+                switch(msg.what){
+                    case SHUTDOWN:
+                        Log.d(mTag, "In Handler's shutdown");
+			//to add textView set
+                        break;
+		}
+            }
 
+        };
+        return mHandler;
+    }
 
     public void onMapReady(GoogleMap googleMap) {
 
@@ -232,13 +237,16 @@ public class map extends AppCompatActivity implements
     */
     @Override
     protected void onStart() {
-        super.onStart();// ATTENTION: This was auto-generated to implement the App Indexing API.
-// See https://g.co/AppIndexing/AndroidStudio for more information.
+        super.onStart();
+	// ATTENTION: This was auto-generated to implement the App Indexing API.
+	// See https://g.co/AppIndexing/AndroidStudio for more information.
         client.connect();
         connectClient();
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         AppIndex.AppIndexApi.start(client, getIndexApiAction());
+	//Create AsyncTask to make connection with server
+	new ServerTask(getmHandler()).execute("");
     }
 
     /*
@@ -250,9 +258,7 @@ public class map extends AppCompatActivity implements
         switch (requestCode) {
 
             case CONNECTION_FAILURE_RESOLUTION_REQUEST:
-			/*
-			 * If the result code is Activity.RESULT_OK, try to connect again
-			 */
+			//If the result code is Activity.RESULT_OK, try to connect again
                 switch (resultCode) {
                     case Activity.RESULT_OK:
                         mGoogleApiClient.connect();
@@ -271,7 +277,7 @@ public class map extends AppCompatActivity implements
             CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 17);
             mMap.animateCamera(cameraUpdate);
         } else {
-            Toast.makeText(this, "Current location was null, enable GPS on emulator!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Current location was not found, enable GPS", Toast.LENGTH_SHORT).show();
         }
         startLocationUpdates();
     }
@@ -290,21 +296,6 @@ public class map extends AppCompatActivity implements
                 Double.toString(location.getLatitude()) + "," +
                 Double.toString(location.getLongitude());
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
-
-        try {
-            String str = Double.toString(location.getLatitude());
-            PrintWriter out = new PrintWriter(new BufferedWriter(
-                    new OutputStreamWriter(socket1.getOutputStream())),
-                    true);
-            out.println(str);
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
     }
 
 
@@ -401,63 +392,5 @@ public class map extends AppCompatActivity implements
         }
     }
 
-    protected void createSocket() {
-        try {
-            int portNumber = 57349;
-            InetAddress ip = InetAddress.getByName("192.168.1.154");
-            socket1 = new Socket(ip, portNumber);
-
-            ois = new ObjectInputStream(socket1.getInputStream());
-            oos = new ObjectOutputStream(socket1.getOutputStream());
-
-            String comp = "location update";
-            try {
-                oos.writeObject(comp);
-            } catch (Exception e) {
-                Log.e(TAG, "Client can't send", e);
-            }
-            String str = "";
-            try {
-                while ((str = (String) ois.readObject()) != null) {
-                    System.out.println(str);
-                    oos.writeObject("bye");
-                    if (str.equals("bye"))
-                        closeSocket();
-                }
-            } catch (ClassNotFoundException e) {
-                Log.e(TAG, "class not found", e);
-            }
-
-        } catch (IOException e) {
-            Log.e(TAG, "Client not created", e);
-        }
-    }
-
-    private void closeSocket() {
-        try {
-            socket1.close();
-        } catch (IOException e) {
-            Log.e(TAG, "cant close socket1", e);
-        }
-    }
-
-    class ClientThread implements Runnable {
-
-        @Override
-        public void run() {
-
-            try {
-                int portNumber = 57349;
-                InetAddress ip = InetAddress.getByName("192.168.1.154");
-                socket1 = new Socket(ip, portNumber);
-
-            } catch (UnknownHostException e) {
-                Log.e(TAG, "cant create socket unknown exc", e);
-            } catch (IOException e) {
-                Log.e(TAG, "cant create socket", e);
-            }
-
-        }
-    }
 }
 
