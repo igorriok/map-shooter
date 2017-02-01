@@ -11,14 +11,17 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.appindexing.Action;
@@ -41,6 +44,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 
 
+
 public class map extends AppCompatActivity implements
         OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
@@ -55,6 +59,7 @@ public class map extends AppCompatActivity implements
     private GoogleApiClient sGoogleApiClient;
     private static String TAG = "Map";
     private Handler mHandler;
+    private TextView Points;
 
     /*
      * Define a request code to send to Google Play services This code is
@@ -89,6 +94,7 @@ public class map extends AppCompatActivity implements
                         | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
 
         setContentView(R.layout.content_map);
+        Points = (TextView) findViewById(R.id.Points);
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
@@ -149,7 +155,9 @@ public class map extends AppCompatActivity implements
           mHandler = new Handler(){
 	     public void handleMessage(Message msg) {
 		//set Points to view
-		views.setTextViewText(R.id.Points, msg);
+        String message = (String) msg.obj;
+		Points.setText(message.substring(0,5));
+             Log.d(TAG, message.substring(0,5));
 	     }
        };
        return mHandler;

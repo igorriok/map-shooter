@@ -2,8 +2,8 @@ package com.solonari.igor.virtualshooter;
 
 import android.os.AsyncTask;
 import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
-import android.widget.Toast;
 
 /**
  * Created by isolo on 1/28/2017.
@@ -14,7 +14,7 @@ public class ServerTask extends AsyncTask<String, String, TCPClient> {
     private TCPClient tcpClient;
     private Handler mHandler;
     private static final String TAG = "ServerTask";
-    private static final String idToken;
+    private String idToken;
 
     /**
      * ShutdownAsyncTask constructor with handler passed as argument. The UI is updated via handler.
@@ -27,7 +27,7 @@ public class ServerTask extends AsyncTask<String, String, TCPClient> {
     }
     
     protected void onPreExecute(){
-        this.idToken = Singleton.getInstance().getString(idToken);
+        this.idToken = Singleton.getInstance().getString();
     }
     /**
      * Overriden method from AsyncTask class. There the TCPClient object is created.
@@ -51,8 +51,8 @@ public class ServerTask extends AsyncTask<String, String, TCPClient> {
                 e.printStackTrace();
             }
             tcpClient.run();
-            return null;
         }
+        return null;
     }
 
     /**
@@ -64,7 +64,10 @@ public class ServerTask extends AsyncTask<String, String, TCPClient> {
     protected void onProgressUpdate(String... values) {
         super.onProgressUpdate(values);
         Log.d(TAG, "In onProgressUpdate");
-        mHandler.sendMessage(values);
+        String message = values[0];
+        Message msg = Message.obtain();
+        msg.obj = message;
+        mHandler.sendMessage(msg);
     }
 
     @Override
