@@ -95,6 +95,7 @@ public class map extends AppCompatActivity implements
 
         setContentView(R.layout.content_map);
         Points = (TextView) findViewById(R.id.Points);
+        Points.setText("");
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
