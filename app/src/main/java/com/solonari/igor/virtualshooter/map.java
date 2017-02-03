@@ -3,12 +3,14 @@ package com.solonari.igor.virtualshooter;
 import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -21,6 +23,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.RemoteViews;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -59,7 +62,8 @@ public class map extends AppCompatActivity implements
     private GoogleApiClient sGoogleApiClient;
     private static String TAG = "Map";
     private Handler mHandler;
-    private TextView Points;
+    protected TextView Rating;
+    RemoteViews views;
 
     /*
      * Define a request code to send to Google Play services This code is
@@ -94,8 +98,8 @@ public class map extends AppCompatActivity implements
                         | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
 
         setContentView(R.layout.content_map);
-        Points = (TextView) findViewById(R.id.Points);
-        Points.setText("");
+        Rating = (TextView) findViewById(R.id.rating);
+        Rating.setText("test");
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
@@ -148,21 +152,40 @@ public class map extends AppCompatActivity implements
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
-        
+
+        new ServerTask(getmHandler()).execute("");
     }
     
     private Handler getmHandler(){
-       final String mTag = "Handler";
-          mHandler = new Handler(){
-	     public void handleMessage(Message msg) {
-		//set Points to view
-        String message = (String) msg.obj;
-		Points.setText(message.substring(0,5));
-             Log.d(TAG, message.substring(0,5));
-	     }
-       };
-       return mHandler;
+        final String mTag = "Handler";
+        mHandler = new Handler(){
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                //set Points to view
+                String message = (String) msg.obj;
+                //TextView points = (TextView)findViewById(R.id.Points);
+                //Rating.setText("modified");
+                map.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Rating.setText("modified");
+                    }
+                });
+
+                //map.this.onThreadMessage(message);
+                Log.d(mTag, message.substring(0,5));
+                }
+            };
+            return mHandler;
     }
+
+    public void onThreadMessage(String message){
+
+        Log.d(TAG,"modified");
+        Rating.setText(message);
+    }
+
 
     public void onMapReady(GoogleMap googleMap) {
 
@@ -237,15 +260,14 @@ public class map extends AppCompatActivity implements
     @Override
     protected void onStart() {
         super.onStart();
-	// ATTENTION: This was auto-generated to implement the App Indexing API.
-	// See https://g.co/AppIndexing/AndroidStudio for more information.
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
         client.connect();
         connectClient();
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         AppIndex.AppIndexApi.start(client, getIndexApiAction());
-	//Create AsyncTask to make connection with server
-	new ServerTask(getmHandler()).execute("");
+
     }
 
     /*
