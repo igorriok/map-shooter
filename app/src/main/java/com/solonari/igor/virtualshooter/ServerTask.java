@@ -1,21 +1,22 @@
 package com.solonari.igor.virtualshooter;
 
+
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.widget.TextView;
 
 /**
  * Created by isolo on 1/28/2017.
  * AsyncTask class which manages connection with server app and is sending command.
  */
-public class ServerTask extends AsyncTask<String, Void, String> {
+public class ServerTask extends AsyncTask<String, String, TCPClient> {
 
     private TCPClient tcpClient;
     private Handler mHandler;
     private static final String TAG = "ServerTask";
     private String idToken;
-    private String msg;
 
     /**
      * ShutdownAsyncTask constructor with handler passed as argument. The UI is updated via handler.
@@ -36,15 +37,15 @@ public class ServerTask extends AsyncTask<String, Void, String> {
      * @return TCPClient object for closing it in onPostExecute method.
      */
     @Override
-    protected String doInBackground(String... params) {
+    protected TCPClient doInBackground(String... params) {
         Log.d(TAG, "In doInBackground");
-        String msg;
+
         if (tcpClient == null) {
             try{
                 tcpClient = new TCPClient(mHandler, idToken, "192.168.1.154", new TCPClient.MessageCallback() {
                             @Override
                             public void callbackMessageReceiver(String message) {
-                                msg = message;
+                                publishProgress(message);
                             }
                         });
 
@@ -55,15 +56,24 @@ public class ServerTask extends AsyncTask<String, Void, String> {
             tcpClient.run();
         }
 
-        return msg;
+        return null;
     }
 
     @Override
-    protected void onPostExecute(String result){
+    protected void onProgressUpdate(String... values) {
+        super.onProgressUpdate(values);
+        Log.d(TAG, "In onProgressUpdate");
+        String message = values[0];
+        Message msg = Message.obtain();
+        msg.obj = message;
+        mHandler.sendMessage(msg);
+
+    }
+
+    @Override
+    protected void onPostExecute(TCPClient result){
         super.onPostExecute(result);
         Log.d(TAG, "In on post execute");
         //mHandler.sendEmptyMessageDelayed(map.SENT, 4000);
-        String message = result;
-        Rating.setText(message.substring(0,5));
     }
 }

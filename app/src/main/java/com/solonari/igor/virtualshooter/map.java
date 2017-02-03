@@ -166,14 +166,7 @@ public class map extends AppCompatActivity implements
                 String message = (String) msg.obj;
                 //TextView points = (TextView)findViewById(R.id.Points);
                 //Rating.setText("modified");
-                map.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Rating.setText("modified");
-                    }
-                });
-
-                //map.this.onThreadMessage(message);
+                
                 Log.d(mTag, message.substring(0,5));
                 }
             };
