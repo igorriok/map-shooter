@@ -9,7 +9,7 @@ import android.util.Log;
  * Created by isolo on 1/28/2017.
  * AsyncTask class which manages connection with server app and is sending command.
  */
-public class ServerTask extends AsyncTask<String, String, TCPClient> {
+public class ServerTask extends AsyncTask<String, Void, String> {
 
     private TCPClient tcpClient;
     private Handler mHandler;
@@ -35,14 +35,14 @@ public class ServerTask extends AsyncTask<String, String, TCPClient> {
      * @return TCPClient object for closing it in onPostExecute method.
      */
     @Override
-    protected TCPClient doInBackground(String... params) {
+    protected String doInBackground(String... params) {
         Log.d(TAG, "In doInBackground");
         if (tcpClient == null) {
             try{
                 tcpClient = new TCPClient(mHandler, idToken, "192.168.1.154", new TCPClient.MessageCallback() {
                             @Override
                             public void callbackMessageReceiver(String message) {
-                                publishProgress(message);
+                                protected msg = message;
                             }
                         });
 
@@ -52,29 +52,15 @@ public class ServerTask extends AsyncTask<String, String, TCPClient> {
             }
             tcpClient.run();
         }
-        return null;
-    }
-
-    /**
-     * Overriden method from AsyncTask class. Here we're checking if server answered properly.
-     * @param values If "restart" message came, the client is stopped and computer should be restarted.
-     * Otherwise "wrong" message is sent and 'Error' message is shown in UI.
-     */
-    @Override
-    protected void onProgressUpdate(String... values) {
-        super.onProgressUpdate(values);
-        Log.d(TAG, "In onProgressUpdate");
-        String message = values[0];
-        Message msg = Message.obtain();
-        msg.obj = message;
-        mHandler.sendMessage(msg);
+        return msg;
     }
 
     @Override
-    protected void onPostExecute(TCPClient result){
+    protected void onPostExecute(String result){
         super.onPostExecute(result);
         Log.d(TAG, "In on post execute");
         //mHandler.sendEmptyMessageDelayed(map.SENT, 4000);
-
+        String message = result;
+        Rating.setText(message.substring(0,5));
     }
 }
