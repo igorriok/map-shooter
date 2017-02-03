@@ -15,6 +15,7 @@ public class ServerTask extends AsyncTask<String, Void, String> {
     private Handler mHandler;
     private static final String TAG = "ServerTask";
     private String idToken;
+    private String msg;
 
     /**
      * ShutdownAsyncTask constructor with handler passed as argument. The UI is updated via handler.
@@ -37,12 +38,13 @@ public class ServerTask extends AsyncTask<String, Void, String> {
     @Override
     protected String doInBackground(String... params) {
         Log.d(TAG, "In doInBackground");
+        String msg;
         if (tcpClient == null) {
             try{
                 tcpClient = new TCPClient(mHandler, idToken, "192.168.1.154", new TCPClient.MessageCallback() {
                             @Override
                             public void callbackMessageReceiver(String message) {
-                                protected msg = message;
+                                msg = message;
                             }
                         });
 
@@ -52,6 +54,7 @@ public class ServerTask extends AsyncTask<String, Void, String> {
             }
             tcpClient.run();
         }
+
         return msg;
     }
 
