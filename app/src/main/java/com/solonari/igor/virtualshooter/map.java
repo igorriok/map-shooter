@@ -3,7 +3,6 @@ package com.solonari.igor.virtualshooter;
 import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.ActivityInfo;
@@ -13,6 +12,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -23,7 +23,6 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.RemoteViews;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,6 +45,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 
+import static java.lang.Thread.sleep;
 
 
 public class map extends AppCompatActivity implements
@@ -61,9 +61,10 @@ public class map extends AppCompatActivity implements
     private long FASTEST_INTERVAL = 5000; /* 5 secs */
     private GoogleApiClient sGoogleApiClient;
     private static String TAG = "Map";
-    private Handler mHandler;
+    protected Handler mHandler;
     protected TextView Rating;
-    RemoteViews views;
+    protected TCPClient tcpClient;
+    final String mTag = "Handler";
 
     /*
      * Define a request code to send to Google Play services This code is
@@ -153,30 +154,37 @@ public class map extends AppCompatActivity implements
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
 
-        new ServerTask(getmHandler()).execute("");
-    }
-    
-    private Handler getmHandler(){
-        final String mTag = "Handler";
-        mHandler = new Handler(){
+        mHandler = new Handler(Looper.getMainLooper()){
             @Override
             public void handleMessage(Message msg) {
-                super.handleMessage(msg);
+
                 //set Points to view
                 String message = (String) msg.obj;
-                //TextView points = (TextView)findViewById(R.id.Points);
-                //Rating.setText("modified");
-                
-                Log.d(mTag, message.substring(0,5));
+                TextView Rating = (TextView)findViewById(R.id.rating);
+                switch (msg.what) {
+                    case 1:
+                        Rating.setText(message.substring(0, 5));
+
+                        //Rating.setText("modified");
+                        //onThreadMessage(message);
+                        Log.d(mTag, message.substring(0, 5));
                 }
-            };
-            return mHandler;
+            }
+        };
+
+        new Thread(new ClientThread()).start();
+        new Thread(new IDThread()).start();
+    }
+
+    private Handler getmHandler(){
+        return mHandler;
     }
 
     public void onThreadMessage(String message){
 
         Log.d(TAG,"modified");
-        Rating.setText(message);
+        Rating.setText(message.substring(0,5));
+        Rating.invalidate();
     }
 
 
@@ -402,6 +410,38 @@ public class map extends AppCompatActivity implements
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             return mDialog;
+        }
+    }
+
+
+    class ClientThread implements Runnable {
+
+        @Override
+        public void run() {
+
+            try {
+                tcpClient = new TCPClient(mHandler);
+
+                Log.d("tcpClient", "client created");
+            } catch (Exception e) {
+                Log.e(TAG, "cant create tcpClient", e);
+            }
+            tcpClient.run();
+        }
+
+    }
+
+    class IDThread implements Runnable {
+        String idToken = Singleton.getInstance().getString();
+
+        @Override
+        public void run() {
+            try {
+                Thread.sleep(1000);
+                tcpClient.sendMessage(idToken);
+            } catch (Exception e) {
+                Log.e(TAG, "cant send message", e);
+            }
         }
     }
 

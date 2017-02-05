@@ -1,6 +1,7 @@
 package com.solonari.igor.virtualshooter;
 
 import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 
 import java.io.BufferedReader;
@@ -12,45 +13,33 @@ import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
 
-/**
- * Created by isolo on 1/28/2017.
- */
 
 public class TCPClient {
 
     private static final String TAG = "TCPClient";
-    private final Handler mHandler;
-    private String ipNumber, incomingMessage, command;
+    private final String ipNumber = "192.168.1.154";
+    private String incomingMessage;
     BufferedReader in;
     PrintWriter out;
-    private MessageCallback listener = null;
     private boolean mRun = false;
+    private Handler mHandler ;
 
-    /**
-     * TCPClient class constructor, which is created in AsyncTasks
-     * @param mHandler Handler passed as an argument for updating the UI with sent message
-     * @param listener Callback interface object
-     */
-    public TCPClient(Handler mHandler, String command, String ipNumber, MessageCallback listener) {
-        this.listener = listener;
-        this.ipNumber = ipNumber;
-        this.command = command;
+
+    public TCPClient(Handler mHandler) {
         this.mHandler = mHandler;
+        //run();
     }
 
-    /**Public method for sending the message via OutputStream object.
-     * @param message Message passed as an argument and sent via OutputStream object.
-     */
+
     public void sendMessage(String message) {
         if (out != null && !out.checkError()) {
             out.println(message);
             out.flush();
             Log.d(TAG, "Sent Message: " + message);
         }
+
     }
-    /**
-     * Public method for stopping the TCPClient object ( and finalizing it after that ) from AsyncTask
-     */
+
     public void stopClient() {
         Log.d(TAG, "Client stopped!");
         mRun = false;
@@ -70,16 +59,17 @@ public class TCPClient {
                 //Create BufferedReader object for receiving messages from server.
                 in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 Log.d(TAG, "In/Out created");
-                //Sending message with command specified by AsyncTask
-                this.sendMessage(command);
+
                 //Listen for the incoming messages while mRun = true
                 while (mRun) {
                     incomingMessage = in.readLine();
-                    if (incomingMessage != null && listener != null) {
+                    if (incomingMessage != null) {
                         /**Incoming message is passed to MessageCallback object.
                          * Next it is retrieved by AsyncTask and passed to onPublishProgress method.
                          */
-                        listener.callbackMessageReceiver(incomingMessage);
+                        Message msg = mHandler.obtainMessage(1, incomingMessage);
+                        msg.sendToTarget();
+
                     }
                     incomingMessage = null;
                 }
@@ -97,12 +87,5 @@ public class TCPClient {
             Log.d(TAG, "Error on socket", e);
         }
     }
-    /**Callback Interface for sending received messages to 'onPublishProgress' method in AsyncTask.
-     */
-    public interface MessageCallback {
-        /**Method overriden in AsyncTask 'doInBackground' method while creating the TCPClient object.
-         * @param message Received message from server app.
-         */
-        public void callbackMessageReceiver(String message);
-    }
+
 }
