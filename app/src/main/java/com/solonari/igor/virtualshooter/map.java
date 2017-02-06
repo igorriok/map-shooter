@@ -168,7 +168,9 @@ public class map extends AppCompatActivity implements
                         //Rating.setText("modified");
                         //onThreadMessage(message);
                         Log.d(mTag, message.substring(0, 5));
+			break;
                 }
+		    super.handleMessage(msg);
             }
         };
 
