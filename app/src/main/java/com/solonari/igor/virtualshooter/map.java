@@ -187,8 +187,8 @@ public class map extends AppCompatActivity implements
     public void onThreadMessage(String message){
 
         Log.d(TAG,"modified");
-        Rating.setText(message.substring(0,5));
-        Rating.invalidate();
+        //Rating.setText(message.substring(0,5));
+        //Rating.invalidate();
     }
 
 
