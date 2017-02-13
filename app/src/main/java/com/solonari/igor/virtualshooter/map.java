@@ -175,7 +175,7 @@ public class map extends AppCompatActivity implements
             }
         };
 
-        ClientThread();
+        ClientThread(mHandler);
         //new Thread(new ClientThread()).start();
         new Thread(new IDThread()).start();
     }
@@ -418,12 +418,14 @@ public class map extends AppCompatActivity implements
     }
 
 
-    protected void ClientThread() {
+    protected void ClientThread(Handler handler) {
+        final Handler mHandler = handler;
+
         Thread client = new Thread() {
             @Override
             public void run() {
-		Message msg = mHandler.obtainMessage(1, "changed text");
-                msg.sendToTarget();
+		        //Message msg = mHandler.obtainMessage(1, "changed text");
+                // msg.sendToTarget();
                 
                 try {
                     tcpClient = new TCPClient(mHandler);
