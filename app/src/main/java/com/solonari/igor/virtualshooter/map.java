@@ -169,6 +169,8 @@ public class map extends AppCompatActivity implements
                         //onThreadMessage(message);
                         Log.d(mTag, message.substring(0, 5));
 			break;
+		default:
+            		break;
                 }
 		    super.handleMessage(msg);
             }
