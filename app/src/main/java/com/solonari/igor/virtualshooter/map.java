@@ -168,13 +168,9 @@ public class map extends AppCompatActivity implements
                         //Rating.setText("modified");
                         //onThreadMessage(message);
                         Log.d(mTag, message.substring(0, 5));
-<<<<<<< HEAD
-			        break;
-=======
-			break;
+                        break;
 		default:
             		break;
->>>>>>> origin/threads
                 }
 		    super.handleMessage(msg);
             }
