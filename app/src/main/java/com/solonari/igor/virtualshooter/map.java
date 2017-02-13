@@ -422,7 +422,9 @@ public class map extends AppCompatActivity implements
         Thread client = new Thread() {
             @Override
             public void run() {
-
+		Message msg = mHandler.obtainMessage(1, "changed text");
+                msg.sendToTarget();
+                
                 try {
                     tcpClient = new TCPClient(mHandler);
 
