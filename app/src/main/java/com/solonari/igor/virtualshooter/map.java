@@ -62,7 +62,6 @@ public class map extends AppCompatActivity implements
     private GoogleApiClient sGoogleApiClient;
     private static String TAG = "Map";
     protected Handler mHandler;
-    protected TextView Rating;
     protected TCPClient tcpClient;
     final String mTag = "Handler";
 
@@ -99,7 +98,7 @@ public class map extends AppCompatActivity implements
                         | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
 
         setContentView(R.layout.content_map);
-        Rating = (TextView) findViewById(R.id.rating);
+        //Rating = (TextView) findViewById(R.id.rating);
         //Rating.setText("test");
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
@@ -160,7 +159,7 @@ public class map extends AppCompatActivity implements
 
                 //set Points to view
                 String message = (String) msg.obj;
-                //TextView Rating = (TextView)findViewById(R.id.rating);
+                TextView Rating = (TextView)findViewById(R.id.rating);
                 switch (msg.what) {
                     case 1:
                         Rating.setText(message.substring(0, 5));
