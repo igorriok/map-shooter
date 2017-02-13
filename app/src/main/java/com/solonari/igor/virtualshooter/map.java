@@ -100,7 +100,7 @@ public class map extends AppCompatActivity implements
 
         setContentView(R.layout.content_map);
         Rating = (TextView) findViewById(R.id.rating);
-        Rating.setText("test");
+        //Rating.setText("test");
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
@@ -154,27 +154,28 @@ public class map extends AppCompatActivity implements
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
 
-        mHandler = new Handler(Looper.getMainLooper()){
+        mHandler = new Handler(Looper.myLooper()){
             @Override
             public void handleMessage(Message msg) {
 
                 //set Points to view
                 String message = (String) msg.obj;
-                TextView Rating = (TextView)findViewById(R.id.rating);
+                //TextView Rating = (TextView)findViewById(R.id.rating);
                 switch (msg.what) {
                     case 1:
                         Rating.setText(message.substring(0, 5));
-
+                        Rating.invalidate();
                         //Rating.setText("modified");
                         //onThreadMessage(message);
                         Log.d(mTag, message.substring(0, 5));
-			break;
+			        break;
                 }
 		    super.handleMessage(msg);
             }
         };
 
-        new Thread(new ClientThread()).start();
+        ClientThread();
+        //new Thread(new ClientThread()).start();
         new Thread(new IDThread()).start();
     }
 
@@ -416,21 +417,22 @@ public class map extends AppCompatActivity implements
     }
 
 
-    class ClientThread implements Runnable {
+    protected void ClientThread() {
+        Thread client = new Thread() {
+            @Override
+            public void run() {
 
-        @Override
-        public void run() {
+                try {
+                    tcpClient = new TCPClient(mHandler);
 
-            try {
-                tcpClient = new TCPClient(mHandler);
-
-                Log.d("tcpClient", "client created");
-            } catch (Exception e) {
-                Log.e(TAG, "cant create tcpClient", e);
+                    Log.d("ClientThread", "client created");
+                } catch (Exception e) {
+                    Log.e(TAG, "cant create tcpClient", e);
+                }
+                tcpClient.run();
             }
-            tcpClient.run();
-        }
-
+        };
+        client.start();
     }
 
     class IDThread implements Runnable {

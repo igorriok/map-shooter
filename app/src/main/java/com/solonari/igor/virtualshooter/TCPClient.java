@@ -17,7 +17,7 @@ import java.net.Socket;
 public class TCPClient {
 
     private static final String TAG = "TCPClient";
-    private final String ipNumber = "192.168.1.154";
+    private final String ipNumber = "178.168.41.217";
     private String incomingMessage;
     BufferedReader in;
     PrintWriter out;
@@ -64,16 +64,12 @@ public class TCPClient {
                 while (mRun) {
                     incomingMessage = in.readLine();
                     if (incomingMessage != null) {
-                        /**Incoming message is passed to MessageCallback object.
-                         * Next it is retrieved by AsyncTask and passed to onPublishProgress method.
-                         */
                         Message msg = mHandler.obtainMessage(1, incomingMessage);
                         msg.sendToTarget();
-
+                        Log.d(TAG, "Received Message: " + incomingMessage);
                     }
                     incomingMessage = null;
                 }
-                Log.d(TAG, "Received Message: " + incomingMessage);
             } catch (Exception e) {
                 Log.d(TAG, "Error on streamers", e);
             } finally {
