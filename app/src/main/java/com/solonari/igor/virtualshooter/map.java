@@ -175,7 +175,9 @@ public class map extends AppCompatActivity implements
             }
         };
 
-        ClientThread(mHandler);
+        tcpClient = new TCPClient(mHandler);
+	tcpClient.start();
+	//ClientThread(mHandler);
         //new Thread(new ClientThread()).start();
         new Thread(new IDThread()).start();
     }
