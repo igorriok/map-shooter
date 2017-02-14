@@ -14,7 +14,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 
 
-public class TCPClient {
+public class TCPClient extends Thread{
 
     private static final String TAG = "TCPClient";
     private final String ipNumber = "178.168.41.217";
@@ -25,24 +25,9 @@ public class TCPClient {
     private Handler mHandler ;
 
 
-    public TCPClient(Handler mHandler) {
-        this.mHandler = mHandler;
+    public TCPClient(Handler handler) {
+        this.mHandler = handler;
         //run();
-    }
-
-
-    public void sendMessage(String message) {
-        if (out != null && !out.checkError()) {
-            out.println(message);
-            out.flush();
-            Log.d(TAG, "Sent Message: " + message);
-        }
-
-    }
-
-    public void stopClient() {
-        Log.d(TAG, "Client stopped!");
-        mRun = false;
     }
 
     public void run() {
@@ -82,6 +67,19 @@ public class TCPClient {
         } catch (Exception e) {
             Log.d(TAG, "Error on socket", e);
         }
+    }
+    
+    public void sendMessage(String message) {
+        if (out != null && !out.checkError()) {
+            out.println(message);
+            out.flush();
+            Log.d(TAG, "Sent Message: " + message);
+        }
+    }
+
+    public void stopClient() {
+        Log.d(TAG, "Client stopped!");
+        mRun = false;
     }
 
 }
