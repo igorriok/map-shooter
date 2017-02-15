@@ -52,7 +52,7 @@ public class map extends AppCompatActivity implements
         OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
-        LocationListener {
+        LocationListener, Handler.Callback {
 
     private GoogleMap mMap;
     protected GoogleApiClient mGoogleApiClient;
@@ -61,7 +61,7 @@ public class map extends AppCompatActivity implements
     private long FASTEST_INTERVAL = 5000; /* 5 secs */
     private GoogleApiClient sGoogleApiClient;
     private static String TAG = "Map";
-    protected Handler mHandler;
+    private Handler mHandler = new Handler(this);
     protected TCPClient tcpClient;
     final String mTag = "Handler";
     private ChatManager chatManager;
@@ -154,36 +154,35 @@ public class map extends AppCompatActivity implements
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
 
-        mHandler = new Handler(){
-            @Override
-            public void handleMessage(Message msg) {
 
-                //set Points to view
-                TextView Rating = (TextView)findViewById(R.id.rating);
-                switch (msg.what) {
-                    case 1:
-                        String message = (String) msg.obj;
-                        Rating.setText(message.substring(0, 5));
-                        //Rating.invalidate();
-                        //Rating.setText("modified");
-                        //onThreadMessage(message);
-                        Log.d(mTag, message.substring(0, 5));
-                        break;
-                    case 2:
-                        Object obj = msg.obj;
-                        setChatManager((ChatManager) obj);
-		            default:
-            		    break;
-                }
-		    super.handleMessage(msg);
-            }
-        };
-
-        tcpClient = new TCPClient(mHandler);
+        tcpClient = new TCPClient(this.getHandler());
 	    tcpClient.start();
 	    //ClientThread(mHandler);
         //new Thread(new ClientThread()).start();
         //new Thread(new IDThread()).start();
+    }
+
+    @Override
+    public boolean handleMessage(Message msg) {
+
+        TextView Rating = (TextView)findViewById(R.id.rating);
+        switch (msg.what) {
+            case 1:
+                String message = (String) msg.obj;
+                Rating.setText(message.substring(0, 5));
+                //Rating.invalidate();
+                //Rating.setText("modified");
+                //onThreadMessage(message);
+                Log.d(mTag, message.substring(0, 5));
+                break;
+            case 2:
+                Object obj = msg.obj;
+                setChatManager((ChatManager) obj);
+                Log.d(mTag, "ChatManager set");
+            default:
+                break;
+        }
+        return true;
     }
 
     public void setChatManager(ChatManager obj) {
@@ -191,17 +190,9 @@ public class map extends AppCompatActivity implements
         new Thread(new IDThread()).start();
     }
 
-    private Handler getmHandler(){
+    private Handler getHandler(){
         return mHandler;
     }
-
-    public void onThreadMessage(String message){
-
-        Log.d(TAG,"modified");
-        //Rating.setText(message.substring(0,5));
-        //Rating.invalidate();
-    }
-
 
     public void onMapReady(GoogleMap googleMap) {
 
