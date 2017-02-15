@@ -31,6 +31,7 @@ public class TCPClient extends Thread{
     }
 
     public void run() {
+        Looper.prepare();
         //Message msg = mHandler.obtainMessage(1, "changed text");
         //mHandler.sendMessage(msg);
         mRun = true;
@@ -69,6 +70,7 @@ public class TCPClient extends Thread{
         } catch (Exception e) {
             Log.d(TAG, "Error on socket", e);
         }
+        Looper.loop();
     }
     
     public void sendMessage(String message) {
