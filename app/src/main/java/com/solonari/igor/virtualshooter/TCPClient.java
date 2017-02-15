@@ -32,7 +32,7 @@ public class TCPClient extends Thread{
     }
 
     public void run() {
-        Looper.prepare();
+        
         //Message msg = mHandler.obtainMessage(1, "changed text");
         //mHandler.sendMessage(msg);
         mRun = true;
@@ -51,11 +51,8 @@ public class TCPClient extends Thread{
 
                 //Listen for the incoming messages while mRun = true
                 while (mRun) {
-                    incomingMessage = in.readLine();
-                    if (incomingMessage != null) {
-                        Message msg = mHandler.obtainMessage(1, "changed text");
-                        mHandler.sendMessage(msg);
-                        Log.d(TAG, "Received Message: " + incomingMessage);
+                    if ((incomingMessage = in.readLine()) != null) {
+                        getMessage(incomingMessage);
                     }
                     incomingMessage = null;
                 }
@@ -71,7 +68,7 @@ public class TCPClient extends Thread{
         } catch (Exception e) {
             Log.d(TAG, "Error on socket", e);
         }
-        Looper.loop();
+        
     }
     
     public void sendMessage(String message) {
@@ -80,6 +77,12 @@ public class TCPClient extends Thread{
             out.flush();
             Log.d(TAG, "Sent Message: " + message);
         }
+    }
+    
+    public void getMessage(String message) {
+        Message msg = mHandler.obtainMessage(1, message);
+        mHandler.sendMessage(msg);
+        Log.d(TAG, "Received Message: " + message);
     }
 
     public void stopClient() {
