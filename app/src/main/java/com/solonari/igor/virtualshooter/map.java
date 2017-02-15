@@ -153,7 +153,7 @@ public class map extends AppCompatActivity implements
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
 
-        mHandler = new Handler(Looper.myLooper()){
+        mHandler = new Handler(){
             @Override
             public void handleMessage(Message msg) {
 
