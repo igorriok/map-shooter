@@ -50,7 +50,7 @@ public class TCPClient extends Thread{
                     incomingMessage = in.readLine();
                     if (incomingMessage != null) {
                         Message msg = mHandler.obtainMessage(1, incomingMessage);
-                        msg.sendToTarget();
+                        mHandler.sendMessage(msg);
                         Log.d(TAG, "Received Message: " + incomingMessage);
                     }
                     incomingMessage = null;
