@@ -31,6 +31,8 @@ public class TCPClient extends Thread{
     }
 
     public void run() {
+        Message msg = mHandler.obtainMessage(1, "changed text");
+        mHandler.sendMessage(msg);
         mRun = true;
         try {
             // Creating InetAddress object from ipNumber passed via constructor from IpGetter class.
