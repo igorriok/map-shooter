@@ -64,6 +64,7 @@ public class map extends AppCompatActivity implements
     protected Handler mHandler;
     protected TCPClient tcpClient;
     final String mTag = "Handler";
+    private ChatManager chatManager;
 
     /*
      * Define a request code to send to Google Play services This code is
@@ -158,27 +159,35 @@ public class map extends AppCompatActivity implements
             public void handleMessage(Message msg) {
 
                 //set Points to view
-                String message = (String) msg.obj;
                 TextView Rating = (TextView)findViewById(R.id.rating);
                 switch (msg.what) {
                     case 1:
+                        String message = (String) msg.obj;
                         Rating.setText(message.substring(0, 5));
-                        Rating.invalidate();
+                        //Rating.invalidate();
                         //Rating.setText("modified");
                         //onThreadMessage(message);
                         Log.d(mTag, message.substring(0, 5));
                         break;
-		default:
-            		break;
+                    case 2:
+                        Object obj = msg.obj;
+                        setChatManager((ChatManager) obj);
+		            default:
+            		    break;
                 }
 		    super.handleMessage(msg);
             }
         };
 
         tcpClient = new TCPClient(mHandler);
-	tcpClient.start();
-	//ClientThread(mHandler);
+	    tcpClient.start();
+	    //ClientThread(mHandler);
         //new Thread(new ClientThread()).start();
+        //new Thread(new IDThread()).start();
+    }
+
+    public void setChatManager(ChatManager obj) {
+        chatManager = obj;
         new Thread(new IDThread()).start();
     }
 
@@ -448,8 +457,8 @@ public class map extends AppCompatActivity implements
         @Override
         public void run() {
             try {
-                Thread.sleep(1000);
-                tcpClient.sendMessage(idToken);
+                //Thread.sleep(1000);
+                chatManager.sendMessage(idToken);
             } catch (Exception e) {
                 Log.e(TAG, "cant send message", e);
             }
