@@ -171,8 +171,7 @@ public class map extends AppCompatActivity implements
                 String message = (String) msg.obj;
                 Rating.setText(message.substring(0, 5));
                 //Rating.invalidate();
-                //Rating.setText("modified");
-                //onThreadMessage(message);
+                Toast.makeText(this, "Handler", Toast.LENGTH_SHORT).show();
                 Log.d(mTag, message.substring(0, 5));
                 break;
             case 2:
