@@ -165,13 +165,21 @@ public class map extends AppCompatActivity implements
     @Override
     public boolean handleMessage(Message msg) {
 
-        TextView Rating = (TextView)findViewById(R.id.rating);
         switch (msg.what) {
             case 1:
-                String message = (String) msg.obj;
+                final String message = (String) msg.obj;
+                final TextView Rating = (TextView)findViewById(R.id.rating);
                 Rating.setText(message.substring(0, 5));
-                //Rating.invalidate();
-                Toast.makeText(this, "Handler", Toast.LENGTH_SHORT).show();
+                //Rating.postInvalidate();
+                /*
+                Rating.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Rating.setText(message.substring(0, 5));
+                    }
+                });
+                */
+                Toast.makeText(this, message.substring(0, 5), Toast.LENGTH_LONG).show();
                 Log.d(mTag, message.substring(0, 5));
                 break;
             case 2:

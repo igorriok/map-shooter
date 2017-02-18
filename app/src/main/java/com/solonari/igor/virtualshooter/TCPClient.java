@@ -18,7 +18,7 @@ import java.net.Socket;
 public class TCPClient extends Thread{
 
     private static final String TAG = "TCPClient";
-    private final String ipNumber = "178.168.41.217";
+    private final String ipNumber = "192.168.0.100";
     private Handler mHandler;
     private ChatManager chat;
 
