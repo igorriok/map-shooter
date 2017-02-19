@@ -101,8 +101,6 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks, O
                         | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
                         | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
 
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
             requestCameraPermission();
@@ -111,7 +109,7 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks, O
 
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.periscope);
 
         mDrawView = (DrawSurfaceView) findViewById(R.id.drawSurfaceView);
 
