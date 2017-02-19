@@ -3,14 +3,12 @@ package com.solonari.igor.virtualshooter;
 import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -23,7 +21,6 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.RemoteViews;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,13 +43,14 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 
+import static java.lang.Thread.sleep;
 
 
 public class map extends AppCompatActivity implements
         OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
-        LocationListener {
+        LocationListener, Handler.Callback {
 
     private GoogleMap mMap;
     protected GoogleApiClient mGoogleApiClient;
@@ -61,9 +59,10 @@ public class map extends AppCompatActivity implements
     private long FASTEST_INTERVAL = 5000; /* 5 secs */
     private GoogleApiClient sGoogleApiClient;
     private static String TAG = "Map";
-    private Handler mHandler;
-    protected TextView Rating;
-    RemoteViews views;
+    private Handler mHandler = new Handler(this);
+    //protected TCPClient tcpClient;
+    final String mTag = "Handler";
+    private ChatManager chatManager;
 
     /*
      * Define a request code to send to Google Play services This code is
@@ -98,10 +97,6 @@ public class map extends AppCompatActivity implements
                         | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
 
         setContentView(R.layout.content_map);
-        Rating = (TextView) findViewById(R.id.rating);
-        Rating.setText("test");
-
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_fragment);
@@ -153,32 +148,46 @@ public class map extends AppCompatActivity implements
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
 
-        new ServerTask(getmHandler()).execute("");
-    }
-    
-    private Handler getmHandler(){
-        final String mTag = "Handler";
-        mHandler = new Handler(){
-            @Override
-            public void handleMessage(Message msg) {
-                super.handleMessage(msg);
-                //set Points to view
-                String message = (String) msg.obj;
-                //TextView points = (TextView)findViewById(R.id.Points);
-                //Rating.setText("modified");
-                
-                Log.d(mTag, message.substring(0,5));
-                }
-            };
-            return mHandler;
+
+        (new TCPClient(this.getHandler())).start();
+        Log.d(TAG, "TCPClient created");
+	    //tcpClient.start();
+
     }
 
-    public void onThreadMessage(String message){
+    @Override
+    public boolean handleMessage(Message msg) {
 
-        Log.d(TAG,"modified");
-        Rating.setText(message);
+        switch (msg.what) {
+            case 1:
+                final String message = (String) msg.obj;
+                final TextView Rating = (TextView) findViewById(R.id.rating);
+                Rating.setText(message.substring(0, 5));
+                //Rating.postInvalidate();
+                Toast.makeText(this, message.substring(0, 5), Toast.LENGTH_LONG).show();
+                Log.d(mTag, message.substring(0, 5));
+                break;
+
+            case 2:
+                Object obj = msg.obj;
+                setChatManager((ChatManager) obj);
+                Log.d(mTag, "ChatManager set");
+                break;
+
+            default:
+                break;
+        }
+        return true;
     }
 
+    public void setChatManager(ChatManager obj) {
+        chatManager = obj;
+        new Thread(new IDSend()).start();
+    }
+
+    private Handler getHandler(){
+        return mHandler;
+    }
 
     public void onMapReady(GoogleMap googleMap) {
 
@@ -402,6 +411,20 @@ public class map extends AppCompatActivity implements
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             return mDialog;
+        }
+    }
+
+    class IDSend implements Runnable {
+        String idToken = Singleton.getInstance().getString();
+
+        @Override
+        public void run() {
+            try {
+                //Thread.sleep(1000);
+                chatManager.sendMessage(idToken);
+            } catch (Exception e) {
+                Log.e(TAG, "cant send message", e);
+            }
         }
     }
 
