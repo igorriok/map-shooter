@@ -69,7 +69,7 @@ public class ChatManager implements Runnable {
     public void sendMessage(String message) {
         if (out != null && !out.checkError()) {
             out.println(message);
-            out.flush();
+            //out.flush();
             Log.d(TAG, "Sent Message: " + message);
         }
     }

@@ -9,10 +9,8 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -62,7 +60,7 @@ public class map extends AppCompatActivity implements
     private GoogleApiClient sGoogleApiClient;
     private static String TAG = "Map";
     private Handler mHandler = new Handler(this);
-    protected TCPClient tcpClient;
+    //protected TCPClient tcpClient;
     final String mTag = "Handler";
     private ChatManager chatManager;
 
@@ -99,10 +97,6 @@ public class map extends AppCompatActivity implements
                         | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
 
         setContentView(R.layout.content_map);
-        //Rating = (TextView) findViewById(R.id.rating);
-        //Rating.setText("test");
-
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_fragment);
@@ -155,11 +149,10 @@ public class map extends AppCompatActivity implements
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
 
 
-        tcpClient = new TCPClient(this.getHandler());
-	    tcpClient.start();
-	    //ClientThread(mHandler);
-        //new Thread(new ClientThread()).start();
-        //new Thread(new IDThread()).start();
+        (new TCPClient(this.getHandler())).start();
+        Log.d(TAG, "TCPClient created");
+	    //tcpClient.start();
+
     }
 
     @Override
@@ -168,24 +161,19 @@ public class map extends AppCompatActivity implements
         switch (msg.what) {
             case 1:
                 final String message = (String) msg.obj;
-                final TextView Rating = (TextView)findViewById(R.id.rating);
+                final TextView Rating = (TextView) findViewById(R.id.rating);
                 Rating.setText(message.substring(0, 5));
                 //Rating.postInvalidate();
-                /*
-                Rating.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Rating.setText(message.substring(0, 5));
-                    }
-                });
-                */
                 Toast.makeText(this, message.substring(0, 5), Toast.LENGTH_LONG).show();
                 Log.d(mTag, message.substring(0, 5));
                 break;
+
             case 2:
                 Object obj = msg.obj;
                 setChatManager((ChatManager) obj);
                 Log.d(mTag, "ChatManager set");
+                break;
+
             default:
                 break;
         }
@@ -194,7 +182,7 @@ public class map extends AppCompatActivity implements
 
     public void setChatManager(ChatManager obj) {
         chatManager = obj;
-        new Thread(new IDThread()).start();
+        new Thread(new IDSend()).start();
     }
 
     private Handler getHandler(){
@@ -426,30 +414,7 @@ public class map extends AppCompatActivity implements
         }
     }
 
-
-    protected void ClientThread(Handler handler) {
-        final Handler mHandler = handler;
-
-        Thread client = new Thread() {
-            @Override
-            public void run() {
-		        //Message msg = mHandler.obtainMessage(1, "changed text");
-                // msg.sendToTarget();
-                
-                try {
-                    tcpClient = new TCPClient(mHandler);
-
-                    Log.d("ClientThread", "client created");
-                } catch (Exception e) {
-                    Log.e(TAG, "cant create tcpClient", e);
-                }
-                tcpClient.run();
-            }
-        };
-        client.start();
-    }
-
-    class IDThread implements Runnable {
+    class IDSend implements Runnable {
         String idToken = Singleton.getInstance().getString();
 
         @Override

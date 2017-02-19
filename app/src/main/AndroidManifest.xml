@@ -42,13 +42,18 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
         android:debuggable="true"
+
         <activity
             android:name=".map"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="sensorLandscape">
         </activity>
 
-        <activity android:name=".Compass"></activity>
+        <activity
+            android:name=".Compass"
+            android:screenOrientation="sensorLandscape">
+        </activity>
 
         <uses-library
             android:name="com.google.android.maps"
