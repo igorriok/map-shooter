@@ -130,7 +130,7 @@ public class map extends AppCompatActivity implements
 
         // Set a click listener on signOut button
         signOut.setOnClickListener(new View.OnClickListener() {
-            // The code in this method will be executed when the shoot View is clicked on.
+            // The code in this method will be executed when the signout View is clicked on.
             @Override
             public void onClick(View view) {
                 Auth.GoogleSignInApi.signOut(sGoogleApiClient).setResultCallback(

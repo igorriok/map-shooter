@@ -1,6 +1,7 @@
 package com.solonari.igor.virtualshooter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.hardware.GeomagneticField;
@@ -17,6 +18,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -112,6 +114,17 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks, O
         setContentView(R.layout.periscope);
 
         mDrawView = (DrawSurfaceView) findViewById(R.id.drawSurfaceView);
+
+        Button map = (Button) findViewById(R.id.map);
+
+        // Set a click listener on shoot button
+        map.setOnClickListener(new View.OnClickListener() {
+            // The code in this method will be executed when the shoot View is clicked on.
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
 
         buildGoogleApiClient();
     }

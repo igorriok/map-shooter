@@ -11,8 +11,8 @@
         android:layout_height="0dp"
         android:layout_weight=".1"
         android:background="#03A9F4"
-        android:weightSum="2"
-        >
+        android:weightSum="2">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="25dp"
@@ -61,7 +61,8 @@
         map_fragment:uiScrollGestures="true"
         map_fragment:uiTiltGestures="true"
         map_fragment:uiZoomControls="true"
-        map_fragment:uiZoomGestures="true" />
+        map_fragment:uiZoomGestures="true"
+        />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -80,7 +81,6 @@
             android:layout_marginRight="20dp"
             android:layout_marginBottom="5dp"
             android:layout_marginTop="5dp"
-            style="?android:attr/borderlessButtonStyle"
             android:text="Shoot"
             android:textColor="#E3F2FD"
             android:background="#0097A7"
@@ -95,7 +95,6 @@
             android:layout_marginRight="20dp"
             android:layout_marginBottom="5dp"
             android:layout_marginTop="5dp"
-            style="?android:attr/borderlessButtonStyle"
             android:text="Sign Out"
             android:textColor="#E3F2FD"
             android:background="#0097A7"
