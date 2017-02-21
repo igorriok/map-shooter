@@ -29,8 +29,10 @@ import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationListener;
@@ -60,7 +62,7 @@ public class map extends AppCompatActivity implements
     private GoogleApiClient sGoogleApiClient;
     private static String TAG = "Map";
     private Handler mHandler = new Handler(this);
-    //protected TCPClient tcpClient;
+    protected TCPClient tcpClient;
     final String mTag = "Handler";
     private ChatManager chatManager;
 
