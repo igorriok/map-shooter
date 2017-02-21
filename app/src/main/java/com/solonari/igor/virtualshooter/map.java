@@ -123,6 +123,7 @@ public class map extends AppCompatActivity implements
 		handleSignInResult(result);
         } else {
 		goToSignIn();
+		Log.d(TAG, "No signed account");
 	}
 
         // Find the View that shows the compass category
