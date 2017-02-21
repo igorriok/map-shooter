@@ -65,6 +65,7 @@ public class map extends AppCompatActivity implements
     protected TCPClient tcpClient;
     final String mTag = "Handler";
     private ChatManager chatManager;
+    private String idToken;
 
     /*
      * Define a request code to send to Google Play services This code is
@@ -177,7 +178,7 @@ public class map extends AppCompatActivity implements
 		Log.d(TAG, "handleSignInResult:" + result.isSuccess());
 		if (result.isSuccess()) {
 		    // Signed in successfully, show authenticated UI.
-		    String idToken = result.getSignInAccount().getIdToken();
+		    idToken = result.getSignInAccount().getIdToken();
             	    Log.d(TAG, "got token: " + idToken);
 		    Singleton.getInstance().setString(idToken);
 		} else {
