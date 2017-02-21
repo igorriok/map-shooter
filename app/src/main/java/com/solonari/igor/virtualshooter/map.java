@@ -122,7 +122,7 @@ public class map extends AppCompatActivity implements
 		GoogleSignInResult result = opr.get();
 		handleSignInResult(result);
         } else {
-		goToSignIn();
+                startActivity(new Intent(map.this, SignInActivity.class));
 		Log.d(TAG, "No signed account");
 	}
 
