@@ -122,7 +122,7 @@ public class map extends AppCompatActivity implements
 		GoogleSignInResult result = opr.get();
 		handleSignInResult(result);
         } else {
-                startActivity(new Intent(map.this, SignInActivity.class));
+                goToSignIn();
 		Log.d(TAG, "No signed account");
 	}
 
@@ -178,7 +178,7 @@ public class map extends AppCompatActivity implements
 		if (result.isSuccess()) {
 		    // Signed in successfully, show authenticated UI.
 		    String idToken = result.getSignInAccount().getIdToken();
-            Log.d(TAG, "got token: " + idToken);
+            	    Log.d(TAG, "got token: " + idToken);
 		    Singleton.getInstance().setString(idToken);
 		} else {
 		    // Signed out, show unauthenticated UI.
