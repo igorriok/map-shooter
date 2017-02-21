@@ -148,10 +148,11 @@ public class map extends AppCompatActivity implements
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
 
-
-        (new TCPClient(this.getHandler())).start();
-        Log.d(TAG, "TCPClient created");
-	    //tcpClient.start();
+	if (tcpClient == null) {
+		tcpClient = new TCPClient(this.getHandler());
+		tcpClient.start();
+		Log.d(TAG, "TCPClient created");
+	}
 
     }
 
