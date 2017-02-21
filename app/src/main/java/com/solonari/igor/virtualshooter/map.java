@@ -111,6 +111,19 @@ public class map extends AppCompatActivity implements
                 .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
+	    
+	OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(sGoogleApiClient);
+        if (opr.isDone()) {
+		// If the user's cached credentials are valid, the OptionalPendingResult will be "done"
+		// and the GoogleSignInResult will be available instantly.
+		Log.d(TAG, "Got cached sign-in");
+		GoogleSignInResult result = opr.get();
+		String idToken = result.getSignInAccount().getIdToken();
+		Singleton.getInstance().setString(idToken);
+        } else {
+		Intent signInIntent = new Intent(map.this, SignInActivity.class);
+                startActivity(signInIntent);
+	}
 
         // Find the View that shows the compass category
         Button Compass = (Button) findViewById(R.id.shootButton);
@@ -139,6 +152,7 @@ public class map extends AppCompatActivity implements
                             public void onResult(Status status) {
                                 Intent signInIntent = new Intent(map.this, SignInActivity.class);
                                 startActivity(signInIntent);
+				Singleton.getInstance().setString(null);
                             }
                         });
             }
