@@ -120,11 +120,9 @@ public class map extends AppCompatActivity implements
 		// and the GoogleSignInResult will be available instantly.
 		Log.d(TAG, "Got cached sign-in");
 		GoogleSignInResult result = opr.get();
-		String idToken = result.getSignInAccount().getIdToken();
-		Singleton.getInstance().setString(idToken);
+		handleSignInResult(result);
         } else {
-		Intent signInIntent = new Intent(map.this, SignInActivity.class);
-                startActivity(signInIntent);
+		goToSignIn();
 	}
 
         // Find the View that shows the compass category
@@ -171,6 +169,23 @@ public class map extends AppCompatActivity implements
 	}
 
     }
+	
+	private void handleSignInResult(GoogleSignInResult result) {
+		Log.d(TAG, "handleSignInResult:" + result.isSuccess());
+		if (result.isSuccess()) {
+		    // Signed in successfully, show authenticated UI.
+		    String idToken = result.getSignInAccount().getIdToken();
+		    Singleton.getInstance().setString(idToken);
+		} else {
+		    // Signed out, show unauthenticated UI.
+			goToSignIn();
+		}
+	}
+		
+	private void goToSignIn() {
+		Intent signInIntent = new Intent(map.this, SignInActivity.class);
+                startActivity(signInIntent);
+	}
 
     @Override
     public boolean handleMessage(Message msg) {
