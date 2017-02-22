@@ -17,10 +17,12 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -52,7 +54,7 @@ public class map extends AppCompatActivity implements
         OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
-        LocationListener, Handler.Callback {
+        LocationListener, Handler.Callback, PopupMenu.OnMenuItemClickListener {
 
     private GoogleMap mMap;
     protected GoogleApiClient mGoogleApiClient;
@@ -171,12 +173,12 @@ public class map extends AppCompatActivity implements
 	} else {
 		Log.d(TAG, "no idToken!!!");
 	}
-	    View settingsMenu = (View) findViewById(R.id.settings);
-	    settingsMenu.setOnClickListener(new View.OnClickListener() {
+	    final View settingsMenu = findViewById(R.id.settings);
+	        settingsMenu.setOnClickListener(new View.OnClickListener() {
 		    // The code in this method will be executed when the settings View is clicked on.
 		    @Override
 		    public void onClick(View view) {
-			showMenu();
+			showMenu(settingsMenu);
 		    }
 		});
 
@@ -186,19 +188,22 @@ public class map extends AppCompatActivity implements
 	    PopupMenu popup = new PopupMenu(this, v);
 	    // This activity implements OnMenuItemClickListener
 	    popup.setOnMenuItemClickListener(this);
-	    popup.inflate(R.menu.menu_settings);
+	    popup.inflate(R.menu.settings_menu);
 	    popup.show();
 	}
 
 	@Override
 	public boolean onMenuItemClick(MenuItem item) {
 	    switch (item.getItemId()) {
-		case R.id.archive:
-		    archive(item);
+		case R.id.shipName:
+		    //archive(item);
 		    return true;
-		case R.id.delete:
-		    delete(item);
+		case R.id.signOut:
+		    //delete(item);
 		    return true;
+        case R.id.exit:
+            //delete(item);
+            return true;
 		default:
 		    return false;
 	    }
