@@ -186,7 +186,7 @@ public class map extends AppCompatActivity implements
 	    PopupMenu popup = new PopupMenu(this, v);
 	    // This activity implements OnMenuItemClickListener
 	    popup.setOnMenuItemClickListener(this);
-	    popup.inflate(R.menu.menuSettings);
+	    popup.inflate(R.menu.menu_settings);
 	    popup.show();
 	}
 
