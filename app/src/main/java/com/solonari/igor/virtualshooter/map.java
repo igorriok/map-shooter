@@ -171,9 +171,39 @@ public class map extends AppCompatActivity implements
 	} else {
 		Log.d(TAG, "no idToken!!!");
 	}
+	    View settingsMenu = (View) findViewById(R.id.settings);
+	    settingsMenu.setOnClickListener(new View.OnClickListener() {
+		    // The code in this method will be executed when the settings View is clicked on.
+		    @Override
+		    public void onClick(View view) {
+			showMenu();
+		    }
+		});
 
     }
 	
+	public void showMenu(View v) {
+	    PopupMenu popup = new PopupMenu(this, v);
+	    // This activity implements OnMenuItemClickListener
+	    popup.setOnMenuItemClickListener(this);
+	    popup.inflate(R.menu.menuSettings);
+	    popup.show();
+	}
+
+	@Override
+	public boolean onMenuItemClick(MenuItem item) {
+	    switch (item.getItemId()) {
+		case R.id.archive:
+		    archive(item);
+		    return true;
+		case R.id.delete:
+		    delete(item);
+		    return true;
+		default:
+		    return false;
+	    }
+	}	
+		
 	private void handleSignInResult(GoogleSignInResult result) {
 		Log.d(TAG, "handleSignInResult:" + result.isSuccess());
 		if (result.isSuccess()) {
