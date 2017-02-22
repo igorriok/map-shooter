@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/menu"
-          android:icon="@drawable/ic_new_game"
-          android:title="@string/new_game"
+    <item android:id="@+id/shipName"
+          android:icon="@drawable/ship"
+          android:title="@string/ship_name"
           android:showAsAction="ifRoom"/>
-    <item android:id="@+id/help"
-          android:icon="@drawable/ic_help"
-          android:title="@string/help" />
+    <item android:id="@+id/signOut"
+          android:icon="@drawable/signOut"
+          android:title="@string/sign_out" />
+    <item android:id="@+id/exit"
+          android:icon="@drawable/exit"
+          android:title="@string/exit" />
 </menu>
