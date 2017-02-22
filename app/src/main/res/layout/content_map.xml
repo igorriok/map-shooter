@@ -45,6 +45,12 @@
             android:background="#03A9F4"
             android:textStyle="bold"
             />
+        <ImageButton
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_overflow_holo_dark"
+            android:contentDescription="@string/descr_settings"
+            android:onClick="showMenu" />
     </LinearLayout>
     
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
