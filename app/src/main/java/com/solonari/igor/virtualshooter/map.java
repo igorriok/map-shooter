@@ -142,26 +142,6 @@ public class map extends AppCompatActivity implements
             }
         });
 
-        // Find the View that shows the compass category
-        Button signOut = (Button) findViewById(R.id.signOutButton);
-
-        // Set a click listener on signOut button
-        signOut.setOnClickListener(new View.OnClickListener() {
-            // The code in this method will be executed when the signout View is clicked on.
-            @Override
-            public void onClick(View view) {
-                Auth.GoogleSignInApi.signOut(sGoogleApiClient).setResultCallback(
-                        new ResultCallback<Status>() {
-                            @Override
-                            public void onResult(Status status) {
-                                Intent signInIntent = new Intent(map.this, SignInActivity.class);
-                                startActivity(signInIntent);
-				Singleton.getInstance().setString(null);
-                            }
-                        });
-            }
-        });
-
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
@@ -199,11 +179,19 @@ public class map extends AppCompatActivity implements
 		    //archive(item);
 		    return true;
 		case R.id.signOut:
+		    Auth.GoogleSignInApi.signOut(sGoogleApiClient).setResultCallback(
+                        new ResultCallback<Status>() {
+                            @Override
+                            public void onResult(Status status) {
+                                Intent signInIntent = new Intent(map.this, SignInActivity.class);
+                                startActivity(signInIntent);
+				Singleton.getInstance().setString(null);
+                            }
+                        });
+		    return true;
+		case R.id.exit:
 		    //delete(item);
 		    return true;
-        case R.id.exit:
-            //delete(item);
-            return true;
 		default:
 		    return false;
 	    }
