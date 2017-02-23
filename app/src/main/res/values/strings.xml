@@ -22,9 +22,9 @@
     <string name="loading">Loading…</string>
 
     <!-- Settings menu options -->
-    <string name="ship_name">Loading…</string>
+    <string name="ship_name">Ship Name</string>
     <string name="sign_out">Sign Out</string>
-    <string name="exit">exit</string>
+    <string name="exit">Exit</string>
     
     <!-- Server ID -->
     <string name="server_client_id">271455468141-r4lrggg5mh2knhq777k64m3ju784qkr5.apps.googleusercontent.com</string>
