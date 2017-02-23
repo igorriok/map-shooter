@@ -94,20 +94,6 @@
             android:background="#0097A7"
             android:textStyle="bold"
             />
-        <Button
-            android:id="@+id/signOutButton"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginBottom="5dp"
-            android:layout_marginTop="5dp"
-            android:text="Sign Out"
-            android:textColor="#E3F2FD"
-            android:background="#0097A7"
-            android:textStyle="bold"
-            />
     </LinearLayout>
 
 </LinearLayout>
