@@ -3,6 +3,7 @@ package com.solonari.igor.virtualshooter;
 import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.DialogFragment;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.ActivityInfo;
@@ -14,7 +15,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
@@ -54,7 +54,8 @@ public class map extends AppCompatActivity implements
         OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
-        LocationListener, Handler.Callback, PopupMenu.OnMenuItemClickListener {
+        LocationListener, Handler.Callback, PopupMenu.OnMenuItemClickListener,
+        ShipNameFragment.NoticeDialogListener {
 
     private GoogleMap mMap;
     protected GoogleApiClient mGoogleApiClient;
@@ -176,7 +177,7 @@ public class map extends AppCompatActivity implements
 	public boolean onMenuItemClick(MenuItem item) {
 	    switch (item.getItemId()) {
 		case R.id.shipName:
-		    //archive(item);
+            showNoticeDialog();
 		    return true;
 		case R.id.signOut:
 		    Auth.GoogleSignInApi.signOut(sGoogleApiClient).setResultCallback(
@@ -198,7 +199,23 @@ public class map extends AppCompatActivity implements
 		default:
 		    return false;
 	    }
-	}	
+	}
+
+    public void showNoticeDialog() {
+        // Create an instance of the dialog fragment and show it
+        DialogFragment ShipDialog = new ShipNameFragment();
+        ShipDialog.show(getFragmentManager(), "shipNameFragment");
+    }
+
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog) {
+        // User touched the dialog's positive button
+    }
+
+    @Override
+    public void onDialogNegativeClick(DialogFragment dialog) {
+        // User touched the dialog's negative button
+    }
 		
 	private void handleSignInResult(GoogleSignInResult result) {
 		Log.d(TAG, "handleSignInResult:" + result.isSuccess());
