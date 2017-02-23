@@ -190,7 +190,10 @@ public class map extends AppCompatActivity implements
                         });
 		    return true;
 		case R.id.exit:
-		    //delete(item);
+		    Intent intent = new Intent(Intent.ACTION_MAIN);
+			intent.addCategory(Intent.CATEGORY_HOME);
+			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			startActivity(intent);
 		    return true;
 		default:
 		    return false;
