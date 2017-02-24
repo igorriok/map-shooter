@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -22,6 +23,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -47,7 +49,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 
-import static java.lang.Thread.sleep;
+import java.util.Objects;
 
 
 public class map extends AppCompatActivity implements
@@ -69,6 +71,7 @@ public class map extends AppCompatActivity implements
     final String mTag = "Handler";
     private ChatManager chatManager;
     private String idToken;
+    public static final String Pref_file = "Pref_file";
 
     /*
      * Define a request code to send to Google Play services This code is
@@ -93,14 +96,6 @@ public class map extends AppCompatActivity implements
 
         //Keep screen on
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        //Set full-screen
-        getWindow().getDecorView().setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
-                        | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
-                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
 
         setContentView(R.layout.content_map);
 
@@ -147,15 +142,15 @@ public class map extends AppCompatActivity implements
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
 
-	if (tcpClient == null && idToken != null) {
-		tcpClient = new TCPClient(this.getHandler());
-		tcpClient.start();
-		Log.d(TAG, "TCPClient created");
-	} else {
-		Log.d(TAG, "no idToken!!!");
-	}
-	    final View settingsMenu = findViewById(R.id.settings);
-	        settingsMenu.setOnClickListener(new View.OnClickListener() {
+        if (tcpClient == null && idToken != null) {
+            tcpClient = new TCPClient(this.getHandler());
+            tcpClient.start();
+            Log.d(TAG, "TCPClient created");
+        } else {
+            Log.d(TAG, "no idToken!!!");
+        }
+        final View settingsMenu = findViewById(R.id.settings);
+        settingsMenu.setOnClickListener(new View.OnClickListener() {
 		    // The code in this method will be executed when the settings View is clicked on.
 		    @Override
 		    public void onClick(View view) {
@@ -163,6 +158,19 @@ public class map extends AppCompatActivity implements
 		    }
 		});
 
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus) {
+            getWindow().getDecorView().setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);}
     }
 	
 	public void showMenu(View v) {
@@ -208,20 +216,21 @@ public class map extends AppCompatActivity implements
     }
 
     @Override
-    public void onDialogPositiveClick(DialogFragment dialog) {
+    public void onDialogPositiveClick(DialogFragment dialog, String shipName) {
         // User touched the dialog's positive button
-	if(shipName != "" || shipName != null) {
-	    SharedPreferences settings = getSharedPreferences(Pref_file, 0);
-	    SharedPreferences.Editor editor = settings.edit();
-	    editor.putBString("shipName", shipName);
-	    editor.commit();
-	} else {
-		showNoticeDialog();
-	}
+        if(!Objects.equals(shipName, "")) {
+            SharedPreferences settings = getSharedPreferences(Pref_file, 0);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putString("shipName", shipName);
+            editor.apply();
+            Log.d(TAG, "New Ship name: " + shipName);
+        } else {
+            showNoticeDialog();
+        }
     }
 
     @Override
-    public void onDialogNegativeClick(DialogFragment dialog) {
+    public void onDialogNegativeClick(DialogFragment dialog, String shipName) {
         // User touched the dialog's negative button
     }
 		
@@ -248,8 +257,8 @@ public class map extends AppCompatActivity implements
 
         switch (msg.what) {
             case 1:
-                final String message = (String) msg.obj;
-                final TextView Rating = (TextView) findViewById(R.id.rating);
+                String message = (String) msg.obj;
+                TextView Rating = (TextView) findViewById(R.id.rating);
                 Rating.setText(message.substring(0, 5));
                 //Rating.postInvalidate();
                 Toast.makeText(this, message.substring(0, 5), Toast.LENGTH_LONG).show();
@@ -289,16 +298,16 @@ public class map extends AppCompatActivity implements
     protected void enableMyLocation() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
-            // Permission to access the location is missing.
-            PermissionUtils.requestPermission(this, LOCATION_PERMISSION_REQUEST_CODE,
-                    Manifest.permission.ACCESS_FINE_LOCATION, true);
+                // Permission to access the location is missing.
+                PermissionUtils.requestPermission(this, LOCATION_PERMISSION_REQUEST_CODE,
+                        Manifest.permission.ACCESS_FINE_LOCATION, true);
         } else if (mMap != null) {
             // Access to the location has been granted to the app.
             mMap.setMyLocationEnabled(true);
             mGoogleApiClient = new GoogleApiClient.Builder(this)
-                    .addApi(LocationServices.API)
-                    .addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(this).build();
+                .addApi(LocationServices.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this).build();
             connectClient();
         }
     }

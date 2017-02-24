@@ -6,14 +6,17 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.widget.EditText;
 
 
 public class ShipNameFragment extends DialogFragment {
 
     // Use this instance of the interface to deliver action events
     NoticeDialogListener mListener;
+    public static final String Pref_file = "Pref_file";
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -28,14 +31,16 @@ public class ShipNameFragment extends DialogFragment {
                 .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
+                        String shipName = ((EditText) getDialog().findViewById(R.id.newShipName)).getText().toString();
                         // Send the positive button event back to the host activity
-                        mListener.onDialogPositiveClick(ShipNameFragment.this);
+                        mListener.onDialogPositiveClick(ShipNameFragment.this, shipName);
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
+                        String shipName = ((EditText) getDialog().findViewById(R.id.newShipName)).getText().toString();
+                        mListener.onDialogNegativeClick(ShipNameFragment.this, shipName);
                         ShipNameFragment.this.getDialog().cancel();
-                        mListener.onDialogNegativeClick(ShipNameFragment.this);
                     }
                 });
         return builder.create();
@@ -60,8 +65,8 @@ public class ShipNameFragment extends DialogFragment {
      * implement this interface in order to receive event callbacks.
      * Each method passes the DialogFragment in case the host needs to query it. */
     public interface NoticeDialogListener {
-        public void onDialogPositiveClick(DialogFragment dialog);
-        public void onDialogNegativeClick(DialogFragment dialog);
+        public void onDialogPositiveClick(DialogFragment dialog, String shipName);
+        public void onDialogNegativeClick(DialogFragment dialog, String shipName);
     }
 
 }
