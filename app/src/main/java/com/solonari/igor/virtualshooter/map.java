@@ -210,6 +210,14 @@ public class map extends AppCompatActivity implements
     @Override
     public void onDialogPositiveClick(DialogFragment dialog) {
         // User touched the dialog's positive button
+	if(shipName != "" || shipName != null) {
+	    SharedPreferences settings = getSharedPreferences(Pref_file, 0);
+	    SharedPreferences.Editor editor = settings.edit();
+	    editor.putBString("shipName", shipName);
+	    editor.commit();
+	} else {
+		showNoticeDialog();
+	}
     }
 
     @Override
