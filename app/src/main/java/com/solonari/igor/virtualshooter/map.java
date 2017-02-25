@@ -23,7 +23,6 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -191,7 +190,7 @@ public class map extends AppCompatActivity implements
 		    Auth.GoogleSignInApi.signOut(sGoogleApiClient).setResultCallback(
                         new ResultCallback<Status>() {
                             @Override
-                            public void onResult(Status status) {
+                            public void onResult(@NonNull Status status) {
                                 Intent signInIntent = new Intent(map.this, SignInActivity.class);
                                 startActivity(signInIntent);
 				Singleton.getInstance().setString(null);
@@ -366,7 +365,12 @@ public class map extends AppCompatActivity implements
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         AppIndex.AppIndexApi.start(client, getIndexApiAction());
+        displayShipName();
+    }
 
+    protected void displayShipName(){
+        SharedPreferences settings = getSharedPreferences(Pref_file, 0);
+        ((TextView) findViewById(R.id.ship)).setText(settings.getString("shipName", ""));
     }
 
     /*
@@ -388,6 +392,12 @@ public class map extends AppCompatActivity implements
 
     @Override
     public void onConnected(Bundle dataBundle) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Permission to access the location is missing.
+            PermissionUtils.requestPermission(this, LOCATION_PERMISSION_REQUEST_CODE,
+                    Manifest.permission.ACCESS_FINE_LOCATION, true);
+        }
         // Display the connection status
         Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (location != null) {
@@ -406,6 +416,13 @@ public class map extends AppCompatActivity implements
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         mLocationRequest.setInterval(UPDATE_INTERVAL);
         mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Permission to access the location is missing.
+            PermissionUtils.requestPermission(this, LOCATION_PERMISSION_REQUEST_CODE,
+                    Manifest.permission.ACCESS_FINE_LOCATION, true);
+        }
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
     }
 

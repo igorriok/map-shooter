@@ -44,6 +44,21 @@
             android:background="#03A9F4"
             android:textStyle="bold"
             />
+        <TextView
+            android:id="@+id/ship"
+            android:layout_width="wrap_content"
+            android:layout_height="25dp"
+            android:maxLines="1"
+            android:textSize="20sp"
+            android:gravity="end"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="5dp"
+            android:textColor="#E1F5FE"
+            android:background="#03A9F4"
+            android:textStyle="bold"
+            />
         <ImageButton
             android:id="@+id/settings"
             android:layout_width="wrap_content"
