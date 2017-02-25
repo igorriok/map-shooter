@@ -239,7 +239,7 @@ public class map extends AppCompatActivity implements
 		if (result.isSuccess()) {
 		    // Signed in successfully, show authenticated UI.
 		    idToken = result.getSignInAccount().getIdToken();
-            	    Log.d(TAG, "got token: " + idToken);
+            Log.d(TAG, "got token: " + idToken);
 		    Singleton.getInstance().setString(idToken);
 		} else {
 		    // Signed out, show unauthenticated UI.
