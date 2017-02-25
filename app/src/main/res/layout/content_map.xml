@@ -9,66 +9,50 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight=".1"
-        android:background="#03A9F4"
-        android:weightSum="2">
+        android:layout_weight=".15"
+        android:background="#03A9F4">
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="25dp"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
             android:maxLines="1"
             android:text="@string/Points"
             android:textSize="20sp"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="5dp"
-            android:layout_marginBottom="10dp"
-            android:layout_marginTop="5dp"
             android:textColor="#E1F5FE"
             android:background="#03A9F4"
             android:textAllCaps="true"
             android:textStyle="bold"
-            />
+            android:padding="5dp"
+            android:gravity="center|end" />
         <TextView
             android:id="@+id/rating"
-            android:layout_width="wrap_content"
-            android:layout_height="25dp"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:padding="5dp"
+            android:gravity="center_vertical"
             android:maxLines="1"
             android:text="123"
             android:textSize="20sp"
-            android:gravity="end"
-            android:layout_marginStart="5dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginBottom="10dp"
-            android:layout_marginTop="5dp"
             android:textColor="#E1F5FE"
             android:background="#03A9F4"
-            android:textStyle="bold"
-            />
+            android:textStyle="bold" />
         <TextView
             android:id="@+id/ship"
-            android:layout_width="wrap_content"
-            android:layout_height="25dp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:gravity="center"
+            android:layout_weight="1"
             android:maxLines="1"
             android:textSize="20sp"
-            android:gravity="end"
-            android:layout_marginStart="5dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginBottom="10dp"
-            android:layout_marginTop="5dp"
             android:textColor="#E1F5FE"
             android:background="#03A9F4"
             android:textStyle="bold"
             />
-        <ImageButton
-            android:id="@+id/settings"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/gears"
-            android:contentDescription="@string/desc_settings"
-            android:onClick="showMenu"
-            />
     </LinearLayout>
-    
+
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/map_fragment"
         xmlns:map_fragment="http://schemas.android.com/apk/res-auto"
@@ -108,6 +92,17 @@
             android:background="#0097A7"
             android:textStyle="bold"
             />
+        <ImageButton
+            android:id="@+id/settings"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:src="@drawable/gears"
+            android:contentDescription="@string/desc_settings"
+            android:onClick="showMenu"
+            android:background="#03A9F4"
+            android:layout_gravity="end"
+            android:scaleType="fitCenter" />
     </LinearLayout>
 
 </LinearLayout>

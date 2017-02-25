@@ -222,6 +222,7 @@ public class map extends AppCompatActivity implements
             SharedPreferences.Editor editor = settings.edit();
             editor.putString("shipName", shipName);
             editor.apply();
+            displayShipName();
             Log.d(TAG, "New Ship name: " + shipName);
         } else {
             showNoticeDialog();
@@ -231,6 +232,9 @@ public class map extends AppCompatActivity implements
     @Override
     public void onDialogNegativeClick(DialogFragment dialog, String shipName) {
         // User touched the dialog's negative button
+        if(Objects.equals(shipName, "")){
+            showNoticeDialog();
+        }
     }
 		
 	private void handleSignInResult(GoogleSignInResult result) {
