@@ -13,6 +13,8 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -61,8 +63,8 @@ public class map extends AppCompatActivity implements
     private GoogleMap mMap;
     protected GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
-    private long UPDATE_INTERVAL = 60000;  /* 60 secs */
-    private long FASTEST_INTERVAL = 5000; /* 5 secs */
+    private long UPDATE_INTERVAL = 5000;  /* 5 secs */
+    private long FASTEST_INTERVAL = 1000; /* 1 secs */
     private GoogleApiClient sGoogleApiClient;
     private static String TAG = "Map";
     private Handler mHandler = new Handler(this);
@@ -70,7 +72,8 @@ public class map extends AppCompatActivity implements
     final String mTag = "Handler";
     private ChatManager chatManager;
     private String idToken;
-    public static final String Pref_file = "Pref_file";
+    protected static final String Pref_file = "Pref_file";
+    protected SharedPreferences settings;
 
     /*
      * Define a request code to send to Google Play services This code is
@@ -112,17 +115,17 @@ public class map extends AppCompatActivity implements
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 	    
-	OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(sGoogleApiClient);
-        if (opr.isDone()) {
-		// If the user's cached credentials are valid, the OptionalPendingResult will be "done"
-		// and the GoogleSignInResult will be available instantly.
-		Log.d(TAG, "Got cached sign-in");
-		GoogleSignInResult result = opr.get();
-		handleSignInResult(result);
-        } else {
+        OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(sGoogleApiClient);
+            if (opr.isDone()) {
+                // If the user's cached credentials are valid, the OptionalPendingResult will be "done"
+                // and the GoogleSignInResult will be available instantly.
+                Log.d(TAG, "Got cached sign-in");
+                GoogleSignInResult result = opr.get();
+                handleSignInResult(result);
+            } else {
                 goToSignIn();
-		Log.d(TAG, "No signed account");
-	}
+                Log.d(TAG, "No signed account");
+        }
 
         // Find the View that shows the compass category
         Button Compass = (Button) findViewById(R.id.shootButton);
@@ -217,7 +220,7 @@ public class map extends AppCompatActivity implements
     @Override
     public void onDialogPositiveClick(DialogFragment dialog, String shipName) {
         // User touched the dialog's positive button
-        if(!Objects.equals(shipName, "")) {
+        if(!shipName.equals("")) {
             SharedPreferences settings = getSharedPreferences(Pref_file, 0);
             SharedPreferences.Editor editor = settings.edit();
             editor.putString("shipName", shipName);
@@ -262,10 +265,10 @@ public class map extends AppCompatActivity implements
             case 1:
                 String message = (String) msg.obj;
                 TextView Rating = (TextView) findViewById(R.id.rating);
-                Rating.setText(message.substring(0, 5));
+                Rating.setText(message);
                 //Rating.postInvalidate();
-                Toast.makeText(this, message.substring(0, 5), Toast.LENGTH_LONG).show();
-                Log.d(mTag, message.substring(0, 5));
+                Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+                Log.d(mTag, message);
                 break;
 
             case 2:
@@ -283,6 +286,7 @@ public class map extends AppCompatActivity implements
     public void setChatManager(ChatManager obj) {
         chatManager = obj;
         new Thread(new IDSend()).start();
+        sendShip();
     }
 
     private Handler getHandler(){
@@ -369,7 +373,19 @@ public class map extends AppCompatActivity implements
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         AppIndex.AppIndexApi.start(client, getIndexApiAction());
-        displayShipName();
+        settings = getSharedPreferences(Pref_file, 0);
+        String ship = settings.getString("shipName", "");
+        if(!ship.equals("")) {
+            displayShipName();
+        } else {
+            showNoticeDialog();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        //enableMyLocation();
     }
 
     protected void displayShipName(){
@@ -498,6 +514,16 @@ public class map extends AppCompatActivity implements
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+
+    }
+
+    protected void stopLocationUpdates() {
+        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+    }
+
+    @Override
     public void onStop() {
         super.onStop();
 
@@ -538,12 +564,36 @@ public class map extends AppCompatActivity implements
         @Override
         public void run() {
             try {
-                //Thread.sleep(1000);
                 chatManager.sendMessage(idToken);
             } catch (Exception e) {
                 Log.e(TAG, "cant send message", e);
             }
         }
+    }
+
+    public void sendShip() {
+
+        HandlerThread shipThread = new HandlerThread("ShipThread");
+        shipThread.start();
+        Looper looper = shipThread.getLooper();
+        final Handler shipHandler = new Handler(looper);
+
+        shipHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                settings = getSharedPreferences(Pref_file, 0);
+                String ship = settings.getString("shipName", "");
+                if(!ship.equals("")) {
+                    try {
+                        chatManager.sendMessage(ship);
+                    } catch (Exception e) {
+                        Log.e(TAG, "cant send location", e);
+                    }
+                }
+                shipHandler.postDelayed(this, 5000);
+            }
+        });
+
     }
 
 }
