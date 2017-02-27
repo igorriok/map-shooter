@@ -115,6 +115,7 @@ public class map extends AppCompatActivity implements
                 .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
+        sGoogleApiClient.connect();
 	    
         OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(sGoogleApiClient);
             if (opr.isDone()) {
