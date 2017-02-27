@@ -74,6 +74,7 @@ public class map extends AppCompatActivity implements
     private String idToken;
     protected static final String Pref_file = "Pref_file";
     protected SharedPreferences settings;
+    HandlerThread shipThread;
 
     /*
      * Define a request code to send to Google Play services This code is
@@ -246,7 +247,7 @@ public class map extends AppCompatActivity implements
 		    // Signed in successfully, show authenticated UI.
 		    idToken = result.getSignInAccount().getIdToken();
             Log.d(TAG, "got token: " + idToken);
-		    Singleton.getInstance().setString(idToken);
+		    //Singleton.getInstance().setString(idToken);
 		} else {
 		    // Signed out, show unauthenticated UI.
 			goToSignIn();
@@ -357,6 +358,8 @@ public class map extends AppCompatActivity implements
         // Connect the client.
         if (mGoogleApiClient != null) {
             mGoogleApiClient.connect();
+        } else {
+            enableMyLocation();
         }
     }
 
@@ -373,23 +376,24 @@ public class map extends AppCompatActivity implements
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         AppIndex.AppIndexApi.start(client, getIndexApiAction());
-        settings = getSharedPreferences(Pref_file, 0);
-	if(settings != null) {
-		String ship = settings.getString("shipName", "");
-		if(!ship.equals("")) {
-		    displayShipName();
-		} else {
-		    showNoticeDialog();
-		}
-	} else {
-		showNoticeDialog();
-	}
+
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        //enableMyLocation();
+        settings = getSharedPreferences(Pref_file, 0);
+        if(settings != null) {
+            String ship = settings.getString("shipName", "");
+            if(!ship.equals("")) {
+                displayShipName();
+            } else {
+                showNoticeDialog();
+            }
+        } else {
+            showNoticeDialog();
+        }
+
     }
 
     protected void displayShipName(){
@@ -485,8 +489,7 @@ public class map extends AppCompatActivity implements
         if (connectionResult.hasResolution()) {
             try {
                 // Start an Activity that tries to resolve the error
-                connectionResult.startResolutionForResult(this,
-                        CONNECTION_FAILURE_RESOLUTION_REQUEST);
+                connectionResult.startResolutionForResult(this, CONNECTION_FAILURE_RESOLUTION_REQUEST);
 				/*
 				 * Thrown if Google Play services canceled the original
 				 * PendingIntent
@@ -520,7 +523,6 @@ public class map extends AppCompatActivity implements
     @Override
     protected void onPause() {
         super.onPause();
-
     }
 
     protected void stopLocationUpdates() {
@@ -535,6 +537,19 @@ public class map extends AppCompatActivity implements
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         AppIndex.AppIndexApi.end(client, getIndexApiAction());
         client.disconnect();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "destroyed");
+        if(shipThread != null) {
+            shipThread.quit();
+            Log.d(TAG, "shipThread quit");
+        }
+        if(mGoogleApiClient != null) {
+            mGoogleApiClient.disconnect();
+        }
     }
 
     // Define a DialogFragment that displays the error dialog
@@ -577,7 +592,7 @@ public class map extends AppCompatActivity implements
 
     public void sendShip() {
 
-        HandlerThread shipThread = new HandlerThread("ShipThread");
+        shipThread = new HandlerThread("ShipThread");
         shipThread.start();
         Looper looper = shipThread.getLooper();
         final Handler shipHandler = new Handler(looper);
