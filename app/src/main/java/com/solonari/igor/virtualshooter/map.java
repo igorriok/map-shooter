@@ -374,12 +374,16 @@ public class map extends AppCompatActivity implements
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         AppIndex.AppIndexApi.start(client, getIndexApiAction());
         settings = getSharedPreferences(Pref_file, 0);
-        String ship = settings.getString("shipName", "");
-        if(!ship.equals("")) {
-            displayShipName();
-        } else {
-            showNoticeDialog();
-        }
+	if(settings != null) {
+		String ship = settings.getString("shipName", "");
+		if(!ship.equals("")) {
+		    displayShipName();
+		} else {
+		    showNoticeDialog();
+		}
+	} else {
+		showNoticeDialog();
+	}
     }
 
     @Override
