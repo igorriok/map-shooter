@@ -75,6 +75,7 @@ public class map extends AppCompatActivity implements
     protected static final String Pref_file = "Pref_file";
     protected SharedPreferences settings;
     HandlerThread shipThread;
+	LatLng latLng;
 
     /*
      * Define a request code to send to Google Play services This code is
@@ -110,25 +111,15 @@ public class map extends AppCompatActivity implements
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.server_client_id))
                 .build();
-
-        sGoogleApiClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
-                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-                .build();
-        sGoogleApiClient.connect();
-	    
-        OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(sGoogleApiClient);
-            if (opr.isDone()) {
-                // If the user's cached credentials are valid, the OptionalPendingResult will be "done"
-                // and the GoogleSignInResult will be available instantly.
-                Log.d(TAG, "Got cached sign-in");
-                GoogleSignInResult result = opr.get();
-                handleSignInResult(result);
-            } else {
-                goToSignIn();
-                Log.d(TAG, "No signed account");
-        }
-
+	
+	mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addApi(LocationServices.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+		.addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+		.build();
+	mGoogleApiClient.connect();
+	
         // Find the View that shows the compass category
         Button Compass = (Button) findViewById(R.id.shootButton);
 
@@ -313,11 +304,9 @@ public class map extends AppCompatActivity implements
         } else if (mMap != null) {
             // Access to the location has been granted to the app.
             mMap.setMyLocationEnabled(true);
-            mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addApi(LocationServices.API)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this).build();
-            connectClient();
+		if (latLng != null) {
+			CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 17);
+		}
         }
     }
 
@@ -353,15 +342,6 @@ public class map extends AppCompatActivity implements
      */
     private void showMissingPermissionError() {
         PermissionUtils.PermissionDeniedDialog.newInstance(true).show(getSupportFragmentManager(), "dialog");
-    }
-
-    protected void connectClient() {
-        // Connect the client.
-        if (mGoogleApiClient != null) {
-            mGoogleApiClient.connect();
-        } else {
-            enableMyLocation();
-        }
     }
 
     /*
@@ -421,6 +401,19 @@ public class map extends AppCompatActivity implements
 
     @Override
     public void onConnected(Bundle dataBundle) {
+	
+	OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(mGoogleApiClient);
+            if (opr.isDone()) {
+                // If the user's cached credentials are valid, the OptionalPendingResult will be "done"
+                // and the GoogleSignInResult will be available instantly.
+                Log.d(TAG, "Got cached sign-in");
+                GoogleSignInResult result = opr.get();
+                handleSignInResult(result);
+            } else {
+                goToSignIn();
+                Log.d(TAG, "No signed account");
+        }
+	
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
             // Permission to access the location is missing.
@@ -433,7 +426,9 @@ public class map extends AppCompatActivity implements
             Toast.makeText(this, "GPS location was found!", Toast.LENGTH_SHORT).show();
             LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
             CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 17);
-            mMap.animateCamera(cameraUpdate);
+            if (mMap != null) {
+		mMap.animateCamera(cameraUpdate);
+	    }
         } else {
             Toast.makeText(this, "Current location was not found, enable GPS", Toast.LENGTH_SHORT).show();
         }
@@ -457,6 +452,7 @@ public class map extends AppCompatActivity implements
 
     public void onLocationChanged(Location location) {
         // Report to the UI that the location was updated
+	latLng = new LatLng(location.getLatitude(), location.getLongitude());
         String msg = "Updated Location: " +
                 Double.toString(location.getLatitude()) + "," +
                 Double.toString(location.getLongitude());
