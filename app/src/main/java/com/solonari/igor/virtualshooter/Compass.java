@@ -42,7 +42,6 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks, O
     private final float[] mOrientation = new float[9];
     private float mHeading;
     private GeomagneticField mGeomagneticField;
-    private Location mLocation;
     private static final int ARM_DISPLACEMENT_DEGREES = 6;
     protected GoogleApiClient mGoogleApiClient;
     protected LocationRequest mLocationRequest;

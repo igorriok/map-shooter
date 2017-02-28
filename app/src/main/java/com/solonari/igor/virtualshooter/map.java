@@ -451,11 +451,12 @@ public class map extends AppCompatActivity implements
 
     public void onLocationChanged(Location location) {
         // Report to the UI that the location was updated
-	latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        Toast.makeText(this, location.toString(), Toast.LENGTH_SHORT).show();
+	    latLng = new LatLng(location.getLatitude(), location.getLongitude());
         String msg = "Updated Location: " +
                 Double.toString(location.getLatitude()) + "," +
                 Double.toString(location.getLongitude());
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
 
