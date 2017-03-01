@@ -27,10 +27,9 @@ public class ChatManager implements Runnable {
     PrintWriter out;
     SocketAddress sockaddr;
 
-    public ChatManager(Socket socket, Handler handler, SocketAddress sockaddr) {
+    public ChatManager(Socket socket, Handler handler) {
         this.socket = socket;
         this.handler = handler;
-        this.sockaddr = sockaddr;
     }
 
 
@@ -55,12 +54,6 @@ public class ChatManager implements Runnable {
 
                 } catch (IOException e) {
                     Log.e(TAG, "disconnected", e);
-                } finally {
-                    try {
-                        socket.connect(sockaddr);
-                    } catch (IOException e) {
-                        Log.e(TAG, "can't reconnect socket", e);
-                    }
                 }
             }
         } catch (IOException e) {
