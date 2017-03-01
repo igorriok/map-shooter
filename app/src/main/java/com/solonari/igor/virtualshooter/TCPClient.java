@@ -26,10 +26,12 @@ public class TCPClient extends Thread{
         try {
             // Creating InetAddress object from ipNumber passed via constructor from IpGetter class.
             InetAddress serverAddress = InetAddress.getByName(ipNumber);
+            SocketAddress sockaddr = new InetSocketAddress(serverAddress, 57349);
             Log.d(TAG, "Connecting...");
 
             //Here the socket is created with hardcoded port.
-            Socket socket = new Socket(serverAddress, 57349);
+            Socket socket = new Socket();
+            socket.connect(sockaddr);
             Log.d(TAG, "Connected");
 
             chat = new ChatManager(socket, mHandler);
