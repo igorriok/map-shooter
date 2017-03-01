@@ -34,7 +34,7 @@ public class TCPClient extends Thread{
             socket.connect(sockaddr);
             Log.d(TAG, "Connected");
 
-            chat = new ChatManager(socket, mHandler, sockaddr);
+            chat = new ChatManager(socket, mHandler);
             new Thread(chat).start();
 
         } catch (Exception e) {
