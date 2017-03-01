@@ -39,9 +39,11 @@ public class TCPClient extends Thread{
                 //Here the socket is created
                 Socket socket = new Socket();
                 socket.connect(sockaddr);
+                disconnected = false;
                 Log.d(TAG, "Connected");
 
             } catch (Exception e) {
+                disconnected = true;
                 Log.d(TAG, "Error on socket", e);
             }
         } while (disconnected);
