@@ -65,7 +65,6 @@ public class map extends AppCompatActivity implements
     private LocationRequest mLocationRequest;
     private long UPDATE_INTERVAL = 5000;  /* 5 secs */
     private long FASTEST_INTERVAL = 1000; /* 1 secs */
-    private GoogleApiClient sGoogleApiClient;
     private static String TAG = "Map";
     private Handler mHandler = new Handler(this);
     protected TCPClient tcpClient;
@@ -183,7 +182,7 @@ public class map extends AppCompatActivity implements
             showNoticeDialog();
 		    return true;
 		case R.id.signOut:
-		    Auth.GoogleSignInApi.signOut(sGoogleApiClient).setResultCallback(
+		    Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
                         new ResultCallback<Status>() {
                             @Override
                             public void onResult(@NonNull Status status) {
