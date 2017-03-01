@@ -28,18 +28,26 @@ public class TCPClient extends Thread{
             InetAddress serverAddress = InetAddress.getByName(ipNumber);
             SocketAddress sockaddr = new InetSocketAddress(serverAddress, 57349);
             Log.d(TAG, "Connecting...");
-
-            //Here the socket is created with hardcoded port.
-            Socket socket = new Socket();
-            socket.connect(sockaddr);
-            Log.d(TAG, "Connected");
-
-            chat = new ChatManager(socket, mHandler);
-            new Thread(chat).start();
-
+            
         } catch (Exception e) {
             Log.d(TAG, "Error on socket", e);
         }
+        
+        boolean disconnected = true;
+        do {
+            try {    
+                //Here the socket is created
+                Socket socket = new Socket();
+                socket.connect(sockaddr);
+                Log.d(TAG, "Connected");
+
+            } catch (Exception e) {
+                Log.d(TAG, "Error on socket", e);
+            }
+        } while (disconnected);
+        
+        chat = new ChatManager(socket, mHandler);
+        new Thread(chat).start();
         
     }
 
