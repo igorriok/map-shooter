@@ -106,16 +106,11 @@ public class map extends AppCompatActivity implements
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_fragment);
 
         mapFragment.getMapAsync(this);
-
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.server_client_id))
-                .build();
 	
 	mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(LocationServices.API)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
-		.addApi(Auth.GOOGLE_SIGN_IN_API, gso)
 		.build();
 	mGoogleApiClient.connect();
 	
@@ -151,7 +146,12 @@ public class map extends AppCompatActivity implements
 			showMenu(settingsMenu);
 		    }
 		});
-
+	SharedPreferences settings = getSharedPreferences(Pref_file, 0);
+        if ((String ID = settings.getString("ID", "")) != "") {
+		idToken = ID;
+	} else {
+		goToSignIn();
+	}
     }
 
     @Override
@@ -186,9 +186,12 @@ public class map extends AppCompatActivity implements
                         new ResultCallback<Status>() {
                             @Override
                             public void onResult(@NonNull Status status) {
+				    SharedPreferences settings = getSharedPreferences(Pref_file, 0);
+				    SharedPreferences.Editor editor = settings.edit();
+				    editor.putString("ID", "");
+				    editor.apply();
                                 Intent signInIntent = new Intent(map.this, SignInActivity.class);
                                 startActivity(signInIntent);
-				Singleton.getInstance().setString(null);
                             }
                         });
 		    return true;
@@ -231,23 +234,10 @@ public class map extends AppCompatActivity implements
             showNoticeDialog();
         }
     }
-		
-	private void handleSignInResult(GoogleSignInResult result) {
-		Log.d(TAG, "handleSignInResult:" + result.isSuccess());
-		if (result.isSuccess()) {
-		    // Signed in successfully, show authenticated UI.
-		    idToken = result.getSignInAccount().getIdToken();
-            Log.d(TAG, "got token: " + idToken);
-		    //Singleton.getInstance().setString(idToken);
-		} else {
-		    // Signed out, show unauthenticated UI.
-			goToSignIn();
-		}
-	}
-		
+			
 	private void goToSignIn() {
 		Intent signInIntent = new Intent(map.this, SignInActivity.class);
-                startActivity(signInIntent);
+		startActivity(signInIntent);
 	}
 
     @Override
@@ -399,18 +389,6 @@ public class map extends AppCompatActivity implements
 
     @Override
     public void onConnected(Bundle dataBundle) {
-	
-	OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(mGoogleApiClient);
-            if (opr.isDone()) {
-                // If the user's cached credentials are valid, the OptionalPendingResult will be "done"
-                // and the GoogleSignInResult will be available instantly.
-                Log.d(TAG, "Got cached sign-in");
-                GoogleSignInResult result = opr.get();
-                handleSignInResult(result);
-            } else {
-                goToSignIn();
-                Log.d(TAG, "No signed account");
-        }
 	
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
