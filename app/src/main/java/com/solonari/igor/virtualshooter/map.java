@@ -130,6 +130,13 @@ public class map extends AppCompatActivity implements
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+	
+	SharedPreferences settings = getSharedPreferences(Pref_file, 0);
+        if ((String ID = settings.getString("ID", "")) != "") {
+		idToken = ID;
+	} else {
+		goToSignIn();
+	}
 
         if (tcpClient == null && idToken != null) {
             tcpClient = new TCPClient(this.getHandler());
@@ -146,12 +153,6 @@ public class map extends AppCompatActivity implements
 			showMenu(settingsMenu);
 		    }
 		});
-	SharedPreferences settings = getSharedPreferences(Pref_file, 0);
-        if ((String ID = settings.getString("ID", "")) != "") {
-		idToken = ID;
-	} else {
-		goToSignIn();
-	}
     }
 
     @Override
