@@ -115,6 +115,10 @@ public class SignInActivity extends AppCompatActivity implements
             mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
             startActivity(new Intent(SignInActivity.this, map.class));
             //Singleton.getInstance().setString(result.getSignInAccount().getIdToken());
+            SharedPreferences settings = getSharedPreferences("Pref_file", 0);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putString("ID", result.getSignInAccount().getIdToken());
+            editor.apply();
             updateUI(true);
         } else {
             // Signed out, show unauthenticated UI.
