@@ -37,15 +37,15 @@ public class ChatManager implements Runnable {
     public void run() {
         try {
             // Create PrintWriter object for sending messages to server.
-            out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
+            out = new ObjectOutputStream(socket.getOutputStream());
             //Create BufferedReader object for receiving messages from server.
-            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            in = new ObjectInputStream(socket.getInputStream());
             Log.d(TAG, "In/Out created");
             handler.obtainMessage(2, this).sendToTarget();
 
             while (true) {
                 try {
-                    if ((incomingMessage = in.readLine()) != null) {
+                    if ((incomingMessage = (String) in.readObject()) != null) {
 
                         Message msg = handler.obtainMessage(1, incomingMessage);
                         handler.sendMessage(msg);
