@@ -15,6 +15,8 @@ public class TCPClient extends Thread{
     private final String ipNumber = "178.168.41.217";
     private Handler mHandler;
     private ChatManager chat;
+    SocketAddress sockaddr;
+    Socket socket;
 
 
     public TCPClient(Handler handler) {
@@ -29,18 +31,18 @@ public class TCPClient extends Thread{
         try {
             // Creating InetAddress object from ipNumber passed via constructor from IpGetter class.
             InetAddress serverAddress = InetAddress.getByName(ipNumber);
-            SocketAddress sockaddr = new InetSocketAddress(serverAddress, 57349);
+            sockaddr = new InetSocketAddress(serverAddress, 57349);
             Log.d(TAG, "Connecting...");
             
         } catch (Exception e) {
             Log.d(TAG, "Error on socket", e);
         }
         
-        boolean disconnected = true;
+        boolean disconnected;
         do {
             try {    
                 //Here the socket is created
-                Socket socket = new Socket();
+                socket = new Socket();
                 socket.connect(sockaddr);
                 disconnected = false;
                 Log.d(TAG, "Connected");

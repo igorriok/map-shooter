@@ -2,13 +2,13 @@ package com.solonari.igor.virtualshooter;
 
 
 import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.net.SocketAddress;
 
 
 public class ChatManager implements Runnable {
@@ -16,10 +16,8 @@ public class ChatManager implements Runnable {
     private Socket socket = null;
     private Handler handler;
     private static final String TAG = "ChatHandler";
-    private String incomingMessage;
     ObjectInputStream in;
     ObjectOutputStream out;
-    SocketAddress sockaddr;
 
     ChatManager(Socket socket, Handler handler) {
         this.socket = socket;
@@ -40,6 +38,8 @@ public class ChatManager implements Runnable {
             while (true) {
                 try {
                     Object o = in.readObject();
+                    Message msg = handler.obtainMessage(1, o);
+                    handler.sendMessage(msg);
                     System.out.println("Read object: "+o);
                 } catch (IOException e) {
                     Log.d(TAG, "Cant read message", e);
