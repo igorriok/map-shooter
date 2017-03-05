@@ -103,12 +103,12 @@ public class map extends AppCompatActivity implements
 
         mapFragment.getMapAsync(this);
 	
-	mGoogleApiClient = new GoogleApiClient.Builder(this)
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(LocationServices.API)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
-		.build();
-	mGoogleApiClient.connect();
+                .build();
+        mGoogleApiClient.connect();
 	
         // Find the View that shows the compass category
         Button Compass = (Button) findViewById(R.id.shootButton);
@@ -126,14 +126,14 @@ public class map extends AppCompatActivity implements
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
-	
-	SharedPreferences settings = getSharedPreferences(Pref_file, 0);
-    String id = settings.getString("ID", "");
-    if (!id.equals("")) {
-		idToken = id;
-	} else {
-		goToSignIn();
-	}
+
+        SharedPreferences settings = getSharedPreferences(Pref_file, 0);
+        String id = settings.getString("ID", "");
+        if (!id.equals("")) {
+            idToken = id;
+        } else {
+            goToSignIn();
+        }
 
         if (tcpClient == null && idToken != null) {
             tcpClient = new TCPClient(this.getHandler());
@@ -144,12 +144,12 @@ public class map extends AppCompatActivity implements
         }
         final View settingsMenu = findViewById(R.id.settings);
         settingsMenu.setOnClickListener(new View.OnClickListener() {
-		    // The code in this method will be executed when the settings View is clicked on.
-		    @Override
-		    public void onClick(View view) {
-			showMenu(settingsMenu);
-		    }
-		});
+            // The code in this method will be executed when the settings View is clicked on.
+            @Override
+            public void onClick(View view) {
+            showMenu(settingsMenu);
+            }
+        });
     }
 
     @Override
@@ -184,10 +184,10 @@ public class map extends AppCompatActivity implements
                         new ResultCallback<Status>() {
                             @Override
                             public void onResult(@NonNull Status status) {
-				    SharedPreferences settings = getSharedPreferences(Pref_file, 0);
-				    SharedPreferences.Editor editor = settings.edit();
-				    editor.putString("ID", "");
-				    editor.apply();
+                                SharedPreferences settings = getSharedPreferences(Pref_file, 0);
+                                SharedPreferences.Editor editor = settings.edit();
+                                editor.putString("ID", "");
+                                editor.apply();
                                 Intent signInIntent = new Intent(map.this, SignInActivity.class);
                                 startActivity(signInIntent);
                             }
@@ -549,8 +549,7 @@ public class map extends AppCompatActivity implements
         }
     }
 
-    class IDSend implements Runnable {
-        String idToken = Singleton.getInstance().getString();
+    private class IDSend implements Runnable {
 
         @Override
         public void run() {
