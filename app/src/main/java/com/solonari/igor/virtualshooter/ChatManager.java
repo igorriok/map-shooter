@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
 
 
 public class ChatManager implements Runnable {
@@ -18,6 +19,8 @@ public class ChatManager implements Runnable {
     private static final String TAG = "ChatHandler";
     ObjectInputStream in;
     ObjectOutputStream out;
+    private final String id = "id";
+    //ArrayList<String> line;
 
     ChatManager(Socket socket, Handler handler) {
         this.socket = socket;
@@ -33,14 +36,20 @@ public class ChatManager implements Runnable {
             //Create BufferedReader object for receiving messages from server.
             in = new ObjectInputStream(socket.getInputStream());
             Log.d(TAG, "In/Out created");
-            handler.obtainMessage(2, this).sendToTarget();
+            handler.obtainMessage(1, this).sendToTarget();
 
             while (true) {
                 try {
-                    Object o = in.readObject();
-                    Message msg = handler.obtainMessage(1, o);
-                    handler.sendMessage(msg);
-                    System.out.println("Read object: "+o);
+                    ArrayList<String> line = (ArrayList) in.readObject();
+                    String head = line.get(0);
+                    switch (head) {
+                        case id:
+                            String points = line.get(1);
+                            Message msg = handler.obtainMessage(2, points);
+                            handler.sendMessage(msg);
+                            break;
+                    }
+
                 } catch (IOException e) {
                     Log.d(TAG, "Cant read message", e);
                 } catch (ClassNotFoundException e) {

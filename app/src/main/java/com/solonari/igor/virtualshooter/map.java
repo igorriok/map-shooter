@@ -46,6 +46,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 
@@ -242,7 +243,7 @@ public class map extends AppCompatActivity implements
     public boolean handleMessage(Message msg) {
 
         switch (msg.what) {
-            case 1:
+            case 2:
                 String message = (String) msg.obj;
                 TextView Rating = (TextView) findViewById(R.id.rating);
                 Rating.setText(message);
@@ -251,7 +252,7 @@ public class map extends AppCompatActivity implements
                 Log.d(mTag, message);
                 break;
 
-            case 2:
+            case 1:
                 Object obj = msg.obj;
                 setChatManager((ChatManager) obj);
                 Log.d(mTag, "ChatManager set");
@@ -427,7 +428,7 @@ public class map extends AppCompatActivity implements
     public void onLocationChanged(Location location) {
         // Report to the UI that the location was updated
         Toast.makeText(this, location.toString(), Toast.LENGTH_SHORT).show();
-	latLng = new LatLng(location.getLatitude(), location.getLongitude());
+	    latLng = new LatLng(location.getLatitude(), location.getLongitude());
         String msg = "Updated Location: " +
                 Double.toString(location.getLatitude()) + "," +
                 Double.toString(location.getLongitude());
@@ -497,9 +498,6 @@ public class map extends AppCompatActivity implements
         super.onPause();
     }
 
-    protected void stopLocationUpdates() {
-        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
-    }
 
     @Override
     public void onStop() {
@@ -553,7 +551,7 @@ public class map extends AppCompatActivity implements
 
         @Override
         public void run() {
-		ArrayList<String> idArray = new ArrayList<String>();
+		ArrayList<String> idArray = new ArrayList<>();
 		idArray.add("id");
 		idArray.add(idToken);
             try {
@@ -570,18 +568,26 @@ public class map extends AppCompatActivity implements
         shipThread.start();
         Looper looper = shipThread.getLooper();
         final Handler shipHandler = new Handler(looper);
-	ArrayList<String> shipArray = new ArrayList<String>();
-	idArray.add("ship");
-	idArray.add(idToken);
+
 
         shipHandler.post(new Runnable() {
             @Override
             public void run() {
+                ArrayList<String> shipArray = new ArrayList<>();
+                shipArray.add("ship");
+
                 settings = getSharedPreferences(Pref_file, 0);
-                String ship = settings.getString("shipName", "");
-                if(!ship.equals("")) {
+                String shipName = settings.getString("shipName", "");
+                shipArray.add(shipName);
+
+                if (latLng != null) {
+                    shipArray.add(Double.toString(latLng.latitude));
+                    shipArray.add(Double.toString(latLng.longitude));
+                }
+
+                if(!shipName.equals("")) {
                     try {
-                        chatManager.sendMessage(ship);
+                        chatManager.sendMessage(shipArray);
                     } catch (Exception e) {
                         Log.e(TAG, "cant send location", e);
                     }
