@@ -553,8 +553,11 @@ public class map extends AppCompatActivity implements
 
         @Override
         public void run() {
+		ArrayList<String> idArray = new ArrayList<String>();
+		idArray.add("id");
+		idArray.add(idToken);
             try {
-                chatManager.sendMessage(idToken);
+                chatManager.sendMessage(idArray);
             } catch (Exception e) {
                 Log.e(TAG, "cant send message", e);
             }
