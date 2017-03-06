@@ -9,18 +9,31 @@
 
     <!-- Content Description for images -->
     <string name="desc_google_icon">Google Logo</string>
+    <string name="desc_settings">Settings menu button</string>
 
     <string name="title_text">Google Sign-In\nQuickstart</string>
     <string name="signed_out">Signed out</string>
 
     <!-- Button labels -->
-    <string name="sign_out">Sign Out</string>
     <string name="disconnect">Disconnect</string>
+    <string name="shoot">Shoot</string>
+    <string name="ok">Ok</string>
+    <string name="cancel">Cancel</string>
 
     <!-- Sign-in status messages -->
     <string name="signed_in_fmt">Signed in as: %s</string>
     <string name="loading">Loading…</string>
-    
+
+    <!-- Settings menu options -->
+    <string name="ship_name">Ship Name</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="exit">Exit</string>
+
+    <!-- Ship name dialog -->
+    <string name="ship_name_header">Ship Name</string>
+    <string name="ship_message">Enter new name</string>
+    <string name="new_ship_name">Ship Name</string>
+
     <!-- Server ID -->
     <string name="server_client_id">271455468141-r4lrggg5mh2knhq777k64m3ju784qkr5.apps.googleusercontent.com</string>
 </resources>

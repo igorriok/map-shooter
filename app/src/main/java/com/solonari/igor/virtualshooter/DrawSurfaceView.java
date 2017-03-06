@@ -18,8 +18,7 @@ public class DrawSurfaceView extends View {
     Paint mPaint = new Paint();
     private double OFFSET = 0d;
     private double screenWidth, screenHeight = 0d;
-    private Bitmap[] mSpots, mBlips;
-    private Bitmap mRadar;
+    private Bitmap[] mSpots;
 
     public static ArrayList<Point> props = new ArrayList<Point>();
     static {
@@ -30,7 +29,6 @@ public class DrawSurfaceView extends View {
     }
 
     public DrawSurfaceView(Context c, Paint paint) {
-
         super(c);
     }
 

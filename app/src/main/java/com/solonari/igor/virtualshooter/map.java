@@ -3,24 +3,28 @@ package com.solonari.igor.virtualshooter;
 import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.DialogFragment;
 import android.content.Intent;
 import android.content.IntentSender;
-import android.content.pm.ActivityInfo;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,7 +32,6 @@ import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
@@ -43,26 +46,31 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 
-import static java.lang.Thread.sleep;
+import java.util.Objects;
 
 
 public class map extends AppCompatActivity implements
         OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
-        LocationListener, Handler.Callback {
+        LocationListener, Handler.Callback, PopupMenu.OnMenuItemClickListener,
+        ShipNameFragment.NoticeDialogListener {
 
     private GoogleMap mMap;
     protected GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
-    private long UPDATE_INTERVAL = 60000;  /* 60 secs */
-    private long FASTEST_INTERVAL = 5000; /* 5 secs */
-    private GoogleApiClient sGoogleApiClient;
+    private long UPDATE_INTERVAL = 5000;  /* 5 secs */
+    private long FASTEST_INTERVAL = 1000; /* 1 secs */
     private static String TAG = "Map";
     private Handler mHandler = new Handler(this);
-    //protected TCPClient tcpClient;
+    protected TCPClient tcpClient;
     final String mTag = "Handler";
     private ChatManager chatManager;
+    private String idToken;
+    protected static final String Pref_file = "Pref_file";
+    protected SharedPreferences settings;
+    HandlerThread shipThread;
+	LatLng latLng;
 
     /*
      * Define a request code to send to Google Play services This code is
@@ -87,14 +95,6 @@ public class map extends AppCompatActivity implements
 
         //Keep screen on
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        //Set full-screen
-        getWindow().getDecorView().setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
-                        | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
-                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
 
         setContentView(R.layout.content_map);
 
@@ -102,16 +102,14 @@ public class map extends AppCompatActivity implements
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_fragment);
 
         mapFragment.getMapAsync(this);
-
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail()
+	
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addApi(LocationServices.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
                 .build();
-
-        sGoogleApiClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
-                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-                .build();
-
+        mGoogleApiClient.connect();
+	
         // Find the View that shows the compass category
         Button Compass = (Button) findViewById(R.id.shootButton);
 
@@ -125,47 +123,132 @@ public class map extends AppCompatActivity implements
             }
         });
 
-        // Find the View that shows the compass category
-        Button signOut = (Button) findViewById(R.id.signOutButton);
-
-        // Set a click listener on signOut button
-        signOut.setOnClickListener(new View.OnClickListener() {
-            // The code in this method will be executed when the shoot View is clicked on.
-            @Override
-            public void onClick(View view) {
-                Auth.GoogleSignInApi.signOut(sGoogleApiClient).setResultCallback(
-                        new ResultCallback<Status>() {
-                            @Override
-                            public void onResult(Status status) {
-                                Intent signInIntent = new Intent(map.this, SignInActivity.class);
-                                startActivity(signInIntent);
-                            }
-                        });
-            }
-        });
-
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
 
+        SharedPreferences settings = getSharedPreferences(Pref_file, 0);
+        String id = settings.getString("ID", "");
+        if (!id.equals("")) {
+            idToken = id;
+        } else {
+            goToSignIn();
+        }
 
-        (new TCPClient(this.getHandler())).start();
-        Log.d(TAG, "TCPClient created");
-	    //tcpClient.start();
-
+        if (tcpClient == null && idToken != null) {
+            tcpClient = new TCPClient(this.getHandler());
+            tcpClient.start();
+            Log.d(TAG, "TCPClient created");
+        } else {
+            Log.d(TAG, "no idToken!!!");
+        }
+        final View settingsMenu = findViewById(R.id.settings);
+        settingsMenu.setOnClickListener(new View.OnClickListener() {
+            // The code in this method will be executed when the settings View is clicked on.
+            @Override
+            public void onClick(View view) {
+            showMenu(settingsMenu);
+            }
+        });
     }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus) {
+            getWindow().getDecorView().setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);}
+    }
+	
+	public void showMenu(View v) {
+	    PopupMenu popup = new PopupMenu(this, v);
+	    // This activity implements OnMenuItemClickListener
+	    popup.setOnMenuItemClickListener(this);
+	    popup.inflate(R.menu.settings_menu);
+	    popup.show();
+	}
+
+	@Override
+	public boolean onMenuItemClick(MenuItem item) {
+	    switch (item.getItemId()) {
+		case R.id.shipName:
+            showNoticeDialog();
+		    return true;
+		case R.id.signOut:
+		    Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
+                        new ResultCallback<Status>() {
+                            @Override
+                            public void onResult(@NonNull Status status) {
+                                SharedPreferences settings = getSharedPreferences(Pref_file, 0);
+                                SharedPreferences.Editor editor = settings.edit();
+                                editor.putString("ID", "");
+                                editor.apply();
+                                Intent signInIntent = new Intent(map.this, SignInActivity.class);
+                                startActivity(signInIntent);
+                            }
+                        });
+		    return true;
+		case R.id.exit:
+		    Intent intent = new Intent(Intent.ACTION_MAIN);
+			intent.addCategory(Intent.CATEGORY_HOME);
+			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			startActivity(intent);
+		    return true;
+		default:
+		    return false;
+	    }
+	}
+
+    public void showNoticeDialog() {
+        // Create an instance of the dialog fragment and show it
+        DialogFragment ShipDialog = new ShipNameFragment();
+        ShipDialog.show(getFragmentManager(), "shipNameFragment");
+    }
+
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog, String shipName) {
+        // User touched the dialog's positive button
+        if(!shipName.equals("")) {
+            SharedPreferences settings = getSharedPreferences(Pref_file, 0);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putString("shipName", shipName);
+            editor.apply();
+            displayShipName();
+            Log.d(TAG, "New Ship name: " + shipName);
+        } else {
+            showNoticeDialog();
+        }
+    }
+
+    @Override
+    public void onDialogNegativeClick(DialogFragment dialog, String shipName) {
+        // User touched the dialog's negative button
+        if(Objects.equals(shipName, "")){
+            showNoticeDialog();
+        }
+    }
+			
+	private void goToSignIn() {
+		Intent signInIntent = new Intent(map.this, SignInActivity.class);
+		startActivity(signInIntent);
+	}
 
     @Override
     public boolean handleMessage(Message msg) {
 
         switch (msg.what) {
             case 1:
-                final String message = (String) msg.obj;
-                final TextView Rating = (TextView) findViewById(R.id.rating);
-                Rating.setText(message.substring(0, 5));
+                String message = (String) msg.obj;
+                TextView Rating = (TextView) findViewById(R.id.rating);
+                Rating.setText(message);
                 //Rating.postInvalidate();
-                Toast.makeText(this, message.substring(0, 5), Toast.LENGTH_LONG).show();
-                Log.d(mTag, message.substring(0, 5));
+                Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+                Log.d(mTag, message);
                 break;
 
             case 2:
@@ -183,6 +266,7 @@ public class map extends AppCompatActivity implements
     public void setChatManager(ChatManager obj) {
         chatManager = obj;
         new Thread(new IDSend()).start();
+        sendShip();
     }
 
     private Handler getHandler(){
@@ -201,17 +285,15 @@ public class map extends AppCompatActivity implements
     protected void enableMyLocation() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
-            // Permission to access the location is missing.
-            PermissionUtils.requestPermission(this, LOCATION_PERMISSION_REQUEST_CODE,
-                    Manifest.permission.ACCESS_FINE_LOCATION, true);
+                // Permission to access the location is missing.
+                PermissionUtils.requestPermission(this, LOCATION_PERMISSION_REQUEST_CODE,
+                        Manifest.permission.ACCESS_FINE_LOCATION, true);
         } else if (mMap != null) {
             // Access to the location has been granted to the app.
             mMap.setMyLocationEnabled(true);
-            mGoogleApiClient = new GoogleApiClient.Builder(this)
-                    .addApi(LocationServices.API)
-                    .addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(this).build();
-            connectClient();
+		if (latLng != null) {
+			CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 17);
+		}
         }
     }
 
@@ -249,13 +331,6 @@ public class map extends AppCompatActivity implements
         PermissionUtils.PermissionDeniedDialog.newInstance(true).show(getSupportFragmentManager(), "dialog");
     }
 
-    protected void connectClient() {
-        // Connect the client.
-        if (mGoogleApiClient != null) {
-            mGoogleApiClient.connect();
-        }
-    }
-
     /*
      * Called when the Activity becomes visible.
     */
@@ -265,11 +340,32 @@ public class map extends AppCompatActivity implements
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client.connect();
-        connectClient();
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         AppIndex.AppIndexApi.start(client, getIndexApiAction());
 
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        settings = getSharedPreferences(Pref_file, 0);
+        if(settings != null) {
+            String ship = settings.getString("shipName", "");
+            if(!ship.equals("")) {
+                displayShipName();
+            } else {
+                showNoticeDialog();
+            }
+        } else {
+            showNoticeDialog();
+        }
+
+    }
+
+    protected void displayShipName(){
+        SharedPreferences settings = getSharedPreferences(Pref_file, 0);
+        ((TextView) findViewById(R.id.ship)).setText(settings.getString("shipName", ""));
     }
 
     /*
@@ -291,13 +387,22 @@ public class map extends AppCompatActivity implements
 
     @Override
     public void onConnected(Bundle dataBundle) {
+	
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Permission to access the location is missing.
+            PermissionUtils.requestPermission(this, LOCATION_PERMISSION_REQUEST_CODE,
+                    Manifest.permission.ACCESS_FINE_LOCATION, true);
+        }
         // Display the connection status
         Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (location != null) {
             Toast.makeText(this, "GPS location was found!", Toast.LENGTH_SHORT).show();
             LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
             CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 17);
-            mMap.animateCamera(cameraUpdate);
+            if (mMap != null) {
+		mMap.animateCamera(cameraUpdate);
+	    }
         } else {
             Toast.makeText(this, "Current location was not found, enable GPS", Toast.LENGTH_SHORT).show();
         }
@@ -309,15 +414,24 @@ public class map extends AppCompatActivity implements
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         mLocationRequest.setInterval(UPDATE_INTERVAL);
         mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Permission to access the location is missing.
+            PermissionUtils.requestPermission(this, LOCATION_PERMISSION_REQUEST_CODE,
+                    Manifest.permission.ACCESS_FINE_LOCATION, true);
+        }
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
     }
 
     public void onLocationChanged(Location location) {
         // Report to the UI that the location was updated
+        Toast.makeText(this, location.toString(), Toast.LENGTH_SHORT).show();
+	    latLng = new LatLng(location.getLatitude(), location.getLongitude());
         String msg = "Updated Location: " +
                 Double.toString(location.getLatitude()) + "," +
                 Double.toString(location.getLongitude());
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
 
@@ -347,8 +461,7 @@ public class map extends AppCompatActivity implements
         if (connectionResult.hasResolution()) {
             try {
                 // Start an Activity that tries to resolve the error
-                connectionResult.startResolutionForResult(this,
-                        CONNECTION_FAILURE_RESOLUTION_REQUEST);
+                connectionResult.startResolutionForResult(this, CONNECTION_FAILURE_RESOLUTION_REQUEST);
 				/*
 				 * Thrown if Google Play services canceled the original
 				 * PendingIntent
@@ -380,6 +493,15 @@ public class map extends AppCompatActivity implements
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    protected void stopLocationUpdates() {
+        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+    }
+
+    @Override
     public void onStop() {
         super.onStop();
 
@@ -387,6 +509,19 @@ public class map extends AppCompatActivity implements
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         AppIndex.AppIndexApi.end(client, getIndexApiAction());
         client.disconnect();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "destroyed");
+        if(shipThread != null) {
+            shipThread.quit();
+            Log.d(TAG, "shipThread quit");
+        }
+        if(mGoogleApiClient != null) {
+            mGoogleApiClient.disconnect();
+        }
     }
 
     // Define a DialogFragment that displays the error dialog
@@ -414,18 +549,41 @@ public class map extends AppCompatActivity implements
         }
     }
 
-    class IDSend implements Runnable {
-        String idToken = Singleton.getInstance().getString();
+    private class IDSend implements Runnable {
 
         @Override
         public void run() {
             try {
-                //Thread.sleep(1000);
                 chatManager.sendMessage(idToken);
             } catch (Exception e) {
                 Log.e(TAG, "cant send message", e);
             }
         }
+    }
+
+    public void sendShip() {
+
+        shipThread = new HandlerThread("ShipThread");
+        shipThread.start();
+        Looper looper = shipThread.getLooper();
+        final Handler shipHandler = new Handler(looper);
+
+        shipHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                settings = getSharedPreferences(Pref_file, 0);
+                String ship = settings.getString("shipName", "");
+                if(!ship.equals("")) {
+                    try {
+                        chatManager.sendMessage(ship);
+                    } catch (Exception e) {
+                        Log.e(TAG, "cant send location", e);
+                    }
+                }
+                shipHandler.postDelayed(this, 5000);
+            }
+        });
+
     }
 
 }

@@ -2,11 +2,13 @@ package com.solonari.igor.virtualshooter;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -113,10 +115,12 @@ public class SignInActivity extends AppCompatActivity implements
             // Signed in successfully, show authenticated UI.
             GoogleSignInAccount acct = result.getSignInAccount();
             mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
-            Intent map = new Intent(SignInActivity.this, map.class);
-            startActivity(map);
-            String idToken = result.getSignInAccount().getIdToken();
-            Singleton.getInstance().setString(idToken);
+            startActivity(new Intent(SignInActivity.this, map.class));
+            //Singleton.getInstance().setString(result.getSignInAccount().getIdToken());
+            SharedPreferences settings = getSharedPreferences("Pref_file", 0);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putString("ID", result.getSignInAccount().getIdToken());
+            editor.apply();
             updateUI(true);
         } else {
             // Signed out, show unauthenticated UI.

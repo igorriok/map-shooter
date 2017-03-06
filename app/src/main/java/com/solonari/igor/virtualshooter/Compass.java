@@ -1,6 +1,7 @@
 package com.solonari.igor.virtualshooter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.hardware.GeomagneticField;
@@ -17,6 +18,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -40,7 +42,6 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks, O
     private final float[] mOrientation = new float[9];
     private float mHeading;
     private GeomagneticField mGeomagneticField;
-    private Location mLocation;
     private static final int ARM_DISPLACEMENT_DEGREES = 6;
     protected GoogleApiClient mGoogleApiClient;
     protected LocationRequest mLocationRequest;
@@ -92,16 +93,6 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks, O
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         //Keep screen on
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        //Set full-screen
-        getWindow().getDecorView().setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
-                        | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
-                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
-
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -111,11 +102,35 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks, O
 
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.periscope);
 
         mDrawView = (DrawSurfaceView) findViewById(R.id.drawSurfaceView);
 
+        Button map = (Button) findViewById(R.id.map);
+
+        // Set a click listener on shoot button
+        map.setOnClickListener(new View.OnClickListener() {
+            // The code in this method will be executed when the shoot View is clicked on.
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
+
         buildGoogleApiClient();
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus) {
+            getWindow().getDecorView().setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);}
     }
 
     protected synchronized void buildGoogleApiClient() {

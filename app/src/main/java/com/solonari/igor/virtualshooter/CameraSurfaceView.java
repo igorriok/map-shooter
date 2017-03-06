@@ -2,8 +2,6 @@ package com.solonari.igor.virtualshooter;
 
 
 import android.content.Context;
-import android.graphics.SurfaceTexture;
-import android.hardware.Camera;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCharacteristics;
@@ -18,15 +16,13 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.widget.Toast;
 
-import java.io.IOException;
 import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
 
 public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
-    @SuppressWarnings("unused")
+
     private static final String TAG = "CameraSurfaceView";
     private SurfaceHolder holder;
     Context mContext;
@@ -38,17 +34,13 @@ public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Call
     private CameraCaptureSession mCaptureSession;
     private CaptureRequest mPreviewRequest;
 
-    // private DrawSurfaceView draw;
 
-
-    @SuppressWarnings("deprecation")
     public CameraSurfaceView(Context context, AttributeSet set) {
         super(context, set);
 
         // Initiate the Surface Holder properly
         this.holder = this.getHolder();
         this.holder.addCallback(this);
-        this.holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
         mContext = context;
     }
 
@@ -56,8 +48,6 @@ public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Call
     public void surfaceCreated(SurfaceHolder holder) {
 
         cameraType();
-
-
 
         CameraManager manager = (CameraManager) mContext.getSystemService(Context.CAMERA_SERVICE);
         try {
@@ -78,8 +68,7 @@ public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Call
         CameraManager manager = (CameraManager) mContext.getSystemService(Context.CAMERA_SERVICE);
         try {
             for (String cameraId : manager.getCameraIdList()) {
-                CameraCharacteristics characteristics
-                        = manager.getCameraCharacteristics(cameraId);
+                CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
 
                 // We don't use a front facing camera in this sample.
                 Integer facing = characteristics.get(CameraCharacteristics.LENS_FACING);
@@ -192,6 +181,7 @@ public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Call
         // Surface will be destroyed when replaced with a new screen
         // Always make sure to release the Camera instance
         mCameraOpenCloseLock.release();
+        mCameraDevice.close();
         mCameraDevice = null;
     }
 

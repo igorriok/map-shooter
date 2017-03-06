@@ -2,8 +2,11 @@ package com.solonari.igor.virtualshooter;
 
 import android.os.Handler;
 import android.util.Log;
+
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketAddress;
 
 
 public class TCPClient extends Thread{
@@ -12,6 +15,8 @@ public class TCPClient extends Thread{
     private final String ipNumber = "178.168.41.217";
     private Handler mHandler;
     private ChatManager chat;
+    SocketAddress sockaddr;
+    Socket socket;
 
 
     public TCPClient(Handler handler) {
@@ -26,18 +31,30 @@ public class TCPClient extends Thread{
         try {
             // Creating InetAddress object from ipNumber passed via constructor from IpGetter class.
             InetAddress serverAddress = InetAddress.getByName(ipNumber);
+            sockaddr = new InetSocketAddress(serverAddress, 57349);
             Log.d(TAG, "Connecting...");
-
-            //Here the socket is created with hardcoded port.
-            Socket socket = new Socket(serverAddress, 57349);
-            Log.d(TAG, "Connected");
-
-            chat = new ChatManager(socket, mHandler);
-            new Thread(chat).start();
-
+            
         } catch (Exception e) {
             Log.d(TAG, "Error on socket", e);
         }
+        
+        boolean disconnected;
+        do {
+            try {    
+                //Here the socket is created
+                socket = new Socket();
+                socket.connect(sockaddr);
+                disconnected = false;
+                Log.d(TAG, "Connected");
+
+            } catch (Exception e) {
+                disconnected = true;
+                Log.d(TAG, "Error on socket", e);
+            }
+        } while (disconnected);
+        
+        chat = new ChatManager(socket, mHandler);
+        new Thread(chat).start();
         
     }
 
