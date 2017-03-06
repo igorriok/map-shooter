@@ -59,7 +59,7 @@ public class ChatManager implements Runnable {
         }
     }
 
-    void sendMessage(String message) {
+    void sendMessage(ArrayList message) {
         try {
             out.writeObject(message);
         } catch (Exception e){
