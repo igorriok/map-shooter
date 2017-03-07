@@ -48,6 +48,8 @@ public class ChatManager implements Runnable {
                             Message msg = handler.obtainMessage(2, points);
                             handler.sendMessage(msg);
                             break;
+                        default:
+                            break;
                     }
 
                 } catch (IOException e) {
