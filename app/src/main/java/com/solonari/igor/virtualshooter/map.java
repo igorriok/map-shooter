@@ -266,7 +266,6 @@ public class map extends AppCompatActivity implements
 
     public void setChatManager(ChatManager obj) {
         chatManager = obj;
-        new Thread(new IDSend()).start();
         sendShip();
     }
 
@@ -547,21 +546,6 @@ public class map extends AppCompatActivity implements
         }
     }
 
-    private class IDSend implements Runnable {
-
-        @Override
-        public void run() {
-		ArrayList<String> idArray = new ArrayList<>();
-		idArray.add("id");
-		idArray.add(idToken);
-            try {
-                chatManager.sendMessage(idArray);
-            } catch (Exception e) {
-                Log.e(TAG, "cant send message", e);
-            }
-        }
-    }
-
     public void sendShip() {
 
         shipThread = new HandlerThread("ShipThread");
@@ -569,6 +553,19 @@ public class map extends AppCompatActivity implements
         Looper looper = shipThread.getLooper();
         final Handler shipHandler = new Handler(looper);
 
+        shipHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                ArrayList<String> idArray = new ArrayList<>();
+                idArray.add("id");
+                idArray.add(idToken);
+                try {
+                    chatManager.sendMessage(idArray);
+                } catch (Exception e) {
+                    Log.e(TAG, "cant send message", e);
+                }
+            }
+        });
 
         shipHandler.post(new Runnable() {
             @Override
