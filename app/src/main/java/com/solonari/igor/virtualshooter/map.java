@@ -570,23 +570,23 @@ public class map extends AppCompatActivity implements
         shipHandler.post(new Runnable() {
             @Override
             public void run() {
-                ArrayList<String> shipArray = new ArrayList<>();
-                shipArray.add("ship");
-
-                settings = getSharedPreferences(Pref_file, 0);
-                String shipName = settings.getString("shipName", "");
-                shipArray.add(shipName);
-
                 if (latLng != null) {
+                    ArrayList<String> shipArray = new ArrayList<>();
+                    shipArray.add("ship");
+
+                    settings = getSharedPreferences(Pref_file, 0);
+                    String shipName = settings.getString("shipName", "");
+                    shipArray.add(shipName);
+
                     shipArray.add(Double.toString(latLng.latitude));
                     shipArray.add(Double.toString(latLng.longitude));
-                }
 
-                if(!shipName.equals("")) {
-                    try {
-                        chatManager.sendMessage(shipArray);
-                    } catch (Exception e) {
-                        Log.e(TAG, "cant send location", e);
+                    if (!shipName.equals("")) {
+                        try {
+                            chatManager.sendMessage(shipArray);
+                        } catch (Exception e) {
+                            Log.e(TAG, "cant send location", e);
+                        }
                     }
                 }
                 shipHandler.postDelayed(this, 5000);
