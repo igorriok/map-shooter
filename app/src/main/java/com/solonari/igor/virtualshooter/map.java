@@ -72,6 +72,10 @@ public class map extends AppCompatActivity implements
     protected SharedPreferences settings;
     HandlerThread shipThread;
 	LatLng latLng;
+	private int id = 2;
+	private int ship = 3;
+	private int chatManager = 1;
+	private ArrayList<String> line;
 
     /*
      * Define a request code to send to Google Play services This code is
@@ -243,7 +247,7 @@ public class map extends AppCompatActivity implements
     public boolean handleMessage(Message msg) {
 
         switch (msg.what) {
-            case 2:
+            case id:
                 String message = (String) msg.obj;
                 TextView Rating = (TextView) findViewById(R.id.rating);
                 Rating.setText(message);
@@ -252,12 +256,22 @@ public class map extends AppCompatActivity implements
                 Log.d(mTag, message);
                 break;
 
-            case 1:
+            case chatManager:
                 Object obj = msg.obj;
                 setChatManager((ChatManager) obj);
                 Log.d(mTag, "ChatManager set");
                 break;
-
+	case ship:
+		line = (ArrayList) msg.obj;
+		if(mMap != null) {
+			for(int i = 1; i < line.size(); i = i + 3) {
+				String markerName = line.get(i);
+				Marker markerName = map.addMarker(new MarkerOptions()
+				     .position(new LatLng(Double.parseDouble(line.get(i+1)), Double.parseDouble(line.get(i+2))))
+				     .title(markerName));
+				markerName.showInfoWindow();
+			}
+		}
             default:
                 break;
         }
