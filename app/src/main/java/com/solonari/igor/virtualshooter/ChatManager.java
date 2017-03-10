@@ -20,6 +20,7 @@ public class ChatManager implements Runnable {
     ObjectInputStream in;
     ObjectOutputStream out;
     private final String id = "id";
+    private final String ship = "ship";
     //ArrayList<String> line;
 
     ChatManager(Socket socket, Handler handler) {
@@ -46,6 +47,10 @@ public class ChatManager implements Runnable {
                         case id:
                             String points = line.get(1);
                             Message msg = handler.obtainMessage(2, points);
+                            handler.sendMessage(msg);
+                            break;
+                        case ship:
+                            Message msg = handler.obtainMessage(3, line);
                             handler.sendMessage(msg);
                             break;
                         default:
