@@ -259,7 +259,6 @@ public class map extends AppCompatActivity implements
                 Toast.makeText(this, message, Toast.LENGTH_LONG).show();
                 Log.d(mTag, message);
                 break;
-
             case chatThread:
                 Object obj = msg.obj;
                 setChatManager((ChatManager) obj);
@@ -283,7 +282,14 @@ public class map extends AppCompatActivity implements
                 }
                 break;
             case reconnect:
-                reconnect();
+                tcpClient = null;
+                //shipThread = null;
+                if (tcpClient == null && idToken != null) {
+                    tcpClient = new TCPClient(this.getHandler());
+                    tcpClient.start();
+                    Log.d(TAG, "TCPClient created");
+                }
+                //sendShip();
                 break;
             default:
                 break;
@@ -293,11 +299,6 @@ public class map extends AppCompatActivity implements
 
     public void setChatManager(ChatManager obj) {
         chatManager = obj;
-        sendShip();
-    }
-
-    public void reconnect() {
-        shipThread.quit();
         sendShip();
     }
 

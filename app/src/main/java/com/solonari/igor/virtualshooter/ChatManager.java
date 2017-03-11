@@ -56,11 +56,8 @@ public class ChatManager implements Runnable {
 
                 } catch (IOException e) {
                     Log.d(TAG, "Cant read message", e);
-                    //handler.obtainMessage(4, "reconnect").sendToTarget();
                 } catch (ClassNotFoundException e) {
                     Log.d(TAG, "Cant read this kind of object", e);
-                } finally {
-                    handler.obtainMessage(4, "reconnect").sendToTarget();
                 }
             }
 
@@ -69,6 +66,7 @@ public class ChatManager implements Runnable {
         } finally {
             try {
                 socket.close();
+                handler.obtainMessage(4, "reconnect").sendToTarget();
             } catch (IOException e) {
                 Log.e(TAG, "can't close socket", e);
             }
