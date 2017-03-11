@@ -45,6 +45,8 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -72,10 +74,12 @@ public class map extends AppCompatActivity implements
     protected SharedPreferences settings;
     HandlerThread shipThread;
 	LatLng latLng;
-	private int id = 2;
-	private int ship = 3;
-	private int chatManager = 1;
+	private static final int id = 2;
+	private static final int ship = 3;
+	private static final int chatThread = 1;
+    private static final int reconnect = 4;
 	private ArrayList<String> line;
+    private ArrayList<Marker> markers;
 
     /*
      * Define a request code to send to Google Play services This code is
@@ -256,22 +260,31 @@ public class map extends AppCompatActivity implements
                 Log.d(mTag, message);
                 break;
 
-            case chatManager:
+            case chatThread:
                 Object obj = msg.obj;
                 setChatManager((ChatManager) obj);
                 Log.d(mTag, "ChatManager set");
                 break;
-	case ship:
-		line = (ArrayList) msg.obj;
-		if(mMap != null) {
-			for(int i = 1; i < line.size(); i = i + 3) {
-				String markerName = line.get(i);
-				Marker markerName = map.addMarker(new MarkerOptions()
-				     .position(new LatLng(Double.parseDouble(line.get(i+1)), Double.parseDouble(line.get(i+2))))
-				     .title(markerName));
-				markerName.showInfoWindow();
-			}
-		}
+            case ship:
+                line = (ArrayList) msg.obj;
+                if(mMap != null) {
+                    mMap.clear();
+                }
+                markers = new ArrayList<>();
+                if(mMap != null) {
+                    for(int i = 1; i < line.size(); i = i + 3) {
+                        markers.add(mMap.addMarker(new MarkerOptions()
+                                .position(new LatLng(Double.parseDouble(line.get(i+1)), Double.parseDouble(line.get(i+2))))
+                                .title(line.get(i))));
+                    }
+                    for(Marker markerName : markers) {
+                        markerName.showInfoWindow();
+                    }
+                }
+                break;
+            case reconnect:
+                reconnect();
+                break;
             default:
                 break;
         }
@@ -280,6 +293,11 @@ public class map extends AppCompatActivity implements
 
     public void setChatManager(ChatManager obj) {
         chatManager = obj;
+        sendShip();
+    }
+
+    public void reconnect() {
+        shipThread.quit();
         sendShip();
     }
 

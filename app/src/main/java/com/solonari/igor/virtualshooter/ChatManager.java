@@ -2,7 +2,6 @@ package com.solonari.igor.virtualshooter;
 
 
 import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
 
 import java.io.IOException;
@@ -46,12 +45,10 @@ public class ChatManager implements Runnable {
                     switch (head) {
                         case id:
                             String points = line.get(1);
-                            Message msg = handler.obtainMessage(2, points);
-                            handler.sendMessage(msg);
+                            handler.obtainMessage(2, points).sendToTarget();
                             break;
                         case ship:
-                            Message msg = handler.obtainMessage(3, line);
-                            handler.sendMessage(msg);
+                            handler.obtainMessage(3, line).sendToTarget();
                             break;
                         default:
                             break;
@@ -59,8 +56,11 @@ public class ChatManager implements Runnable {
 
                 } catch (IOException e) {
                     Log.d(TAG, "Cant read message", e);
+                    //handler.obtainMessage(4, "reconnect").sendToTarget();
                 } catch (ClassNotFoundException e) {
                     Log.d(TAG, "Cant read this kind of object", e);
+                } finally {
+                    handler.obtainMessage(4, "reconnect").sendToTarget();
                 }
             }
 
