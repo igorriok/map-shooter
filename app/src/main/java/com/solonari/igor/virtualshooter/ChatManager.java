@@ -39,7 +39,6 @@ public class ChatManager implements Runnable {
             handler.obtainMessage(1, this).sendToTarget();
 
             while (true) {
-                try {
                     ArrayList<String> line = (ArrayList) in.readObject();
                     String head = line.get(0);
                     switch (head) {
@@ -54,14 +53,9 @@ public class ChatManager implements Runnable {
                             break;
                     }
 
-                } catch (IOException e) {
-                    Log.d(TAG, "Cant read message", e);
-                } catch (ClassNotFoundException e) {
-                    Log.d(TAG, "Cant read this kind of object", e);
-                }
             }
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             Log.e(TAG, "can't create in/out", e);
         } finally {
             try {
