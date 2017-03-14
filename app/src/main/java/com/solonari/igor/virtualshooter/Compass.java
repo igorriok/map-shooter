@@ -31,7 +31,7 @@ import com.google.android.gms.location.LocationServices;
 
 
 
-public class Compass extends AppCompatActivity implements ConnectionCallbacks, OnConnectionFailedListener, LocationListener {
+public class Compass extends AppCompatActivity implements ConnectionCallbacks, OnConnectionFailedListener, LocationListener, Handler.Callback {
 
     private static final String TAG = "Compass";
     private static boolean DEBUG = false;
@@ -49,6 +49,7 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks, O
     private long FASTEST_INTERVAL = 1000; /* 1 secs */
     protected Location location;
     protected static final int REQUEST_CAMERA_PERMISSION = 2;
+    private Handler mHandler = new Handler(Looper.getMainLooper(), this);
 
 
     private SensorEventListener mListener = new SensorEventListener() {
@@ -131,6 +132,31 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks, O
                             | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                             | View.SYSTEM_UI_FLAG_FULLSCREEN
                             | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);}
+    }
+    
+    @Override
+    public boolean handleMessage(Message msg) {
+
+        switch (msg.what) {
+            case ship:
+                line = (ArrayList) msg.obj;
+                if(mMap != null) {
+                    mMap.clear();
+                }
+                markers = new ArrayList<>();
+                if(mMap != null) {
+                    for(int i = 1; i < line.size(); i = i + 3) {
+                        markers.add(mMap.addMarker(new MarkerOptions()
+                                .position(new LatLng(Double.parseDouble(line.get(i+1)), Double.parseDouble(line.get(i+2))))
+                                .title(line.get(i))));
+                    }
+                    for(Marker markerName : markers) {
+                        markerName.showInfoWindow();
+                    }
+                }
+                break;
+        }
+        return true;
     }
 
     protected synchronized void buildGoogleApiClient() {
