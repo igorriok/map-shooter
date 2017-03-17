@@ -85,7 +85,6 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks, O
                 location.getTime());
     }
 
-    //@SuppressWarnings("deprecation")
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
