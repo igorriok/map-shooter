@@ -1,8 +1,6 @@
 package com.solonari.igor.virtualshooter;
 
 import android.content.Context;
-import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.hardware.GeomagneticField;
 import android.hardware.Sensor;
@@ -11,6 +9,9 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -29,9 +30,11 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
+import java.util.ArrayList;
 
 
-public class Compass extends AppCompatActivity implements ConnectionCallbacks, OnConnectionFailedListener, LocationListener, Handler.Callback {
+public class Compass extends AppCompatActivity implements ConnectionCallbacks,
+        OnConnectionFailedListener, LocationListener, Handler.Callback {
 
     private static final String TAG = "Compass";
     private static boolean DEBUG = false;
