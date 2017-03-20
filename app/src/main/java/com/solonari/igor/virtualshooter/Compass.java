@@ -142,20 +142,7 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks,
         switch (msg.what) {
             case ship:
                 line = (ArrayList) msg.obj;
-                if(mMap != null) {
-                    mMap.clear();
-                }
-                markers = new ArrayList<>();
-                if(mMap != null) {
-                    for(int i = 1; i < line.size(); i = i + 3) {
-                        markers.add(mMap.addMarker(new MarkerOptions()
-                                .position(new LatLng(Double.parseDouble(line.get(i+1)), Double.parseDouble(line.get(i+2))))
-                                .title(line.get(i))));
-                    }
-                    for(Marker markerName : markers) {
-                        markerName.showInfoWindow();
-                    }
-                }
+                mDrawView.setPoints(line);
                 break;
         }
         return true;
