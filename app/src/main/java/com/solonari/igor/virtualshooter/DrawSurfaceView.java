@@ -109,5 +109,9 @@ public class DrawSurfaceView extends View {
         me.latitude = latitude;
         me.longitude = longitude;
     }
+    
+    public void setPoints(ArrayList<Point> points) {
+        props = points
+    }
 
 }
