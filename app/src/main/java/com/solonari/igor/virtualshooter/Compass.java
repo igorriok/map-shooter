@@ -54,6 +54,8 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks,
     protected static final int REQUEST_CAMERA_PERMISSION = 2;
     private Handler mHandler = new Handler(Looper.getMainLooper(), this);
     public ArrayList<Point> props;
+    private final int ship = 3;
+    private ArrayList<String> line;
 
 
     private SensorEventListener mListener = new SensorEventListener() {
@@ -143,7 +145,7 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks,
         switch (msg.what) {
             case ship:
                 line = (ArrayList) msg.obj;
-                props = new ArrayList<Point>();
+                props = new ArrayList<>();
                 for(int i = 1; i < line.size(); i = i + 3) {
                         props.add(new Point(Double.parseDouble(line.get(i+1)), Double.parseDouble(line.get(i+2)), line.get(i)));
                 }
