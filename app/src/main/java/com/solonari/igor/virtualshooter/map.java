@@ -127,6 +127,12 @@ public class map extends AppCompatActivity implements
             // The code in this method will be executed when the shoot View is clicked on.
             @Override
             public void onClick(View view) {
+		if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+			!= PackageManager.PERMISSION_GRANTED) {
+		    // Permission to access camera is missing.
+		    PermissionUtils.requestPermission(this, REQUEST_CAMERA_PERMISSION,
+			    Manifest.permission.CAMERA, true);
+		}
                 Intent shootIntent = new Intent(map.this, Compass.class);
                 startActivity(shootIntent);
             }
