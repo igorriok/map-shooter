@@ -19,8 +19,7 @@ public class DrawSurfaceView extends View {
     private double OFFSET = 0d;
     private double screenWidth, screenHeight = 0d;
     private Bitmap[] mSpots;
-
-    public static ArrayList<Point> props = new ArrayList<Point>();
+    public ArrayList<Point> props = new ArrayList<Point>();
     static {
         props.add(new Point(48.086186, 28.716660, "North"));
         props.add(new Point(45.630479, 28.935411, "South"));
