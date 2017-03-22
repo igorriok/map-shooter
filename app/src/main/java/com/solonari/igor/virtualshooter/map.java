@@ -88,6 +88,7 @@ public class map extends AppCompatActivity implements
 	 */
     protected final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     protected static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
+    protected static final int CAMERA_PERMISSION_REQUEST_CODE = 2;
     protected boolean mPermissionDenied = false;
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -122,7 +123,7 @@ public class map extends AppCompatActivity implements
 	
         // Find the View that shows the compass category
         Button Compass = (Button) findViewById(R.id.shootButton);
-
+	Intent shootIntent = new Intent(map.this, Compass.class);
         // Set a click listener on shoot button
 	activateCompass();
 
@@ -157,14 +158,13 @@ public class map extends AppCompatActivity implements
     
     activateCompass() {
     	Compass.setOnClickListener(new View.OnClickListener() {
-		Intent shootIntent = new Intent(map.this, Compass.class);
             // The code in this method will be executed when the shoot View is clicked on.
             @Override
             public void onClick(View view) {
 		if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
 			startActivity(shootIntent);
 		} else {
-			PermissionUtils.requestPermission(thisActivity, REQUEST_CAMERA_PERMISSION,
+			PermissionUtils.requestPermission(thisActivity, CAMERA_PERMISSION_REQUEST_CODE,
 			    Manifest.permission.CAMERA, false);
 		}
             }
@@ -343,18 +343,28 @@ public class map extends AppCompatActivity implements
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
-        if (requestCode != LOCATION_PERMISSION_REQUEST_CODE) {
-            return;
-        }
-
-        if (PermissionUtils.isPermissionGranted(permissions, grantResults,
-                Manifest.permission.ACCESS_FINE_LOCATION)) {
-            // Enable the my location layer if the permission has been granted.
-            enableMyLocation();
-        } else {
-            // Display the missing permission error dialog when the fragments resume.
-            mPermissionDenied = true;
-        }
+        switch(requestCode) {
+		case LOCATION_PERMISSION_REQUEST_CODE: 
+			if (PermissionUtils.isPermissionGranted(permissions, grantResults,
+				Manifest.permission.ACCESS_FINE_LOCATION)) {
+			    // Enable the my location layer if the permission has been granted.
+			    enableMyLocation();
+			} else {
+			    // Display the missing permission error dialog when the fragments resume.
+			    mPermissionDenied = true;
+			}
+			break;
+		case CAMERA_PERMISSION_REQUEST_CODE:
+			if (PermissionUtils.isPermissionGranted(permissions, grantResults,
+				Manifest.permission.CAMERA)) {
+				startActivity(shootIntent);
+			} else {
+				PermissionUtils.PermissionDeniedDialog.newInstance(false).show(getSupportFragmentManager(), "dialog");
+			}
+			break;
+		default:
+			break;
+	}
     }
 
     @Override
