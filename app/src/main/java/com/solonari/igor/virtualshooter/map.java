@@ -80,6 +80,7 @@ public class map extends AppCompatActivity implements
     private static final int reconnect = 4;
 	private ArrayList<String> line;
     private ArrayList<Marker> markers;
+    private AppCompatActivity thisActivity = this;
 
     /*
      * Define a request code to send to Google Play services This code is
@@ -123,20 +124,7 @@ public class map extends AppCompatActivity implements
         Button Compass = (Button) findViewById(R.id.shootButton);
 
         // Set a click listener on shoot button
-        Compass.setOnClickListener(new View.OnClickListener() {
-            // The code in this method will be executed when the shoot View is clicked on.
-            @Override
-            public void onClick(View view) {
-		if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-			!= PackageManager.PERMISSION_GRANTED) {
-		    // Permission to access camera is missing.
-		    PermissionUtils.requestPermission(this, REQUEST_CAMERA_PERMISSION,
-			    Manifest.permission.CAMERA, true);
-		}
-                Intent shootIntent = new Intent(map.this, Compass.class);
-                startActivity(shootIntent);
-            }
-        });
+	activateCompass();
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -163,6 +151,22 @@ public class map extends AppCompatActivity implements
             @Override
             public void onClick(View view) {
             showMenu(settingsMenu);
+            }
+        });
+    }
+    
+    activateCompass() {
+    	Compass.setOnClickListener(new View.OnClickListener() {
+		Intent shootIntent = new Intent(map.this, Compass.class);
+            // The code in this method will be executed when the shoot View is clicked on.
+            @Override
+            public void onClick(View view) {
+		if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+			startActivity(shootIntent);
+		} else {
+			PermissionUtils.requestPermission(thisActivity, REQUEST_CAMERA_PERMISSION,
+			    Manifest.permission.CAMERA, false);
+		}
             }
         });
     }
