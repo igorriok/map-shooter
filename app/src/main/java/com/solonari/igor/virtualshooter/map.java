@@ -10,12 +10,14 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -81,6 +83,7 @@ public class map extends AppCompatActivity implements
 	private ArrayList<String> line;
     private ArrayList<Marker> markers;
     private AppCompatActivity thisActivity = this;
+    private Intent shootIntent;
 
     /*
      * Define a request code to send to Google Play services This code is
@@ -123,9 +126,21 @@ public class map extends AppCompatActivity implements
 	
         // Find the View that shows the compass category
         Button Compass = (Button) findViewById(R.id.shootButton);
-	Intent shootIntent = new Intent(map.this, Compass.class);
         // Set a click listener on shoot button
-	activateCompass();
+        Compass.setOnClickListener(new View.OnClickListener() {
+            // The code in this method will be executed when the shoot View is clicked on.
+            @RequiresApi(api = Build.VERSION_CODES.M)
+            @Override
+            public void onClick(View view) {
+                shootIntent = new Intent(map.this, Compass.class);
+                if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+                    startActivity(shootIntent);
+                } else {
+                    PermissionUtils.requestPermission(thisActivity, CAMERA_PERMISSION_REQUEST_CODE,
+                            Manifest.permission.CAMERA, false);
+                }
+            }
+        });
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -155,21 +170,7 @@ public class map extends AppCompatActivity implements
             }
         });
     }
-    
-    activateCompass() {
-    	Compass.setOnClickListener(new View.OnClickListener() {
-            // The code in this method will be executed when the shoot View is clicked on.
-            @Override
-            public void onClick(View view) {
-		if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
-			startActivity(shootIntent);
-		} else {
-			PermissionUtils.requestPermission(thisActivity, CAMERA_PERMISSION_REQUEST_CODE,
-			    Manifest.permission.CAMERA, false);
-		}
-            }
-        });
-    }
+
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
@@ -343,28 +344,27 @@ public class map extends AppCompatActivity implements
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
-        switch(requestCode) {
-		case LOCATION_PERMISSION_REQUEST_CODE: 
-			if (PermissionUtils.isPermissionGranted(permissions, grantResults,
-				Manifest.permission.ACCESS_FINE_LOCATION)) {
-			    // Enable the my location layer if the permission has been granted.
-			    enableMyLocation();
-			} else {
-			    // Display the missing permission error dialog when the fragments resume.
-			    mPermissionDenied = true;
-			}
-			break;
-		case CAMERA_PERMISSION_REQUEST_CODE:
-			if (PermissionUtils.isPermissionGranted(permissions, grantResults,
-				Manifest.permission.CAMERA)) {
-				startActivity(shootIntent);
-			} else {
-				PermissionUtils.PermissionDeniedDialog.newInstance(false).show(getSupportFragmentManager(), "dialog");
-			}
-			break;
-		default:
-			break;
-	}
+        switch (requestCode) {
+            case LOCATION_PERMISSION_REQUEST_CODE:
+                if (PermissionUtils.isPermissionGranted(permissions, grantResults,
+                    Manifest.permission.ACCESS_FINE_LOCATION)) {
+                    // Enable the my location layer if the permission has been granted.
+                    enableMyLocation();
+                } else {
+                    // Display the missing permission error dialog when the fragments resume.
+                    mPermissionDenied = true;
+                }
+                break;
+            case CAMERA_PERMISSION_REQUEST_CODE:
+                if (PermissionUtils.isPermissionGranted(permissions, grantResults, Manifest.permission.CAMERA)) {
+                    startActivity(shootIntent);
+                } else {
+                    PermissionUtils.PermissionDeniedDialog.newInstance(false).show(getSupportFragmentManager(), "dialog");
+                }
+                break;
+            default:
+                break;
+        }
     }
 
     @Override
@@ -574,30 +574,6 @@ public class map extends AppCompatActivity implements
         }
     }
 
-    // Define a DialogFragment that displays the error dialog
-    public static class ErrorDialogFragment extends DialogFragment {
-
-        // Global field to contain the error dialog
-        private Dialog mDialog;
-
-        // Default constructor. Sets the dialog field to null
-        public ErrorDialogFragment() {
-            super();
-            mDialog = null;
-        }
-
-        // Set the dialog to display
-        public void setDialog(Dialog dialog) {
-            mDialog = dialog;
-        }
-
-        // Return a Dialog to the DialogFragment.
-        @NonNull
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            return mDialog;
-        }
-    }
 
     public void sendShip() {
 

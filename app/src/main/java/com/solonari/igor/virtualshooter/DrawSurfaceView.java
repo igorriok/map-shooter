@@ -19,13 +19,8 @@ public class DrawSurfaceView extends View {
     private double OFFSET = 0d;
     private double screenWidth, screenHeight = 0d;
     private Bitmap[] mSpots;
-    public ArrayList<Point> props = new ArrayList<Point>();
-    static {
-        props.add(new Point(48.086186, 28.716660, "North"));
-        props.add(new Point(45.630479, 28.935411, "South"));
-        props.add(new Point(47.037986, 29.595115, "East"));
-        props.add(new Point(47.033792, 28.881268, "Mama Svetei"));
-    }
+    public ArrayList<Point> props = new ArrayList<>();
+
 
     public DrawSurfaceView(Context c, Paint paint) {
         super(c);
@@ -110,7 +105,7 @@ public class DrawSurfaceView extends View {
     }
     
     public void setPoints(ArrayList<Point> points) {
-        props = points
+        props = points;
     }
 
 }
