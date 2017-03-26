@@ -2,6 +2,7 @@ package com.solonari.igor.virtualshooter;
 
 
 import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 
 import java.io.IOException;
@@ -48,6 +49,7 @@ public class ChatManager implements Runnable {
                             break;
                         case ship:
                             handler.obtainMessage(3, line).sendToTarget();
+                            Log.d(TAG, "Received Ships:" + line);
                             break;
                         default:
                             break;
@@ -60,7 +62,8 @@ public class ChatManager implements Runnable {
         } finally {
             try {
                 socket.close();
-                handler.obtainMessage(4, "reconnect").sendToTarget();
+                Message reconect = handler.obtainMessage(4, "reconnect");
+                handler.sendMessageDelayed(reconect, 5000);
             } catch (IOException e) {
                 Log.e(TAG, "can't close socket", e);
             }

@@ -52,7 +52,7 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks,
     private long FASTEST_INTERVAL = 1000; /* 1 secs */
     protected Location location;
     protected static final int REQUEST_CAMERA_PERMISSION = 2;
-    private Handler mHandler = new Handler(Looper.getMainLooper(), this);
+    private Handler mHandler;
     public ArrayList<Point> props;
     private final int ship = 3;
     private ArrayList<String> line;
@@ -138,7 +138,8 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks,
                             | View.SYSTEM_UI_FLAG_FULLSCREEN
                             | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);}
     }
-    
+
+
     @Override
     public boolean handleMessage(Message msg) {
 
@@ -147,7 +148,7 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks,
                 line = (ArrayList) msg.obj;
                 props = new ArrayList<>();
                 for(int i = 1; i < line.size(); i = i + 3) {
-                        props.add(new Point(Double.parseDouble(line.get(i+1)), Double.parseDouble(line.get(i+2)), line.get(i)));
+                    props.add(new Point(Double.parseDouble(line.get(i+1)), Double.parseDouble(line.get(i+2)), line.get(i)));
                 }
                 mDrawView.setPoints(props);
                 break;

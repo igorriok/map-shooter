@@ -2,7 +2,6 @@ package com.solonari.igor.virtualshooter;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Intent;
 import android.content.IntentSender;
@@ -16,8 +15,8 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
+import android.os.Messenger;
 import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -67,7 +66,7 @@ public class map extends AppCompatActivity implements
     private long UPDATE_INTERVAL = 5000;  /* 5 secs */
     private long FASTEST_INTERVAL = 1000; /* 1 secs */
     private static String TAG = "Map";
-    private Handler mHandler = new Handler(this);
+    private Handler mHandler = new Handler(Looper.getMainLooper(), this);
     protected TCPClient tcpClient;
     final String mTag = "Handler";
     private ChatManager chatManager;
@@ -129,15 +128,20 @@ public class map extends AppCompatActivity implements
         // Set a click listener on shoot button
         Compass.setOnClickListener(new View.OnClickListener() {
             // The code in this method will be executed when the shoot View is clicked on.
-            @RequiresApi(api = Build.VERSION_CODES.M)
+
             @Override
             public void onClick(View view) {
                 shootIntent = new Intent(map.this, Compass.class);
-                if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
-                    startActivity(shootIntent);
+                shootIntent.putExtra("handler", new Messenger(getHandler()));
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+                        startActivity(shootIntent);
+                    } else {
+                        PermissionUtils.requestPermission(thisActivity, CAMERA_PERMISSION_REQUEST_CODE,
+                                Manifest.permission.CAMERA, false);
+                    }
                 } else {
-                    PermissionUtils.requestPermission(thisActivity, CAMERA_PERMISSION_REQUEST_CODE,
-                            Manifest.permission.CAMERA, false);
+                    startActivity(shootIntent);
                 }
             }
         });
