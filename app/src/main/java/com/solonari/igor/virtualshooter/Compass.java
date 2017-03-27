@@ -10,8 +10,9 @@ import android.hardware.SensorManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
+import android.os.Messenger;
+import android.os.RemoteException;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -34,7 +35,7 @@ import java.util.ArrayList;
 
 
 public class Compass extends AppCompatActivity implements ConnectionCallbacks,
-        OnConnectionFailedListener, LocationListener, Handler.Callback {
+        OnConnectionFailedListener, LocationListener {
 
     private static final String TAG = "Compass";
     private static boolean DEBUG = false;
@@ -52,10 +53,12 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks,
     private long FASTEST_INTERVAL = 1000; /* 1 secs */
     protected Location location;
     protected static final int REQUEST_CAMERA_PERMISSION = 2;
-    private Handler mHandler;
+    private Messenger mService;
+    private static Handler mHandler;
     public ArrayList<Point> props;
     private final int ship = 3;
     private ArrayList<String> line;
+    private ChatManager chatManager;
 
 
     private SensorEventListener mListener = new SensorEventListener() {
@@ -124,6 +127,10 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks,
         });
 
         buildGoogleApiClient();
+
+        setHandler();
+        mService = getIntent().getExtras().getParcelable("handler");
+        sendMessenger();
     }
 
     @Override
@@ -139,21 +146,36 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks,
                             | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);}
     }
 
+    private void setHandler() {
+        mHandler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
 
-    @Override
-    public boolean handleMessage(Message msg) {
-
-        switch (msg.what) {
-            case ship:
-                line = (ArrayList) msg.obj;
-                props = new ArrayList<>();
-                for(int i = 1; i < line.size(); i = i + 3) {
-                    props.add(new Point(Double.parseDouble(line.get(i+1)), Double.parseDouble(line.get(i+2)), line.get(i)));
+                switch (msg.what) {
+                    case ship:
+                        line = (ArrayList) msg.obj;
+                        props = new ArrayList<>();
+                        for (int i = 1; i < line.size(); i = i + 3) {
+                            props.add(new Point(Double.parseDouble(line.get(i + 1)), Double.parseDouble(line.get(i + 2)), line.get(i)));
+                        }
+                        mDrawView.setPoints(props);
+                        break;
                 }
-                mDrawView.setPoints(props);
-                break;
+            }
+        };
+    }
+
+    private void sendMessenger() {
+        Message msg = Message.obtain(null, 6, null);
+        try {
+            mService.send(msg);
+        } catch (RemoteException e){
+            Log.d(TAG, "Cant set handler to ChatManager", e);
         }
-        return true;
+    }
+
+    private Handler getHandler(){
+        return mHandler;
     }
 
     protected synchronized void buildGoogleApiClient() {

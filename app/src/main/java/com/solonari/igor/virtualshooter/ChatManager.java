@@ -2,7 +2,9 @@ package com.solonari.igor.virtualshooter;
 
 
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
+import android.os.Messenger;
 import android.util.Log;
 
 import java.io.IOException;
@@ -12,7 +14,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 
-public class ChatManager implements Runnable {
+public class ChatManager extends Thread {
 
     private Socket socket = null;
     private Handler handler;
@@ -23,7 +25,7 @@ public class ChatManager implements Runnable {
     private final String id = "id";
     private final String ship = "ship";
     //ArrayList<String> line;
-    private final String setHandler = "setHandler";
+    public final int setHandler = 6;
 
     ChatManager(Socket socket, Handler handler) {
         this.socket = socket;
@@ -33,18 +35,22 @@ public class ChatManager implements Runnable {
 
     @Override
     public void run() {
+
+        Looper.prepare();
+
         sHandler = new Handler() {
                 @Override
                 public void handleMessage(Message msg) {
                     switch (msg.what) {
                         case setHandler:
                             handler = (Handler) msg.obj;
+                            Log.d(TAG, "Set new Handler");
                             break;
                         default:
                             super.handleMessage(msg);
                     }
                 }
-            }
+            };
         try {
             // Create PrintWriter object for sending messages to server.
             out = new ObjectOutputStream(socket.getOutputStream());
@@ -52,7 +58,7 @@ public class ChatManager implements Runnable {
             in = new ObjectInputStream(socket.getInputStream());
             Log.d(TAG, "In/Out created");
             handler.obtainMessage(1, this).sendToTarget();
-            handler.obtainMessage(5, new Messanger(sHandler));
+            handler.obtainMessage(5, new Messenger(sHandler)).sendToTarget();
 
             while (true) {
                     ArrayList<String> line = (ArrayList) in.readObject();
@@ -83,6 +89,7 @@ public class ChatManager implements Runnable {
                 Log.e(TAG, "can't close socket", e);
             }
         }
+        Looper.loop();
     }
 
     void sendMessage(ArrayList message) {

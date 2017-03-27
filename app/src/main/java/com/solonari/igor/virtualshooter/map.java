@@ -308,9 +308,10 @@ public class map extends AppCompatActivity implements
                 //sendShip();
                 break;
 	    case 5:
-		mService = (Messanger) msg.obj;
-            default:
-                break;
+		    mService = (Messenger) msg.obj;
+            Log.d(TAG, "Set mService");
+        default:
+            break;
         }
         return true;
     }
@@ -420,7 +421,13 @@ public class map extends AppCompatActivity implements
         } else {
             showNoticeDialog();
         }
-
+        if(mService != null) {
+            try {
+                mService.send(Message.obtain(null, 6, mHandler));
+            } catch (Exception e) {
+                Log.d(TAG, "Cant set handler to ChatManager", e);
+            }
+        }
     }
 
     protected void displayShipName(){
