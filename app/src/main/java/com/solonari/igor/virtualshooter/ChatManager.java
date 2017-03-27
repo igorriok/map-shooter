@@ -16,12 +16,14 @@ public class ChatManager implements Runnable {
 
     private Socket socket = null;
     private Handler handler;
+    private Handler sHandler;
     private static final String TAG = "ChatHandler";
     ObjectInputStream in;
     ObjectOutputStream out;
     private final String id = "id";
     private final String ship = "ship";
     //ArrayList<String> line;
+    private final String setHandler = "setHandler";
 
     ChatManager(Socket socket, Handler handler) {
         this.socket = socket;
@@ -31,6 +33,18 @@ public class ChatManager implements Runnable {
 
     @Override
     public void run() {
+        sHandler = new Handler() {
+                @Override
+                public void handleMessage(Message msg) {
+                    switch (msg.what) {
+                        case setHandler:
+                            handler = (Handler) msg.obj;
+                            break;
+                        default:
+                            super.handleMessage(msg);
+                    }
+                }
+            }
         try {
             // Create PrintWriter object for sending messages to server.
             out = new ObjectOutputStream(socket.getOutputStream());
@@ -38,6 +52,7 @@ public class ChatManager implements Runnable {
             in = new ObjectInputStream(socket.getInputStream());
             Log.d(TAG, "In/Out created");
             handler.obtainMessage(1, this).sendToTarget();
+            handler.obtainMessage(5, new Messanger(sHandler));
 
             while (true) {
                     ArrayList<String> line = (ArrayList) in.readObject();
