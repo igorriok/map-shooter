@@ -83,6 +83,7 @@ public class map extends AppCompatActivity implements
     private ArrayList<Marker> markers;
     private AppCompatActivity thisActivity = this;
     private Intent shootIntent;
+    private Messenger mService = null;
 
     /*
      * Define a request code to send to Google Play services This code is
@@ -132,7 +133,7 @@ public class map extends AppCompatActivity implements
             @Override
             public void onClick(View view) {
                 shootIntent = new Intent(map.this, Compass.class);
-                shootIntent.putExtra("handler", new Messenger(getHandler()));
+                shootIntent.putExtra("handler", mService);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
                         startActivity(shootIntent);
@@ -306,6 +307,8 @@ public class map extends AppCompatActivity implements
                 }
                 //sendShip();
                 break;
+	    case 5:
+		mService = (Messanger) msg.obj;
             default:
                 break;
         }
