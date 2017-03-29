@@ -70,7 +70,7 @@
             android:value="AIzaSyD8PzKjFCrUvkyEVMNeE9h3mQN3OGX0Tzo" />
 
         <service
-            android:name=".MyService"
+            android:name=".TCPService"
             android:enabled="true"
             android:exported="false"></service>
     </application>

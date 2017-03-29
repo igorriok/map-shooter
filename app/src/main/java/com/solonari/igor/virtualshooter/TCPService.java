@@ -8,7 +8,6 @@ import android.os.Message;
 import android.os.Messenger;
 import android.util.Log;
 
-import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
@@ -17,13 +16,14 @@ import java.net.Socket;
 import java.net.SocketAddress;
 import java.util.ArrayList;
 
-public class MyService extends Service {
+public class TCPService extends Service {
     
     final Messenger mMessenger = new Messenger(new IncomingHandler());
     private static final String TAG = "TCPClient";
     final String ipNumber = "178.168.41.217";
     final int port = 57349;
-    private Handler handler;
+    Messenger outMessenger;
+    Message msg;
     SocketAddress sockaddr;
     Socket socket;
     ObjectInputStream in;
@@ -31,7 +31,7 @@ public class MyService extends Service {
     final String id = "id";
     final String ship = "ship";
     
-    public MyService() {
+    public TCPService() {
     }
     
     @Override
@@ -81,18 +81,18 @@ public class MyService extends Service {
                 //Create BufferedReader object for receiving messages from server.
                 in = new ObjectInputStream(socket.getInputStream());
                 Log.d(TAG, "In/Out created");
-                handler.obtainMessage(1, this).sendToTarget();
 
                 while (true) {
                         ArrayList<String> line = (ArrayList) in.readObject();
                         String head = line.get(0);
                         switch (head) {
                             case id:
-                                String points = line.get(1);
-                                handler.obtainMessage(2, points).sendToTarget();
+                                msg = Message.obtain(null, 2, line.get(1));
+                                outMessenger.send(msg);
                                 break;
                             case ship:
-                                handler.obtainMessage(3, line).sendToTarget();
+                                msg = Message.obtain(null, 3, line);
+                                outMessenger.send(msg);
                                 Log.d(TAG, "Received Ships:" + line);
                                 break;
                             default:
@@ -106,9 +106,10 @@ public class MyService extends Service {
             } finally {
                 try {
                     socket.close();
-                    Message reconect = handler.obtainMessage(4, "reconnect");
-                    handler.sendMessageDelayed(reconect, 5000);
-                } catch (IOException e) {
+                    msg = Message.obtain(null, 4, null);
+                    //TODO: make a delay for reconnection
+                    outMessenger.send(msg);
+                } catch (Exception e) {
                     Log.e(TAG, "can't close socket", e);
                 }
             }
@@ -116,14 +117,22 @@ public class MyService extends Service {
     }
     
     //Handler of incoming messages from clients.
-    private static class IncomingHandler extends Handler {
+    private class IncomingHandler extends Handler {
         @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
+        public void handleMessage(Message message) {
+            switch (message.what) {
                 case 1:
+                    outMessenger = (Messenger) message.obj;
+                    break;
+                case 2:
+                    try {
+                        out.writeObject(message.obj);
+                    } catch (Exception e){
+                        Log.d(TAG, "Cant send message", e);
+                    }
                     break;
                 default:
-                    super.handleMessage(msg);
+                    super.handleMessage(message);
             }
         }
     }

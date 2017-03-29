@@ -29,7 +29,7 @@
     <string name="sign_out">Sign Out</string>
     <string name="exit">Exit</string>
 
-    <!-- Ship name dialog -->
+    <!-- Ships name dialog -->
     <string name="ship_name_header">Ship Name</string>
     <string name="ship_message">Enter new name</string>
     <string name="new_ship_name">Ship Name</string>

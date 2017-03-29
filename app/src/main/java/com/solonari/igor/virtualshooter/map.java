@@ -3,8 +3,11 @@ package com.solonari.igor.virtualshooter;
 import android.Manifest;
 import android.app.Activity;
 import android.app.DialogFragment;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -13,6 +16,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.os.Messenger;
@@ -70,7 +74,6 @@ public class map extends AppCompatActivity implements
     private Handler mHandler = new Handler(Looper.getMainLooper(), this);
     protected TCPClient tcpClient;
     final String mTag = "Handler";
-    private ChatManager chatManager;
     private String idToken;
     protected static final String Pref_file = "Pref_file";
     protected SharedPreferences settings;
@@ -80,11 +83,11 @@ public class map extends AppCompatActivity implements
 	private static final int ship = 3;
 	private static final int chatThread = 1;
     private static final int reconnect = 4;
-	private ArrayList<String> line;
-    private ArrayList<Marker> markers;
-    private AppCompatActivity thisActivity = this;
-    private Intent shootIntent;
-    private Messenger mService = null;
+	ArrayList<String> line;
+    ArrayList<Marker> markers;
+    AppCompatActivity thisActivity = this;
+    Intent shootIntent;
+    Messenger mService = null;
 
     /*
      * Define a request code to send to Google Play services This code is
@@ -276,11 +279,6 @@ public class map extends AppCompatActivity implements
                 Toast.makeText(this, message, Toast.LENGTH_LONG).show();
                 Log.d(mTag, message);
                 break;
-            case chatThread:
-                Object obj = msg.obj;
-                setChatManager((ChatManager) obj);
-                Log.d(mTag, "ChatManager set");
-                break;
             case ship:
                 line = (ArrayList) msg.obj;
                 if(mMap != null) {
@@ -323,10 +321,16 @@ public class map extends AppCompatActivity implements
         return true;
     }
 
-    public void setChatManager(ChatManager obj) {
-        chatManager = obj;
-        sendShip();
-    }
+    private ServiceConnection mConnection = new ServiceConnection() {
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            mService = new Messenger(service);
+            sendShip();
+        }
+
+        public void onServiceDisconnected(ComponentName className) {
+            mService = null;
+        }
+    };
 
     private Handler getHandler(){
         return mHandler;
@@ -411,7 +415,8 @@ public class map extends AppCompatActivity implements
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         AppIndex.AppIndexApi.start(client, getIndexApiAction());
-
+        // Bind to the service
+        bindService(new Intent(this, TCPService.class), mConnection, Context.BIND_AUTO_CREATE);
     }
 
     @Override
@@ -610,7 +615,7 @@ public class map extends AppCompatActivity implements
                 idArray.add("id");
                 idArray.add(idToken);
                 try {
-                    chatManager.sendMessage(idArray);
+                    mService.send(Message.obtain(null, 2, idArray));
                 } catch (Exception e) {
                     Log.e(TAG, "cant send message", e);
                 }
@@ -633,7 +638,7 @@ public class map extends AppCompatActivity implements
 
                     if (!shipName.equals("")) {
                         try {
-                            chatManager.sendMessage(shipArray);
+                            mService.send(Message.obtain(null, 2, shipArray));
                         } catch (Exception e) {
                             Log.e(TAG, "cant send location", e);
                         }
