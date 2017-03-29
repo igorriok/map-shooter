@@ -2,52 +2,49 @@ package com.solonari.igor.virtualshooter;
 
 import android.app.Service;
 import android.content.Intent;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
+import android.os.Messenger;
+import android.util.Log;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.net.SocketAddress;
+import java.util.ArrayList;
 
 public class MyService extends Service {
     
     final Messenger mMessenger = new Messenger(new IncomingHandler());
     private static final String TAG = "TCPClient";
-    private final String ipNumber = "178.168.41.217";
-    private Handler mHandler;
-    private ChatManager chat;
+    final String ipNumber = "178.168.41.217";
+    final int port = 57349;
+    private Handler handler;
     SocketAddress sockaddr;
     Socket socket;
+    ObjectInputStream in;
+    ObjectOutputStream out;
+    final String id = "id";
+    final String ship = "ship";
     
     public MyService() {
     }
     
     @Override
     public void onCreate() {
-        new Thread(new ChatManager(mHandler)).start();
+        new Thread(new ChatManager()).start();
     }
     
     @Override
     public IBinder onBind(Intent intent) {
-        // TODO: Return the communication channel to the service.
         return mMessenger.getBinder();
     }
     
-    class ChatManager extends Thread {
-
-        private static final String TAG = "TCPClient";
-        private final String ipNumber = "178.168.41.217";
-        private Socket socket = null;
-        private Handler handler;
-        private Handler sHandler;
-        private static final String TAG = "ChatHandler";
-        ObjectInputStream in;
-        ObjectOutputStream out;
-        private final String id = "id";
-        private final String ship = "ship";
-        //ArrayList<String> line;
-        public final int setHandler = 6;
-
-        ChatManager(Socket socket, Handler handler) {
-            this.socket = socket;
-            this.handler = handler;
-        }
-
+    private class ChatManager extends Thread {
 
         @Override
         public void run() {
@@ -55,7 +52,7 @@ public class MyService extends Service {
             try {
                 // Creating InetAddress object from ipNumber passed via constructor from IpGetter class.
                 InetAddress serverAddress = InetAddress.getByName(ipNumber);
-                sockaddr = new InetSocketAddress(serverAddress, 57349);
+                sockaddr = new InetSocketAddress(serverAddress, port);
                 Log.d(TAG, "Connecting...");
 
             } catch (Exception e) {
@@ -85,7 +82,6 @@ public class MyService extends Service {
                 in = new ObjectInputStream(socket.getInputStream());
                 Log.d(TAG, "In/Out created");
                 handler.obtainMessage(1, this).sendToTarget();
-                handler.obtainMessage(5, new Messenger(sHandler)).sendToTarget();
 
                 while (true) {
                         ArrayList<String> line = (ArrayList) in.readObject();
@@ -120,11 +116,11 @@ public class MyService extends Service {
     }
     
     //Handler of incoming messages from clients.
-    class IncomingHandler extends Handler {
+    private static class IncomingHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case MSG_SAY_HELLO:
+                case 1:
                     break;
                 default:
                     super.handleMessage(msg);

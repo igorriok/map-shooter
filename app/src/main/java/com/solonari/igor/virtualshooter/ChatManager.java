@@ -38,7 +38,7 @@ public class ChatManager extends Thread {
 
         Looper.prepare();
 
-        sHandler = new Handler() {
+        sHandler = new Handler(Looper.myLooper()) {
                 @Override
                 public void handleMessage(Message msg) {
                     switch (msg.what) {
