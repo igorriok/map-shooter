@@ -16,6 +16,7 @@ import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
 import android.os.Messenger;
+import android.os.RemoteException;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -310,6 +311,12 @@ public class map extends AppCompatActivity implements
 	    case 5:
 		    mService = (Messenger) msg.obj;
             Log.d(TAG, "Set mService");
+            Message mes = Message.obtain(null, 6, null);
+            try {
+                mService.send(mes);
+            } catch (RemoteException e){
+                Log.d(TAG, "Cant set handler to ChatManager", e);
+            }
         default:
             break;
         }
