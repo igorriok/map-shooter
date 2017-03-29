@@ -55,8 +55,11 @@
         </activity>
         <activity
             android:name=".Compass"
-            android:screenOrientation="sensorLandscape"></activity>
-        <activity android:name=".SignInActivity"></activity>
+            android:screenOrientation="sensorLandscape">
+        </activity>
+        <activity
+            android:name=".SignInActivity">
+        </activity>
 
         <uses-library
             android:name="com.google.android.maps"
@@ -72,7 +75,9 @@
         <service
             android:name=".TCPService"
             android:enabled="true"
-            android:exported="false"></service>
+            android:exported="false"
+            android:process=":tcpService">
+        </service>
     </application>
 
 </manifest>

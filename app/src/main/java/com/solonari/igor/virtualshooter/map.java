@@ -20,7 +20,6 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.os.Messenger;
-import android.os.RemoteException;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -72,7 +71,6 @@ public class map extends AppCompatActivity implements
     private long FASTEST_INTERVAL = 1000; /* 1 secs */
     private static String TAG = "Map";
     private Handler mHandler = new Handler(Looper.getMainLooper(), this);
-    protected TCPClient tcpClient;
     final String mTag = "Handler";
     private String idToken;
     protected static final String Pref_file = "Pref_file";
@@ -163,13 +161,6 @@ public class map extends AppCompatActivity implements
             goToSignIn();
         }
 
-        if (tcpClient == null && idToken != null) {
-            tcpClient = new TCPClient(this.getHandler());
-            tcpClient.start();
-            Log.d(TAG, "TCPClient created");
-        } else {
-            Log.d(TAG, "no idToken!!!");
-        }
         final View settingsMenu = findViewById(R.id.settings);
         settingsMenu.setOnClickListener(new View.OnClickListener() {
             // The code in this method will be executed when the settings View is clicked on.
@@ -297,27 +288,11 @@ public class map extends AppCompatActivity implements
                 }
                 break;
             case reconnect:
-                tcpClient = null;
-                //shipThread = null;
-                if (tcpClient == null && idToken != null) {
-                    tcpClient = new TCPClient(this.getHandler());
-                    tcpClient.start();
-                    Log.d(TAG, "TCPClient created");
-                }
-                //sendShip();
+                bindService(new Intent(this, TCPService.class), mConnection, Context.BIND_AUTO_CREATE);
                 break;
-	    case 5:
-		    mService = (Messenger) msg.obj;
-            Log.d(TAG, "Set mService");
-            Message mes = Message.obtain(null, 6, null);
-            try {
-                mService.send(mes);
-            } catch (RemoteException e){
-                Log.d(TAG, "Cant set handler to ChatManager", e);
+            default:
+                break;
             }
-        default:
-            break;
-        }
         return true;
     }
 
@@ -416,7 +391,11 @@ public class map extends AppCompatActivity implements
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         AppIndex.AppIndexApi.start(client, getIndexApiAction());
         // Bind to the service
-        bindService(new Intent(this, TCPService.class), mConnection, Context.BIND_AUTO_CREATE);
+        if (mService == null && idToken != null) {
+            bindService(new Intent(this, TCPService.class), mConnection, Context.BIND_AUTO_CREATE);
+        } else {
+            Log.d(TAG, "no idToken!!!");
+        }
     }
 
     @Override
