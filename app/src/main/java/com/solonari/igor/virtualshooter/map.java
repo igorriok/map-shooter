@@ -595,7 +595,7 @@ public class map extends AppCompatActivity implements
                 idArray.add(idToken);
                 try {
 			Bundle b = new Bundle();
-			b.putStringArrayList("ship", shipArray);
+			b.putStringArrayList("ship", idArray);
 			Message m = Message.obtain(null, 2, null);
 			m.setData(b);
                     mService.send(m);
