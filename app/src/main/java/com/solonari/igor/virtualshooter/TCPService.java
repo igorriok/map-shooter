@@ -126,7 +126,7 @@ public class TCPService extends Service {
                     break;
                 case 2:
                     try {
-                        out.writeObject(message.obj);
+                        out.writeObject((message.getData).getStringArrayList("ship"));
                     } catch (Exception e){
                         Log.d(TAG, "Cant send message", e);
                     }
