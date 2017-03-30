@@ -123,6 +123,7 @@ public class TCPService extends Service {
             switch (message.what) {
                 case 1:
                     outMessenger = (Messenger) message.obj;
+                    Log.d(TAG, "set messenger");
                     break;
                 case 2:
                     try {
