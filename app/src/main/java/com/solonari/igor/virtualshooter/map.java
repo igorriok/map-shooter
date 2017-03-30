@@ -85,7 +85,7 @@ public class map extends AppCompatActivity implements
     ArrayList<Marker> markers;
     AppCompatActivity thisActivity = this;
     Intent shootIntent;
-    Messenger mService = null;
+    TCPService mService = null;
 
     /*
      * Define a request code to send to Google Play services This code is
@@ -413,13 +413,6 @@ public class map extends AppCompatActivity implements
             }
         } else {
             showNoticeDialog();
-        }
-        if(mService != null) {
-            try {
-                mService.send(Message.obtain(null, 6, mHandler));
-            } catch (Exception e) {
-                Log.d(TAG, "Cant set handler to ChatManager", e);
-            }
         }
     }
 
