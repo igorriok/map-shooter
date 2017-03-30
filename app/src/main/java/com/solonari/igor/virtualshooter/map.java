@@ -594,7 +594,11 @@ public class map extends AppCompatActivity implements
                 idArray.add("id");
                 idArray.add(idToken);
                 try {
-                    mService.send(Message.obtain(null, 2, idArray));
+			Bundle b = new Bundle();
+			b.putStringArrayList("ship", shipArray);
+			Message m = Message.obtain(null, 2, null);
+			m.setData(b);
+                    mService.send(m);
                 } catch (Exception e) {
                     Log.e(TAG, "cant send message", e);
                 }
