@@ -617,7 +617,9 @@ public class map extends AppCompatActivity implements
 
                     if (!shipName.equals("")) {
                         try {
-                            mService.send((Message.obtain(null, 2, null)).setData((new Bundle).putStringArrayList("ship", shipArray)));
+			    Bundle b = new Bundle();
+			    b.putStringArrayList("ship", shipArray);
+                            mService.send((Message.obtain(null, 2, null)).setData(b));
                         } catch (Exception e) {
                             Log.e(TAG, "cant send location", e);
                         }
