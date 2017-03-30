@@ -129,5 +129,9 @@ public class TCPService extends Service {
             Log.d(TAG, "Cant send message", e);
         }
     }
+    
+    public void setHandler(Handler handler) {
+        this.handler = handler;
+    }
 
 }
