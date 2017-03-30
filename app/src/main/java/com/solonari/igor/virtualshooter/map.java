@@ -298,7 +298,9 @@ public class map extends AppCompatActivity implements
 
     private ServiceConnection mConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder service) {
-            mService = new Messenger(service);
+            LocalBinder binder = (LocalBinder) service;
+            mService = binder.getService();
+		mService.setHandler(getHandler());
             sendShip();
         }
 
@@ -594,11 +596,7 @@ public class map extends AppCompatActivity implements
                 idArray.add("id");
                 idArray.add(idToken);
                 try {
-			Bundle b = new Bundle();
-			b.putStringArrayList("ship", idArray);
-			Message m = Message.obtain(null, 2, null);
-			m.setData(b);
-                    mService.send(m);
+                    mService.sendMessage(idArray);
                 } catch (Exception e) {
                     Log.e(TAG, "cant send message", e);
                 }
@@ -621,11 +619,7 @@ public class map extends AppCompatActivity implements
 
                     if (!shipName.equals("")) {
                         try {
-				Bundle b = new Bundle();
-				b.putStringArrayList("ship", shipArray);
-				Message m = Message.obtain(null, 2, null);
-				m.setData(b);
-                            mService.send(m);
+                            mService.sendMessage(shipArray);
                         } catch (Exception e) {
                             Log.e(TAG, "cant send location", e);
                         }
