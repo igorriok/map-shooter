@@ -2,6 +2,7 @@ package com.solonari.igor.virtualshooter;
 
 import android.app.Service;
 import android.content.Intent;
+import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -40,9 +41,9 @@ public class TCPService extends Service {
     }
     
     public class LocalBinder extends Binder {
-        LocalService getService() {
+        TCPService getService() {
             // Return this instance of LocalService so clients can call public methods
-            return LocalService.this;
+            return TCPService.this;
         }
     }
     
@@ -114,7 +115,7 @@ public class TCPService extends Service {
                     socket.close();
                     msg = Message.obtain(null, 4, null);
                     //TODO: make a delay for reconnection
-                    outMessenger.send(msg);
+
                 } catch (Exception e) {
                     Log.e(TAG, "can't close socket", e);
                 }
