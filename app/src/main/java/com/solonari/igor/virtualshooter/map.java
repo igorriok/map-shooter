@@ -619,7 +619,7 @@ public class map extends AppCompatActivity implements
                         try {
 				Bundle b = new Bundle();
 				b.putStringArrayList("ship", shipArray);
-				Message m = Message.obtain();
+				Message m = Message.obtain(null, 2, null);
 				m.setData(b);
                             mService.send(m);
                         } catch (Exception e) {
