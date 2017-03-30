@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.os.Messenger;
 import android.util.Log;
 
 import java.io.ObjectInputStream;
@@ -18,11 +17,9 @@ import java.util.ArrayList;
 
 public class TCPService extends Service {
     
-    final Messenger mMessenger = new Messenger(new IncomingHandler());
     private static final String TAG = "TCPClient";
     final String ipNumber = "178.168.41.217";
     final int port = 57349;
-    Messenger outMessenger;
     Message msg;
     SocketAddress sockaddr;
     Socket socket;
@@ -30,6 +27,9 @@ public class TCPService extends Service {
     ObjectOutputStream out;
     final String id = "id";
     final String ship = "ship";
+    private Handler handler;
+    // Binder given to clients
+    private final IBinder mBinder = new LocalBinder();
     
     public TCPService() {
     }
@@ -39,9 +39,16 @@ public class TCPService extends Service {
         new Thread(new ChatManager()).start();
     }
     
+    public class LocalBinder extends Binder {
+        LocalService getService() {
+            // Return this instance of LocalService so clients can call public methods
+            return LocalService.this;
+        }
+    }
+    
     @Override
     public IBinder onBind(Intent intent) {
-        return mMessenger.getBinder();
+        return mBinder;
     }
     
     private class ChatManager extends Thread {
@@ -87,12 +94,11 @@ public class TCPService extends Service {
                         String head = line.get(0);
                         switch (head) {
                             case id:
-                                msg = Message.obtain(null, 2, line.get(1));
-                                outMessenger.send(msg);
+                                String points = line.get(1);
+                                handler.obtainMessage(2, points).sendToTarget();
                                 break;
                             case ship:
-                                msg = Message.obtain(null, 3, line);
-                                outMessenger.send(msg);
+                                handler.obtainMessage(3, line).sendToTarget();
                                 Log.d(TAG, "Received Ships:" + line);
                                 break;
                             default:
@@ -116,25 +122,11 @@ public class TCPService extends Service {
         }
     }
     
-    //Handler of incoming messages from clients.
-    private class IncomingHandler extends Handler {
-        @Override
-        public void handleMessage(Message message) {
-            switch (message.what) {
-                case 1:
-                    outMessenger = (Messenger) message.obj;
-                    Log.d(TAG, "set messenger");
-                    break;
-                case 2:
-                    try {
-                        out.writeObject((message.getData()).getStringArrayList("ship"));
-                    } catch (Exception e){
-                        Log.d(TAG, "Cant send message", e);
-                    }
-                    break;
-                default:
-                    super.handleMessage(message);
-            }
+    public void sendMessage(ArrayList message) {
+        try {
+            out.writeObject(message);
+        } catch (Exception e){
+            Log.d(TAG, "Cant send message", e);
         }
     }
 
