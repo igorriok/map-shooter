@@ -51,46 +51,39 @@ public class DrawSurfaceView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
+        if (mSpots != null) {
+            for (int i = 0; i < mSpots.length; i++) {
+                Bitmap spot = mSpots[i];
+                Point u = props.get(i);
+                
+                if (spot == null)
+                    continue;
+                double angle = MathUtils.getBearing(me.latitude, me.longitude, u.latitude, u.longitude);
+                double delta;
 
-        for (int i = 0; i < mSpots.length; i++) {
-            Bitmap spot = mSpots[i];
-            Point u = props.get(i);
+                if ((angle >= 35 && angle < 225 && angle >= OFFSET ) ||
+                        (angle >= 0 && angle < 35 && OFFSET < 225 && angle >= OFFSET) ||
+                        (angle >= 225 && angle < 360 && OFFSET > 35 && angle >= OFFSET)) {
 
-            if (spot == null)
-                continue;
-
-
-            double angle = MathUtils.getBearing(me.latitude, me.longitude, u.latitude, u.longitude);
-            double delta;
-
-            if ((angle >= 35 && angle < 225 && angle >= OFFSET ) ||
-                    (angle >= 0 && angle < 35 && OFFSET < 225 && angle >= OFFSET) ||
-                    (angle >= 225 && angle < 360 && OFFSET > 35 && angle >= OFFSET)) {
-
-                delta = angle - OFFSET;
-                u.x = (float) (screenWidth/2 + screenWidth/2 * delta/35);
-            }
-
-            else if ((angle >= 0 && angle < 35 && OFFSET >= 225)){
-
-                delta = 360 - OFFSET + angle;
-                u.x = (float) (screenWidth/2 + screenWidth/2 * delta/35);
-            }
-            else if (angle >= 225 && angle < 360 && OFFSET < 35){
-
-                delta = 360 - angle + OFFSET;
-                u.x = (float) (screenWidth/2 - screenWidth/2 * delta/35);
-
-            }
-            else {
-                delta = OFFSET - angle;
-                u.x = (float) (screenWidth/2 - screenWidth/2 * delta/35);
-            }
-
-                u.y = (float) screenHeight/2 - spot.getHeight()/2;
-                canvas.drawBitmap(spot, u.x, u.y, mPaint); //camera spot
-                canvas.drawText(u.description, u.x + spot.getWidth(), u.y, mPaint); //text
-
+                    delta = angle - OFFSET;
+                    u.x = (float) (screenWidth/2 + screenWidth/2 * delta/35);
+                }
+                else if ((angle >= 0 && angle < 35 && OFFSET >= 225)){
+                    delta = 360 - OFFSET + angle;
+                    u.x = (float) (screenWidth/2 + screenWidth/2 * delta/35);
+                }
+                else if (angle >= 225 && angle < 360 && OFFSET < 35){
+                    delta = 360 - angle + OFFSET;
+                    u.x = (float) (screenWidth/2 - screenWidth/2 * delta/35);
+                }
+                else {
+                    delta = OFFSET - angle;
+                    u.x = (float) (screenWidth/2 - screenWidth/2 * delta/35);
+                }
+                    u.y = (float) screenHeight/2 - spot.getHeight()/2;
+                    canvas.drawBitmap(spot, u.x, u.y, mPaint); //camera spot
+                    canvas.drawText(u.description, u.x + spot.getWidth(), u.y, mPaint); //text
+        }
         }
         canvas.drawLine(0.0f, (float) screenHeight/2, (float) screenWidth, (float) screenHeight/2, mPaint);
         canvas.drawText(Double.toString(OFFSET), 10, 100, mPaint); //text
