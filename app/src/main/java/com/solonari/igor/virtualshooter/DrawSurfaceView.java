@@ -37,7 +37,7 @@ public class DrawSurfaceView extends View {
     public void setSpots(ArrayList<Point> props) {
         mSpots = new Bitmap[props.size()];
         for (Bitmap spot : mSpots) {
-            spot = BitmapFactory.decodeResource(context.getResources(), R.drawable.dot);
+            spot = BitmapFactory.decodeResource(getResources(), R.drawable.dot);
         }
     }
 
