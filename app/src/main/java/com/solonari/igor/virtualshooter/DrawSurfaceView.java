@@ -32,11 +32,13 @@ public class DrawSurfaceView extends View {
         mPaint.setTextSize(50);
         mPaint.setStrokeWidth(DpiUtils.getPxFromDpi(getContext(), 2));
         mPaint.setAntiAlias(true);
-
+    }
+    
+    public void setSpots(ArrayList<Point> props) {
         mSpots = new Bitmap[props.size()];
-        for (int i = 0; i < mSpots.length; i++)
+        for (int i = 0; i < mSpots.length; i++) {
             mSpots[i] = BitmapFactory.decodeResource(context.getResources(), R.drawable.dot);
-
+        }
     }
 
     @Override
@@ -106,6 +108,7 @@ public class DrawSurfaceView extends View {
     
     public void setPoints(ArrayList<Point> points) {
         props = points;
+        setSpots(props);
     }
 
 }
