@@ -4,6 +4,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.hardware.GeomagneticField;
 import android.hardware.Sensor;
@@ -62,6 +63,10 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks,
     public ArrayList<Point> props;
     private final int ship = 3;
     private ArrayList<String> line;
+    String shipName;
+    SharedPreferences settings;
+    static final String Pref_file = "Pref_file";
+    boolean mBound = false;
 
 
     private SensorEventListener mListener = new SensorEventListener() {
@@ -132,6 +137,8 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks,
         buildGoogleApiClient();
 
         setHandler();
+
+        setShipName();
     }
 
     @Override
@@ -157,6 +164,8 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks,
                         line = (ArrayList) msg.obj;
                         props = new ArrayList<>();
                         for (int i = 1; i < line.size(); i = i + 3) {
+                            if (line.get(i).equals(shipName))
+                                continue;
                             props.add(new Point(Double.parseDouble(line.get(i + 1)), Double.parseDouble(line.get(i + 2)), line.get(i)));
                         }
                         mDrawView.setPoints(props);
@@ -223,7 +232,10 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks,
             mGoogleApiClient.disconnect();
         }
         mSensorManager.unregisterListener(mListener);
-        super.onStop();
+        if (mBound) {
+            unbindService(mConnection);
+            mBound = false;
+        }
     }
 
     @Override
@@ -271,7 +283,7 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks,
             TCPService.LocalBinder binder = (TCPService.LocalBinder) service;
             mService = binder.getService();
             mService.setHandler(getHandler());
-            //sendShip();
+            mBound = true;
         }
 
         public void onServiceDisconnected(ComponentName className) {
@@ -281,6 +293,13 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks,
 
     private Handler getHandler(){
         return mHandler;
+    }
+
+    private void setShipName() {
+        settings = getSharedPreferences(Pref_file, 0);
+        if(settings != null) {
+            shipName = settings.getString("shipName", "");
+        }
     }
 
 }

@@ -415,6 +415,9 @@ public class map extends AppCompatActivity implements
         } else {
             showNoticeDialog();
         }
+        if (mService != null) {
+            mService.setHandler(getHandler());
+        }
 	    Log.d(TAG, "onResume");
     }
 
