@@ -113,7 +113,6 @@ public class TCPService extends Service {
             } finally {
                 try {
                     socket.close();
-                    msg = Message.obtain(null, 4, null);
                     //TODO: make a delay for reconnection
 
                 } catch (Exception e) {

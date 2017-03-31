@@ -19,7 +19,6 @@ import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
-import android.os.Messenger;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -85,7 +84,7 @@ public class map extends AppCompatActivity implements
     ArrayList<Marker> markers;
     AppCompatActivity thisActivity = this;
     Intent shootIntent;
-    TCPService mService = null;
+    TCPService mService;
 
     /*
      * Define a request code to send to Google Play services This code is
@@ -135,7 +134,7 @@ public class map extends AppCompatActivity implements
             @Override
             public void onClick(View view) {
                 shootIntent = new Intent(map.this, Compass.class);
-                shootIntent.putExtra("handler", mService);
+
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
                         startActivity(shootIntent);
@@ -286,6 +285,7 @@ public class map extends AppCompatActivity implements
                         markerName.showInfoWindow();
                     }
                 }
+                Log.d(TAG, "Adding markers on map");
                 break;
             case reconnect:
                 bindService(new Intent(this, TCPService.class), mConnection, Context.BIND_AUTO_CREATE);
@@ -298,9 +298,9 @@ public class map extends AppCompatActivity implements
 
     private ServiceConnection mConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder service) {
-            LocalBinder binder = (LocalBinder) service;
+            TCPService.LocalBinder binder = (TCPService.LocalBinder) service;
             mService = binder.getService();
-		mService.setHandler(getHandler());
+		    mService.setHandler(getHandler());
             sendShip();
         }
 

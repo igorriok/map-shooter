@@ -88,9 +88,9 @@ public class DrawSurfaceView extends View {
                 u.y = (float) screenHeight/2 - spot.getHeight()/2;
                 canvas.drawBitmap(spot, u.x, u.y, mPaint); //camera spot
                 canvas.drawText(u.description, u.x + spot.getWidth(), u.y, mPaint); //text
-                canvas.drawLine(0.0f, (float) screenHeight/2, (float) screenWidth, (float) screenHeight/2, mPaint);
 
         }
+        canvas.drawLine(0.0f, (float) screenHeight/2, (float) screenWidth, (float) screenHeight/2, mPaint);
         canvas.drawText(Double.toString(OFFSET), 10, 100, mPaint); //text
     }
 

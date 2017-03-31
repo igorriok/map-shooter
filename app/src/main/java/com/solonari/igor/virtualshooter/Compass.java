@@ -1,6 +1,9 @@
 package com.solonari.igor.virtualshooter;
 
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.hardware.GeomagneticField;
 import android.hardware.Sensor;
@@ -10,6 +13,7 @@ import android.hardware.SensorManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
@@ -53,12 +57,11 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks,
     private long FASTEST_INTERVAL = 1000; /* 1 secs */
     protected Location location;
     protected static final int REQUEST_CAMERA_PERMISSION = 2;
-    private Messenger mService;
-    private static Handler mHandler;
+    TCPService mService;
+    private Handler mHandler;
     public ArrayList<Point> props;
     private final int ship = 3;
     private ArrayList<String> line;
-    private ChatManager chatManager;
 
 
     private SensorEventListener mListener = new SensorEventListener() {
@@ -129,8 +132,6 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks,
         buildGoogleApiClient();
 
         setHandler();
-        mService = getIntent().getExtras().getParcelable("handler");
-        sendMessenger();
     }
 
     @Override
@@ -165,18 +166,6 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks,
         };
     }
 
-    private void sendMessenger() {
-        Message msg = Message.obtain(null, 6, null);
-        try {
-            mService.send(msg);
-        } catch (RemoteException e){
-            Log.d(TAG, "Cant set handler to ChatManager", e);
-        }
-    }
-
-    private Handler getHandler(){
-        return mHandler;
-    }
 
     protected synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -190,6 +179,7 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks,
     @Override
     protected void onStart() {
         super.onStart();
+        bindService(new Intent(this, TCPService.class), mConnection, Context.BIND_AUTO_CREATE);
     }
 
     @Override
@@ -274,6 +264,23 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks,
             // Display the missing permission error dialog when the fragments resume.
             
         }
+    }
+
+    private ServiceConnection mConnection = new ServiceConnection() {
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            TCPService.LocalBinder binder = (TCPService.LocalBinder) service;
+            mService = binder.getService();
+            mService.setHandler(getHandler());
+            //sendShip();
+        }
+
+        public void onServiceDisconnected(ComponentName className) {
+            mService = null;
+        }
+    };
+
+    private Handler getHandler(){
+        return mHandler;
     }
 
 }
