@@ -398,6 +398,7 @@ public class map extends AppCompatActivity implements
         } else {
             Log.d(TAG, "no idToken!!!");
         }
+	    Log.d(TAG, "onStart")
     }
 
     @Override
@@ -414,6 +415,7 @@ public class map extends AppCompatActivity implements
         } else {
             showNoticeDialog();
         }
+	    Log.d(TAG, "onResume");
     }
 
     protected void displayShipName(){
