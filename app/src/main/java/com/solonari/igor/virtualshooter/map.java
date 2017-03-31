@@ -398,7 +398,7 @@ public class map extends AppCompatActivity implements
         } else {
             Log.d(TAG, "no idToken!!!");
         }
-	    Log.d(TAG, "onStart")
+	    Log.d(TAG, "onStart");
     }
 
     @Override

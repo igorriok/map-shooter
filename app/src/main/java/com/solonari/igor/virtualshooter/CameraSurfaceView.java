@@ -30,23 +30,22 @@ public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Call
     private Semaphore mCameraOpenCloseLock = new Semaphore(1);
     private CameraDevice mCameraDevice;
     private CaptureRequest.Builder mPreviewRequestBuilder;
-    private Surface surface;
+    Surface surface;
     private CameraCaptureSession mCaptureSession;
     private CaptureRequest mPreviewRequest;
 
 
     public CameraSurfaceView(Context context, AttributeSet set) {
         super(context, set);
-
         // Initiate the Surface Holder properly
-        this.holder = this.getHolder();
-        this.holder.addCallback(this);
+        holder = getHolder();
+        holder.addCallback(this);
         mContext = context;
     }
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-
+        surface = holder.getSurface();
         cameraType();
 
         CameraManager manager = (CameraManager) mContext.getSystemService(Context.CAMERA_SERVICE);
@@ -60,8 +59,6 @@ public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Call
         } catch (InterruptedException e) {
             throw new RuntimeException("Interrupted while trying to lock camera opening.", e);
         }
-
-
     }
 
     private void cameraType() {
@@ -114,25 +111,21 @@ public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Call
      */
     private void createCameraPreviewSession() {
         try {
-            //SurfaceTexture texture = this.getSurfaceTexture();
-            //assert texture != null;
-
             // We configure the size of default buffer to be the size of camera preview we want.
             //texture.setDefaultBufferSize(mPreviewSize.getWidth(), mPreviewSize.getHeight());
 
             // This is the output Surface we need to start preview.
             //Surface surface = new Surface(texture);
 
-            this.surface = this.holder.getSurface();
+            //surface = holder.getSurface();
 
             // We set up a CaptureRequest.Builder with the output Surface.
             mPreviewRequestBuilder = mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
-            mPreviewRequestBuilder.addTarget(this.surface);
-            Log.d(TAG, "SurfaceChanged");
+            mPreviewRequestBuilder.addTarget(surface);
+            Log.d(TAG, "Camera surface set");
 
             // Here, we create a CameraCaptureSession for camera preview.
-            mCameraDevice.createCaptureSession(Arrays.asList(this.surface),
-                    new CameraCaptureSession.StateCallback() {
+            mCameraDevice.createCaptureSession(Arrays.asList(surface), new CameraCaptureSession.StateCallback() {
 
                         @Override
                         public void onConfigured(@NonNull CameraCaptureSession cameraCaptureSession) {
@@ -145,8 +138,7 @@ public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Call
                             mCaptureSession = cameraCaptureSession;
                             try {
                                 // Auto focus should be continuous for camera preview.
-                                mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE,
-                                        CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
+                                mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
 
                                 // Finally, we start displaying the camera preview.
                                 mPreviewRequest = mPreviewRequestBuilder.build();
@@ -161,8 +153,7 @@ public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Call
                                 @NonNull CameraCaptureSession cameraCaptureSession) {
                             Toast.makeText(mContext, "Failed", Toast.LENGTH_SHORT).show();
                         }
-                    }, null
-            );
+                    }, null);
 
         } catch (CameraAccessException e) {
             Log.e(TAG, "Camera access exception", e);
@@ -172,8 +163,7 @@ public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Call
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
 
-        Log.d("Test", "SurfaceChanged");
-
+        Log.d(TAG, "Surface Size Changed: " + "width: " + width + ", height: " + height);
     }
 
     @Override
