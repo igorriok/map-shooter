@@ -610,7 +610,7 @@ public class map extends AppCompatActivity implements
 			
 		    settings = getSharedPreferences(Pref_file, 0);
                     String ID = settings.getString("ID", "");
-                    shipArray.add(shipName);
+                    shipArray.add(ID);
                     String shipName = settings.getString("shipName", "");
                     shipArray.add(shipName);
 
