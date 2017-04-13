@@ -118,7 +118,7 @@ public class SignInActivity extends AppCompatActivity implements
             startActivity(new Intent(SignInActivity.this, map.class));
             SharedPreferences settings = getSharedPreferences("Pref_file", 0);
             SharedPreferences.Editor editor = settings.edit();
-            editor.putString("ID", result.getSignInAccount().getIdToken());
+            editor.putString("Token", result.getSignInAccount().getIdToken());
             editor.apply();
             updateUI(true);
         } else {
