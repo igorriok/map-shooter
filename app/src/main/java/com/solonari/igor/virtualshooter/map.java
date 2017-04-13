@@ -607,15 +607,17 @@ public class map extends AppCompatActivity implements
                 if (latLng != null) {
                     ArrayList<String> shipArray = new ArrayList<>();
                     shipArray.add("ship");
-
-                    settings = getSharedPreferences(Pref_file, 0);
+			
+		    settings = getSharedPreferences(Pref_file, 0);
+                    String ID = settings.getString("ID", "");
+                    shipArray.add(shipName);
                     String shipName = settings.getString("shipName", "");
                     shipArray.add(shipName);
 
                     shipArray.add(Double.toString(latLng.latitude));
                     shipArray.add(Double.toString(latLng.longitude));
 
-                    if (!shipName.equals("")) {
+                    if (!shipName.equals("") && !ID.equals("")) {
                         try {
                             mService.sendMessage(shipArray);
                         } catch (Exception e) {
