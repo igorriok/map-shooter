@@ -153,7 +153,7 @@ public class map extends AppCompatActivity implements
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
 
         SharedPreferences settings = getSharedPreferences(Pref_file, 0);
-        String id = settings.getString("ID", "");
+        String id = settings.getString("Token", "");
         if (!id.equals("")) {
             idToken = id;
         } else {
@@ -205,7 +205,7 @@ public class map extends AppCompatActivity implements
                             public void onResult(@NonNull Status status) {
                                 SharedPreferences settings = getSharedPreferences(Pref_file, 0);
                                 SharedPreferences.Editor editor = settings.edit();
-                                editor.putString("ID", "");
+                                editor.putString("Token", "");
                                 editor.apply();
                                 Intent signInIntent = new Intent(map.this, SignInActivity.class);
                                 startActivity(signInIntent);
