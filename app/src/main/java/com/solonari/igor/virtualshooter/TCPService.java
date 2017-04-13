@@ -29,6 +29,7 @@ public class TCPService extends Service {
     final String id = "id";
     final String ship = "ship";
     private Handler handler;
+    protected SharedPreferences settings;
     // Binder given to clients
     private final IBinder mBinder = new LocalBinder();
     
@@ -96,6 +97,10 @@ public class TCPService extends Service {
                         switch (head) {
                             case id:
                                 String points = line.get(1);
+                                SharedPreferences settings = getSharedPreferences("Pref_file", 0);
+                                SharedPreferences.Editor editor = settings.edit();
+                                editor.putString("ID", line.get(2));
+                                editor.apply();
                                 handler.obtainMessage(2, points).sendToTarget();
                                 break;
                             case ship:
