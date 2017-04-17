@@ -16,8 +16,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.os.Messenger;
-import android.os.RemoteException;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -43,6 +41,7 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks,
         OnConnectionFailedListener, LocationListener {
 
     private static final String TAG = "Compass";
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     private static boolean DEBUG = false;
     private SensorManager mSensorManager;
     private Sensor mSensor;
@@ -67,6 +66,8 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks,
     SharedPreferences settings;
     static final String Pref_file = "Pref_file";
     boolean mBound = false;
+    ArrayList<String> missleArray;
+    String shipID;
 
 
     private SensorEventListener mListener = new SensorEventListener() {
@@ -134,6 +135,20 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks,
             }
         });
 
+        Button fire = (Button) findViewById(R.id.fire);
+        fire.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                missleArray = new ArrayList<>();
+                missleArray.add("missle");
+                missleArray.add(shipID);
+                missleArray.add(Float.toString(mHeading));
+                missleArray.add(Double.toString(location.getLatitude()));
+                missleArray.add(Double.toString(location.getLongitude()));
+                mService.sendMessage(missleArray);
+            }
+        });
+
         buildGoogleApiClient();
 
         setHandler();
@@ -189,6 +204,10 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks,
     protected void onStart() {
         super.onStart();
         bindService(new Intent(this, TCPService.class), mConnection, Context.BIND_AUTO_CREATE);
+        settings = getSharedPreferences(Pref_file, 0);
+        if(settings != null) {
+            shipID = settings.getString("ID", "");
+        }
     }
 
     @Override
@@ -202,6 +221,12 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks,
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         mLocationRequest.setInterval(UPDATE_INTERVAL);
         mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Permission to access the location is missing.
+            PermissionUtils.requestPermission(this, LOCATION_PERMISSION_REQUEST_CODE,
+                    android.Manifest.permission.ACCESS_FINE_LOCATION, true);
+        }
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
     }
 

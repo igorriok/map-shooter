@@ -24,7 +24,7 @@ public class ChatManager extends Thread {
     ObjectOutputStream out;
     private final String id = "id";
     private final String ship = "ship";
-    //ArrayList<String> line;
+    //ArrayList<String> shipList;
     public final int setHandler = 6;
 
     ChatManager(Socket socket, Handler handler) {

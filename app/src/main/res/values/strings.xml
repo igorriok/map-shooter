@@ -19,6 +19,8 @@
     <string name="shoot">Shoot</string>
     <string name="ok">Ok</string>
     <string name="cancel">Cancel</string>
+    <string name="map">MAP</string>
+    <string name="fire">FIRE</string>
 
     <!-- Sign-in status messages -->
     <string name="signed_in_fmt">Signed in as: %s</string>

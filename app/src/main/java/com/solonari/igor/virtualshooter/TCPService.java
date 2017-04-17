@@ -22,17 +22,17 @@ public class TCPService extends Service {
     private static final String TAG = "TCPClient";
     final String ipNumber = "178.168.41.217";
     final int port = 57349;
-    Message msg;
     SocketAddress sockaddr;
     Socket socket;
     ObjectInputStream in;
     ObjectOutputStream out;
     final String id = "id";
     final String ship = "ship";
+    final String missleArray = "missleArray";
     private Handler handler;
-    protected SharedPreferences settings;
     // Binder given to clients
     private final IBinder mBinder = new LocalBinder();
+    private Handler sHandler;
     
     public TCPService() {
     }
@@ -40,6 +40,7 @@ public class TCPService extends Service {
     @Override
     public void onCreate() {
         new Thread(new ChatManager()).start();
+        serviceHandler();
     }
     
     public class LocalBinder extends Binder {
@@ -108,6 +109,10 @@ public class TCPService extends Service {
                                 handler.obtainMessage(3, line).sendToTarget();
                                 Log.d(TAG, "Received Ships:" + line);
                                 break;
+                            case missleArray:
+                                handler.obtainMessage(5, line).sendToTarget();
+                                Log.d(TAG, "Received Missles:" + line);
+                                break;
                             default:
                                 break;
                         }
@@ -130,6 +135,7 @@ public class TCPService extends Service {
     
     public void sendMessage(ArrayList message) {
         try {
+            sHandler.obtainMessage(1, message).sendToTarget();
             out.writeObject(message);
         } catch (Exception e){
             Log.d(TAG, "Cant send message", e);
@@ -138,6 +144,19 @@ public class TCPService extends Service {
     
     public void setHandler(Handler handler) {
         this.handler = handler;
+    }
+
+    public void serviceHandler() {
+        sHandler = new Handler(){
+            @Override
+            public void handleMessage(Message inMessage) {
+                try {
+                    out.writeObject(inMessage);
+                } catch (Exception e){
+                    Log.d(TAG, "Cant send message", e);
+                }
+            }
+        };
     }
 
 }

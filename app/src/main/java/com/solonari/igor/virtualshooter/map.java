@@ -80,11 +80,14 @@ public class map extends AppCompatActivity implements
 	private static final int ship = 3;
 	private static final int chatThread = 1;
     private static final int reconnect = 4;
-	ArrayList<String> line;
-    ArrayList<Marker> markers;
+    private static final int missleArray = 5;
+	ArrayList<String> shipList;
+    ArrayList<Marker> shipMarkers;
+    ArrayList<Marker> missleMarkers;
     AppCompatActivity thisActivity = this;
     Intent shootIntent;
     TCPService mService;
+    ArrayList<String> missleList;
 
     /*
      * Define a request code to send to Google Play services This code is
@@ -270,22 +273,34 @@ public class map extends AppCompatActivity implements
                 Log.d(mTag, message);
                 break;
             case ship:
-                line = (ArrayList) msg.obj;
-                if(mMap != null) {
-                    mMap.clear();
-                }
-                markers = new ArrayList<>();
-                if(mMap != null) {
-                    for(int i = 1; i < line.size(); i = i + 3) {
-                        markers.add(mMap.addMarker(new MarkerOptions()
-                                .position(new LatLng(Double.parseDouble(line.get(i+1)), Double.parseDouble(line.get(i+2))))
-                                .title(line.get(i))));
+                shipList = (ArrayList) msg.obj;
+                if(shipMarkers != null) {
+                    for(Marker markerName : shipMarkers) {
+                        markerName.remove();
                     }
-                    for(Marker markerName : markers) {
+                }
+                shipMarkers = new ArrayList<>();
+                if(mMap != null) {
+                    for(int i = 1; i < shipList.size(); i = i + 3) {
+                        shipMarkers.add(mMap.addMarker(new MarkerOptions()
+                                .position(new LatLng(Double.parseDouble(shipList.get(i+1)), Double.parseDouble(shipList.get(i+2))))
+                                .title(shipList.get(i))
+                                .flat(true)));
+                    }
+                    for(Marker markerName : shipMarkers) {
                         markerName.showInfoWindow();
                     }
                 }
-                Log.d(TAG, "Adding markers on map");
+                Log.d(TAG, "Adding shipMarkers on map");
+                break;
+            case missleArray:
+                missleList = (ArrayList) msg.obj;
+                if(missleMarkers != null) {
+                    for(Marker missleMarker : missleMarkers) {
+                        missleMarker.remove();
+                    }
+                }
+
                 break;
             case reconnect:
                 bindService(new Intent(this, TCPService.class), mConnection, Context.BIND_AUTO_CREATE);
@@ -608,7 +623,7 @@ public class map extends AppCompatActivity implements
                     ArrayList<String> shipArray = new ArrayList<>();
                     shipArray.add("ship");
 			
-		    settings = getSharedPreferences(Pref_file, 0);
+		            settings = getSharedPreferences(Pref_file, 0);
                     String ID = settings.getString("ID", "");
                     shipArray.add(ID);
                     String shipName = settings.getString("shipName", "");
@@ -626,6 +641,23 @@ public class map extends AppCompatActivity implements
                     }
                 }
                 shipHandler.postDelayed(this, 5000);
+            }
+        });
+
+        shipHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                if (latLng != null) {
+
+                    ArrayList<String> missleArray = new ArrayList<>();
+                    missleArray.add("missleArray");
+                    try {
+                        mService.sendMessage(missleArray);
+                    } catch (Exception e) {
+                        Log.e(TAG, "cant send location", e);
+                    }
+                }
+                shipHandler.postDelayed(this, 1000);
             }
         });
 
