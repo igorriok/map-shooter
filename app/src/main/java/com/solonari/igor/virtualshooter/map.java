@@ -304,7 +304,7 @@ public class map extends AppCompatActivity implements
                     for(int i = 1; i < missleList.size(); i = i + 3) {
                         missleMarkers.add(mMap.addMarker(new MarkerOptions()
                                 .position(new LatLng(Double.parseDouble(missleList.get(i+1)), Double.parseDouble(missleList.get(i+2))))
-                                .rotation(missleList.get(i))
+                                .rotation(Float.parseFloat(missleList.get(i)))
                                 .flat(true)));
                     }
                 }
