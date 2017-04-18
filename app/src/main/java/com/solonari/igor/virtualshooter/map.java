@@ -300,7 +300,14 @@ public class map extends AppCompatActivity implements
                         missleMarker.remove();
                     }
                 }
-
+		if(mMap != null) {
+                    for(int i = 1; i < missleList.size(); i = i + 3) {
+                        missleMarkers.add(mMap.addMarker(new MarkerOptions()
+                                .position(new LatLng(Double.parseDouble(missleList.get(i+1)), Double.parseDouble(missleList.get(i+2))))
+                                .rotation(missleList.get(i))
+                                .flat(true)));
+                    }
+                }
                 break;
             case reconnect:
                 bindService(new Intent(this, TCPService.class), mConnection, Context.BIND_AUTO_CREATE);
