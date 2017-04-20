@@ -79,8 +79,7 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks,
 
             if (mDrawView != null) {
                 float magneticHeading = (float) Math.toDegrees(mOrientation[0]);
-                mHeading = MathUtils.mod(computeTrueNorth(magneticHeading), 360.0f)
-                        - ARM_DISPLACEMENT_DEGREES;
+                mHeading = MathUtils.mod(computeTrueNorth(magneticHeading), 360.0f);
                 mDrawView.setOffset(mHeading);
                 mDrawView.invalidate();
             }
