@@ -136,7 +136,6 @@ public class TCPService extends Service {
     public void sendMessage(ArrayList message) {
         try {
             sHandler.obtainMessage(1, message).sendToTarget();
-            out.writeObject(message);
         } catch (Exception e){
             Log.d(TAG, "Cant send message", e);
         }
@@ -150,8 +149,9 @@ public class TCPService extends Service {
         sHandler = new Handler(){
             @Override
             public void handleMessage(Message inMessage) {
+                ArrayList<String> mess = (ArrayList) inMessage.obj;
                 try {
-                    out.writeObject(inMessage);
+                    out.writeObject(mess);
                 } catch (Exception e){
                     Log.d(TAG, "Cant send message", e);
                 }
