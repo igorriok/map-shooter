@@ -75,13 +75,13 @@ public class map extends AppCompatActivity implements
     protected static final String Pref_file = "Pref_file";
     protected SharedPreferences settings;
     HandlerThread shipThread;
-	LatLng latLng;
-	private static final int id = 2;
-	private static final int ship = 3;
-	private static final int chatThread = 1;
+    LatLng latLng;
+    private static final int id = 2;
+    private static final int ship = 3;
+    private static final int chatThread = 1;
     private static final int reconnect = 4;
     private static final int missleArray = 5;
-	ArrayList<String> shipList;
+    ArrayList<String> shipList;
     ArrayList<Marker> shipMarkers;
     ArrayList<Marker> missleMarkers;
     AppCompatActivity thisActivity = this;
