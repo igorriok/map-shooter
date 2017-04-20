@@ -123,6 +123,8 @@ public class TCPService extends Service {
                 Log.e(TAG, "can't create in/out", e);
             } finally {
                 try {
+                    in.close();
+                    out.close();
                     socket.close();
                     //TODO: make a delay for reconnection
 
