@@ -76,7 +76,7 @@ public class map extends AppCompatActivity implements
     protected SharedPreferences settings;
     HandlerThread shipThread;
     LatLng latLng;
-    private static final int id = 2;
+    private static final int points = 2;
     private static final int ship = 3;
     private static final int chatThread = 1;
     private static final int reconnect = 4;
@@ -264,13 +264,11 @@ public class map extends AppCompatActivity implements
     public boolean handleMessage(Message msg) {
 
         switch (msg.what) {
-            case id:
+            case points:
                 String message = (String) msg.obj;
                 TextView Rating = (TextView) findViewById(R.id.rating);
                 Rating.setText(message);
-                //Rating.postInvalidate();
-                Toast.makeText(this, message, Toast.LENGTH_LONG).show();
-                Log.d(mTag, message);
+                Log.d("Display Points", message);
                 break;
             case ship:
                 shipList = (ArrayList) msg.obj;
@@ -300,7 +298,8 @@ public class map extends AppCompatActivity implements
                         missleMarker.remove();
                     }
                 }
-		if(mMap != null) {
+                missleMarkers = new ArrayList<>();
+                if(mMap != null) {
                     for(int i = 1; i < missleList.size(); i = i + 3) {
                         missleMarkers.add(mMap.addMarker(new MarkerOptions()
                                 .position(new LatLng(Double.parseDouble(missleList.get(i+1)), Double.parseDouble(missleList.get(i+2))))
@@ -506,7 +505,7 @@ public class map extends AppCompatActivity implements
 
     public void onLocationChanged(Location location) {
         // Report to the UI that the location was updated
-        Toast.makeText(this, location.toString(), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, location.toString(), Toast.LENGTH_SHORT).show();
 	    latLng = new LatLng(location.getLatitude(), location.getLongitude());
         String msg = "Updated Location: " +
                 Double.toString(location.getLatitude()) + "," +
@@ -609,6 +608,7 @@ public class map extends AppCompatActivity implements
         Looper looper = shipThread.getLooper();
         final Handler shipHandler = new Handler(looper);
 
+        //send token to get ID
         shipHandler.post(new Runnable() {
             @Override
             public void run() {
@@ -623,6 +623,7 @@ public class map extends AppCompatActivity implements
             }
         });
 
+        //send ship location
         shipHandler.post(new Runnable() {
             @Override
             public void run() {
@@ -651,13 +652,14 @@ public class map extends AppCompatActivity implements
             }
         });
 
+        //request missiles
         shipHandler.post(new Runnable() {
             @Override
             public void run() {
                 if (latLng != null) {
 
                     ArrayList<String> missleArray = new ArrayList<>();
-                    missleArray.add("missleArray");
+                    missleArray.add("missileArray");
                     try {
                         mService.sendMessage(missleArray);
                     } catch (Exception e) {

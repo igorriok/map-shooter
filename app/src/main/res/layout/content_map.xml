@@ -33,7 +33,7 @@
             android:padding="5dp"
             android:gravity="center_vertical"
             android:maxLines="1"
-            android:text="123"
+            android:text="@string/checking"
             android:textSize="20sp"
             android:textColor="#E1F5FE"
             android:background="#03A9F4"

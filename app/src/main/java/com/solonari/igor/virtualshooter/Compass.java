@@ -139,12 +139,13 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks,
             @Override
             public void onClick(View view) {
                 missleArray = new ArrayList<>();
-                missleArray.add("missle");
+                missleArray.add("missile");
                 missleArray.add(shipID);
                 missleArray.add(Float.toString(mHeading));
                 missleArray.add(Double.toString(location.getLatitude()));
                 missleArray.add(Double.toString(location.getLongitude()));
                 mService.sendMessage(missleArray);
+                Toast.makeText(getApplicationContext(), "Fire in the hall", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -237,10 +238,11 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks,
         mDrawView.invalidate();
         updateGeomagneticField();
 
-        String msg = "Updated Location: " +
-                Double.toString(location.getLatitude()) + "," +
-                Double.toString(location.getLongitude());
+        /*String msg = "Updated Location: " +
+        *        Double.toString(location.getLatitude()) + "," +
+        *        Double.toString(location.getLongitude());
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+        */
     }
 
     @Override

@@ -26,20 +26,23 @@ public class TCPService extends Service {
     Socket socket;
     ObjectInputStream in;
     ObjectOutputStream out;
-    final String id = "id";
-    final String ship = "ship";
-    final String missleArray = "missleArray";
+    final static String id = "id";
+    final static String ship = "ship";
+    final static String missileArray = "missileArray";
+    final static String points = "points";
     private Handler handler;
     // Binder given to clients
     private final IBinder mBinder = new LocalBinder();
     private Handler sHandler;
+    ChatManager cm;
     
     public TCPService() {
     }
     
     @Override
     public void onCreate() {
-        new Thread(new ChatManager()).start();
+        cm = new ChatManager();
+        cm.start();
         serviceHandler();
     }
     
@@ -82,6 +85,11 @@ public class TCPService extends Service {
                 } catch (Exception e) {
                     disconnected = true;
                     Log.d(TAG, "Error on socket", e);
+                    try {
+                        cm.sleep(2000);
+                    } catch (InterruptedException er) {
+                        er.printStackTrace();
+                    }
                 }
             } while (disconnected);
             
@@ -97,19 +105,23 @@ public class TCPService extends Service {
                         ArrayList<String> line = (ArrayList) in.readObject();
                         String head = line.get(0);
                         switch (head) {
+                            case points:
+                                //update points
+                                handler.obtainMessage(2, line.get(1)).sendToTarget();
+                                break;
                             case id:
-                                String points = line.get(1);
+                                //update ID
                                 SharedPreferences settings = getSharedPreferences("Pref_file", 0);
                                 SharedPreferences.Editor editor = settings.edit();
-                                editor.putString("ID", line.get(2));
+                                editor.putString("ID", line.get(1));
                                 editor.apply();
-                                handler.obtainMessage(2, points).sendToTarget();
+                                Log.d(TAG, "Set ID: " + line.get(1));
                                 break;
                             case ship:
                                 handler.obtainMessage(3, line).sendToTarget();
                                 Log.d(TAG, "Received Ships:" + line);
                                 break;
-                            case missleArray:
+                            case missileArray:
                                 handler.obtainMessage(5, line).sendToTarget();
                                 Log.d(TAG, "Received Missles:" + line);
                                 break;
@@ -127,7 +139,7 @@ public class TCPService extends Service {
                     out.close();
                     socket.close();
                     //TODO: make a delay for reconnection
-
+                    sHandler.obtainMessage(2, null).sendToTarget();
                 } catch (Exception e) {
                     Log.e(TAG, "can't close socket", e);
                 }
@@ -136,11 +148,7 @@ public class TCPService extends Service {
     }
     
     public void sendMessage(ArrayList message) {
-        try {
-            sHandler.obtainMessage(1, message).sendToTarget();
-        } catch (Exception e){
-            Log.d(TAG, "Cant send message", e);
-        }
+        sHandler.obtainMessage(1, message).sendToTarget();
     }
     
     public void setHandler(Handler handler) {
@@ -151,11 +159,21 @@ public class TCPService extends Service {
         sHandler = new Handler(){
             @Override
             public void handleMessage(Message inMessage) {
-                ArrayList<String> mess = (ArrayList) inMessage.obj;
-                try {
-                    out.writeObject(mess);
-                } catch (Exception e){
-                    Log.d(TAG, "Cant send message", e);
+                switch(inMessage.what) {
+                    case 1:
+                        ArrayList<String> mess = (ArrayList) inMessage.obj;
+                        try {
+                            out.writeObject(mess);
+                        } catch (Exception e) {
+                            Log.d(TAG, "Cant send message", e);
+                        }
+                        break;
+                    case 2:
+                        cm = new ChatManager();
+                        cm.start();
+                        break;
+                    default:
+                        break;
                 }
             }
         };
