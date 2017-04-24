@@ -81,13 +81,16 @@ public class map extends AppCompatActivity implements
     private static final int chatThread = 1;
     private static final int reconnect = 4;
     private static final int missleArray = 5;
+    private static final int exp = 6;
     ArrayList<String> shipList;
     ArrayList<Marker> shipMarkers;
     ArrayList<Marker> missleMarkers;
+    ArrayList<Marker> expMarkers;
     AppCompatActivity thisActivity = this;
     Intent shootIntent;
     TCPService mService;
     ArrayList<String> missleList;
+    ArrayList<String> expList;
 
     /*
      * Define a request code to send to Google Play services This code is
@@ -304,6 +307,22 @@ public class map extends AppCompatActivity implements
                         missleMarkers.add(mMap.addMarker(new MarkerOptions()
                                 .position(new LatLng(Double.parseDouble(missleList.get(i+1)), Double.parseDouble(missleList.get(i+2))))
                                 .rotation(Float.parseFloat(missleList.get(i)))
+                                .flat(true)));
+                    }
+                }
+                break;
+            case exp:
+                expList = (ArrayList) msg.obj;
+                if(expMarkers != null) {
+                    for(Marker expMarker : expMarkers) {
+                        expMarker.remove();
+                    }
+                }
+                expMarkers = new ArrayList<>();
+                if(mMap != null) {
+                    for(int i = 1; i < expList.size(); i = i + 2) {
+                        expMarkers.add(mMap.addMarker(new MarkerOptions()
+                                .position(new LatLng(Double.parseDouble(expList.get(1)), Double.parseDouble(expList.get(i+1))))
                                 .flat(true)));
                     }
                 }

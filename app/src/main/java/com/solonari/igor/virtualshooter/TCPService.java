@@ -30,6 +30,7 @@ public class TCPService extends Service {
     final static String ship = "ship";
     final static String missileArray = "missileArray";
     final static String points = "points";
+    final static String exp = "exp";
     private Handler handler;
     // Binder given to clients
     private final IBinder mBinder = new LocalBinder();
@@ -123,7 +124,11 @@ public class TCPService extends Service {
                                 break;
                             case missileArray:
                                 handler.obtainMessage(5, line).sendToTarget();
-                                Log.d(TAG, "Received Missles:" + line);
+                                //Log.d(TAG, "Received Missles:" + line);
+                                break;
+                            case exp:
+                                handler.obtainMessage(6, line).sendToTarget();
+                                //Log.d(TAG, "Received exp:" + line);
                                 break;
                             default:
                                 break;
