@@ -79,6 +79,8 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks,
 
             if (mDrawView != null) {
                 float magneticHeading = (float) Math.toDegrees(mOrientation[0]);
+                float axisY = (float) Math.toDegrees(mOrientation[1]);
+                mDrawView.setY(axisY);
                 mHeading = MathUtils.mod(computeTrueNorth(magneticHeading), 360.0f);
                 mDrawView.setOffset(mHeading);
                 mDrawView.invalidate();
@@ -214,6 +216,13 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks,
     public void onConnected(Bundle dataBundle) {
         // Display the connection status
         startLocationUpdates();
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Permission to access the location is missing.
+            PermissionUtils.requestPermission(this, LOCATION_PERMISSION_REQUEST_CODE,
+                    android.Manifest.permission.ACCESS_FINE_LOCATION, true);
+        }
+        location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
     }
 
     protected void startLocationUpdates() {

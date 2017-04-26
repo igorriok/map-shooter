@@ -48,6 +48,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -286,7 +287,8 @@ public class map extends AppCompatActivity implements
                         shipMarkers.add(mMap.addMarker(new MarkerOptions()
                                 .position(new LatLng(Double.parseDouble(shipList.get(i+1)), Double.parseDouble(shipList.get(i+2))))
                                 .title(shipList.get(i))
-                                .flat(true)));
+                                .flat(true)
+                                .icon(BitmapDescriptorFactory.fromResource(R.mipmap.fighter))));
                     }
                     for(Marker markerName : shipMarkers) {
                         markerName.showInfoWindow();
@@ -307,7 +309,8 @@ public class map extends AppCompatActivity implements
                         missleMarkers.add(mMap.addMarker(new MarkerOptions()
                                 .position(new LatLng(Double.parseDouble(missleList.get(i+1)), Double.parseDouble(missleList.get(i+2))))
                                 .rotation(Float.parseFloat(missleList.get(i)))
-                                .flat(true)));
+                                .flat(true)
+                                .icon(BitmapDescriptorFactory.fromResource(R.mipmap.missile))));
                     }
                 }
                 break;
@@ -323,7 +326,8 @@ public class map extends AppCompatActivity implements
                     for(int i = 1; i < expList.size(); i = i + 2) {
                         expMarkers.add(mMap.addMarker(new MarkerOptions()
                                 .position(new LatLng(Double.parseDouble(expList.get(1)), Double.parseDouble(expList.get(i+1))))
-                                .flat(true)));
+                                .flat(true)
+                                .icon(BitmapDescriptorFactory.fromResource(R.mipmap.explosion))));
                     }
                 }
                 break;
@@ -499,8 +503,8 @@ public class map extends AppCompatActivity implements
             LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
             CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 17);
             if (mMap != null) {
-		mMap.animateCamera(cameraUpdate);
-	    }
+		        mMap.animateCamera(cameraUpdate);
+	        }
         } else {
             Toast.makeText(this, "Current location was not found, enable GPS", Toast.LENGTH_SHORT).show();
         }
@@ -526,10 +530,12 @@ public class map extends AppCompatActivity implements
         // Report to the UI that the location was updated
         //Toast.makeText(this, location.toString(), Toast.LENGTH_SHORT).show();
 	    latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        /*
         String msg = "Updated Location: " +
                 Double.toString(location.getLatitude()) + "," +
                 Double.toString(location.getLongitude());
-        //Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+        */
     }
 
 
