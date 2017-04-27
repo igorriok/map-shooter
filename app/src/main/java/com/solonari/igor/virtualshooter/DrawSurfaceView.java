@@ -74,7 +74,7 @@ public class DrawSurfaceView extends View {
                 i.x = (screenWidth/2 - screenWidth/2 * delta/35);
             }
 
-            i.y = screenHeight/2 + axisY;
+            i.y = screenHeight/2 - axisY/35 * screenHeight/2;
             //canvas.drawBitmap(spot, i.x, i.y, mPaint); //camera spot
             canvas.drawCircle(i.x, i.y, 20, mPaint);
             canvas.drawText(i.description, i.x + 10, i.y - 10, mPaint);
