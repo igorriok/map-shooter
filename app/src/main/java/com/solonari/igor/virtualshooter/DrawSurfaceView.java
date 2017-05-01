@@ -6,7 +6,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -25,7 +24,7 @@ public class DrawSurfaceView extends View {
     Bitmap spot  = BitmapFactory.decodeResource(getResources(), R.drawable.dot);
     float angle;
     float delta;
-    Rect target = new Rect(10, 10, 10, 10);
+    private float axisZ = 0;
 
 
     public DrawSurfaceView(Context c, Paint paint) {
@@ -81,15 +80,17 @@ public class DrawSurfaceView extends View {
         }
         //canvas.drawLine(0, screenHeight/2, screenWidth, screenHeight/2, mPaint);
         canvas.drawText(Double.toString(Math.round(OFFSET * 10.0)/10.0), 10, 100, mPaint);
-        canvas.drawText(Double.toString(Math.round(axisY * 10.0)/10.0), 10, 200, mPaint);
+        canvas.drawText(Double.toString(Math.round(axisY * 10.0)/10.0), 10, 150, mPaint);
+        canvas.drawText(Double.toString(Math.round(axisZ+90 * 10.0)/10.0), 10, 200, mPaint);
     }
 
     public void setOffset(float offset) {
         this.OFFSET = offset;
     }
 
-    public void setY(float axisY) {
+    public void setYZ(float axisY, float axisZ) {
         this.axisY = axisY;
+        this.axisZ = axisZ;
     }
 
     public void setMyLocation(double latitude, double longitude) {

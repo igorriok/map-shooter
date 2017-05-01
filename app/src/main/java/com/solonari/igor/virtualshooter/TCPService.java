@@ -5,7 +5,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Binder;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 
@@ -34,8 +36,9 @@ public class TCPService extends Service {
     private Handler handler;
     // Binder given to clients
     private final IBinder mBinder = new LocalBinder();
-    private Handler sHandler;
     ChatManager cm;
+    private Looper mServiceLooper;
+    private ServiceHandler mServiceHandler;
     
     public TCPService() {
     }
@@ -44,7 +47,11 @@ public class TCPService extends Service {
     public void onCreate() {
         cm = new ChatManager();
         cm.start();
-        serviceHandler();
+        HandlerThread thread = new HandlerThread("ServiceThread");
+        thread.start();
+        // Get the HandlerThread's Looper and use it for our Handler
+        mServiceLooper = thread.getLooper();
+        mServiceHandler = new ServiceHandler(mServiceLooper);
     }
     
     public class LocalBinder extends Binder {
@@ -144,7 +151,7 @@ public class TCPService extends Service {
                     out.close();
                     socket.close();
                     //TODO: make a delay for reconnection
-                    sHandler.obtainMessage(2, null).sendToTarget();
+                    mServiceHandler.obtainMessage(2, null).sendToTarget();
                 } catch (Exception e) {
                     Log.e(TAG, "can't close socket", e);
                 }
@@ -153,35 +160,35 @@ public class TCPService extends Service {
     }
     
     public void sendMessage(ArrayList message) {
-        sHandler.obtainMessage(1, message).sendToTarget();
+        mServiceHandler.obtainMessage(1, message).sendToTarget();
     }
     
     public void setHandler(Handler handler) {
         this.handler = handler;
     }
 
-    public void serviceHandler() {
-        sHandler = new Handler(){
-            @Override
-            public void handleMessage(Message inMessage) {
-                switch(inMessage.what) {
-                    case 1:
-                        ArrayList<String> mess = (ArrayList) inMessage.obj;
-                        try {
-                            out.writeObject(mess);
-                        } catch (Exception e) {
-                            Log.d(TAG, "Cant send message", e);
-                        }
-                        break;
-                    case 2:
-                        cm = new ChatManager();
-                        cm.start();
-                        break;
-                    default:
-                        break;
-                }
+    private final class ServiceHandler extends Handler {
+        public ServiceHandler(Looper looper) {
+            super(looper);
+        }
+        @Override
+        public void handleMessage(Message msg) {
+            switch(msg.what) {
+                case 1:
+                    ArrayList<String> mess = (ArrayList) msg.obj;
+                    try {
+                        out.writeObject(mess);
+                    } catch (Exception e) {
+                        Log.d(TAG, "Cant send message", e);
+                    }
+                    break;
+                case 2:
+                    cm = new ChatManager();
+                    cm.start();
+                    break;
+                default:
+                    break;
             }
-        };
+        }
     }
-
 }

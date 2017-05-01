@@ -80,7 +80,8 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks,
             if (mDrawView != null) {
                 float magneticHeading = (float) Math.toDegrees(mOrientation[0]);
                 float axisY = (float) Math.toDegrees(mOrientation[1]);
-                mDrawView.setY(axisY);
+                float axisZ = (float) Math.toDegrees(mOrientation[2]);
+                mDrawView.setYZ(axisY, axisZ);
                 mHeading = MathUtils.mod(computeTrueNorth(magneticHeading), 360.0f);
                 mDrawView.setOffset(mHeading);
                 mDrawView.invalidate();

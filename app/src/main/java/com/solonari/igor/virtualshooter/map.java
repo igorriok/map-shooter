@@ -21,6 +21,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
@@ -92,20 +93,13 @@ public class map extends AppCompatActivity implements
     TCPService mService;
     ArrayList<String> missleList;
     ArrayList<String> expList;
-
-    /*
-     * Define a request code to send to Google Play services This code is
-	 * returned in Activity.onActivityResult
-	 */
+    private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
+    private boolean mLocationPermissionGranted;
+    Location location;
     protected final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
-    protected static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     protected static final int CAMERA_PERMISSION_REQUEST_CODE = 2;
-    protected boolean mPermissionDenied = false;
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
     private GoogleApiClient client;
+    boolean mBound = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -344,6 +338,7 @@ public class map extends AppCompatActivity implements
         public void onServiceConnected(ComponentName className, IBinder service) {
             TCPService.LocalBinder binder = (TCPService.LocalBinder) service;
             mService = binder.getService();
+            mBound = true;
 		    mService.setHandler(getHandler());
             sendShip();
         }
@@ -367,33 +362,28 @@ public class map extends AppCompatActivity implements
     }
 
     protected void enableMyLocation() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-                // Permission to access the location is missing.
-                PermissionUtils.requestPermission(this, LOCATION_PERMISSION_REQUEST_CODE,
-                        Manifest.permission.ACCESS_FINE_LOCATION, true);
-        } else if (mMap != null) {
-            // Access to the location has been granted to the app.
-            mMap.setMyLocationEnabled(true);
-		if (latLng != null) {
-			CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 17);
-		}
+        // Access to the location has been granted to the app.
+        //mMap.setMyLocationEnabled(true);
+        if (latLng != null) {
+            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 17);
+            mMap.animateCamera(cameraUpdate);
+        } else {
+            Toast.makeText(this, "Current location was not found, enable GPS", Toast.LENGTH_SHORT).show();
         }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
+        mLocationPermissionGranted = false;
         switch (requestCode) {
-            case LOCATION_PERMISSION_REQUEST_CODE:
-                if (PermissionUtils.isPermissionGranted(permissions, grantResults,
-                    Manifest.permission.ACCESS_FINE_LOCATION)) {
-                    // Enable the my location layer if the permission has been granted.
-                    enableMyLocation();
-                } else {
-                    // Display the missing permission error dialog when the fragments resume.
-                    mPermissionDenied = true;
+            case PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    mLocationPermissionGranted = true;
+                    startLocationUpdates();
                 }
+            }
                 break;
             case CAMERA_PERMISSION_REQUEST_CODE:
                 if (PermissionUtils.isPermissionGranted(permissions, grantResults, Manifest.permission.CAMERA)) {
@@ -410,10 +400,9 @@ public class map extends AppCompatActivity implements
     @Override
     protected void onResumeFragments() {
         super.onResumeFragments();
-        if (mPermissionDenied) {
+        if (mLocationPermissionGranted) {
             // Permission was not granted, display error dialog.
             showMissingPermissionError();
-            mPermissionDenied = false;
         }
     }
 
@@ -489,26 +478,25 @@ public class map extends AppCompatActivity implements
 
     @Override
     public void onConnected(Bundle dataBundle) {
-	
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            // Permission to access the location is missing.
-            PermissionUtils.requestPermission(this, LOCATION_PERMISSION_REQUEST_CODE,
-                    Manifest.permission.ACCESS_FINE_LOCATION, true);
-        }
-        // Display the connection status
-        Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        if (location != null) {
-            Toast.makeText(this, "GPS location was found!", Toast.LENGTH_SHORT).show();
-            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 17);
-            if (mMap != null) {
-		        mMap.animateCamera(cameraUpdate);
-	        }
+
+        if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
+                android.Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            mLocationPermissionGranted = true;
         } else {
-            Toast.makeText(this, "Current location was not found, enable GPS", Toast.LENGTH_SHORT).show();
+            ActivityCompat.requestPermissions(this,
+                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                    PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
         }
-        startLocationUpdates();
+
+        if (mLocationPermissionGranted) {
+            location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+            if(location != null) {
+                latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                enableMyLocation();
+            }
+            startLocationUpdates();
+        }
     }
 
     protected void startLocationUpdates() {
@@ -517,25 +505,23 @@ public class map extends AppCompatActivity implements
         mLocationRequest.setInterval(UPDATE_INTERVAL);
         mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            // Permission to access the location is missing.
-            PermissionUtils.requestPermission(this, LOCATION_PERMISSION_REQUEST_CODE,
-                    Manifest.permission.ACCESS_FINE_LOCATION, true);
+        if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
+                android.Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            mLocationPermissionGranted = true;
+        } else {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                    PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
         }
-        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+        if (mLocationPermissionGranted) {
+            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+        }
     }
 
     public void onLocationChanged(Location location) {
-        // Report to the UI that the location was updated
-        //Toast.makeText(this, location.toString(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, location.toString(), Toast.LENGTH_SHORT).show();
 	    latLng = new LatLng(location.getLatitude(), location.getLongitude());
-        /*
-        String msg = "Updated Location: " +
-                Double.toString(location.getLatitude()) + "," +
-                Double.toString(location.getLongitude());
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
-        */
     }
 
 
@@ -599,6 +585,7 @@ public class map extends AppCompatActivity implements
     @Override
     protected void onPause() {
         super.onPause();
+
     }
 
 
@@ -622,6 +609,9 @@ public class map extends AppCompatActivity implements
         }
         if(mGoogleApiClient != null) {
             mGoogleApiClient.disconnect();
+        }
+        if(mBound) {
+            unbindService(mConnection);
         }
     }
 
@@ -664,6 +654,7 @@ public class map extends AppCompatActivity implements
 
                     shipArray.add(Double.toString(latLng.latitude));
                     shipArray.add(Double.toString(latLng.longitude));
+                    Log.d(TAG, shipArray.toString());
 
                     if (!shipName.equals("") && !ID.equals("")) {
                         try {
@@ -681,15 +672,13 @@ public class map extends AppCompatActivity implements
         shipHandler.post(new Runnable() {
             @Override
             public void run() {
-                if (latLng != null) {
 
-                    ArrayList<String> missleArray = new ArrayList<>();
-                    missleArray.add("missileArray");
-                    try {
-                        mService.sendMessage(missleArray);
-                    } catch (Exception e) {
-                        Log.e(TAG, "cant send location", e);
-                    }
+                ArrayList<String> missileArray = new ArrayList<>();
+                missileArray.add("missileArray");
+                try {
+                    mService.sendMessage(missileArray);
+                } catch (Exception e) {
+                    Log.e(TAG, "cant send location", e);
                 }
                 shipHandler.postDelayed(this, 1000);
             }
