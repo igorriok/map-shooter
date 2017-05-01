@@ -30,6 +30,7 @@ public class SignInActivity extends AppCompatActivity implements
     private GoogleApiClient sGoogleApiClient;
     private TextView mStatusTextView;
     private ProgressDialog mProgressDialog;
+    String ID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +49,7 @@ public class SignInActivity extends AppCompatActivity implements
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.server_client_id))
+                .requestId()
                 .build();
         // [END configure_signin]
 
@@ -84,11 +85,9 @@ public class SignInActivity extends AppCompatActivity implements
             // If the user has not previously signed in on this device or the sign-in has expired,
             // this asynchronous branch will attempt to sign in the user silently.  Cross-device
             // single sign-on will occur in this branch.
-            showProgressDialog();
             opr.setResultCallback(new ResultCallback<GoogleSignInResult>() {
                 @Override
                 public void onResult(GoogleSignInResult googleSignInResult) {
-                    hideProgressDialog();
                     handleSignInResult(googleSignInResult);
                 }
             });
@@ -118,7 +117,8 @@ public class SignInActivity extends AppCompatActivity implements
             startActivity(new Intent(SignInActivity.this, map.class));
             SharedPreferences settings = getSharedPreferences("Pref_file", 0);
             SharedPreferences.Editor editor = settings.edit();
-            editor.putString("Token", result.getSignInAccount().getIdToken());
+            ID = result.getSignInAccount().getId();
+            editor.putString("Token", ID);
             editor.apply();
             updateUI(true);
         } else {

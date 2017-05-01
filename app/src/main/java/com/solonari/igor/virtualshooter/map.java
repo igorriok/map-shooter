@@ -80,10 +80,9 @@ public class map extends AppCompatActivity implements
     LatLng latLng;
     private static final int points = 2;
     private static final int ship = 3;
-    private static final int chatThread = 1;
-    private static final int reconnect = 4;
     private static final int missleArray = 5;
     private static final int exp = 6;
+    private static final int startCom = 1;
     ArrayList<String> shipList;
     ArrayList<Marker> shipMarkers;
     ArrayList<Marker> missleMarkers;
@@ -325,6 +324,8 @@ public class map extends AppCompatActivity implements
                     }
                 }
                 break;
+            case startCom:
+                sendShip();
             default:
                 break;
             }
@@ -337,7 +338,6 @@ public class map extends AppCompatActivity implements
             mService = binder.getService();
             mBound = true;
 		    mService.setHandler(getHandler());
-            sendShip();
         }
 
         public void onServiceDisconnected(ComponentName className) {
@@ -382,13 +382,13 @@ public class map extends AppCompatActivity implements
                 }
             }
                 break;
-            case CAMERA_PERMISSION_REQUEST_CODE:
+            /*case CAMERA_PERMISSION_REQUEST_CODE:
                 if (PermissionUtils.isPermissionGranted(permissions, grantResults, Manifest.permission.CAMERA)) {
                     startActivity(shootIntent);
                 } else {
                     PermissionUtils.PermissionDeniedDialog.newInstance(false).show(getSupportFragmentManager(), "dialog");
                 }
-                break;
+                break;*/
             default:
                 break;
         }
@@ -397,18 +397,8 @@ public class map extends AppCompatActivity implements
     @Override
     protected void onResumeFragments() {
         super.onResumeFragments();
-        if (mLocationPermissionGranted) {
-            // Permission was not granted, display error dialog.
-            showMissingPermissionError();
-        }
     }
 
-    /**
-     * Displays a dialog with error message explaining that the location permission is missing.
-     */
-    private void showMissingPermissionError() {
-        PermissionUtils.PermissionDeniedDialog.newInstance(true).show(getSupportFragmentManager(), "dialog");
-    }
 
     /*
      * Called when the Activity becomes visible.

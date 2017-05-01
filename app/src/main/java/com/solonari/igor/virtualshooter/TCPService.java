@@ -109,6 +109,8 @@ public class TCPService extends Service {
                 in = new ObjectInputStream(socket.getInputStream());
                 Log.d(TAG, "In/Out created");
 
+                handler.obtainMessage(1, null).sendToTarget();
+
                 while (true) {
                         ArrayList<String> line = (ArrayList) in.readObject();
                         String head = line.get(0);
