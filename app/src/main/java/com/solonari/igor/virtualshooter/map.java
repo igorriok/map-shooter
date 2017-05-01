@@ -325,9 +325,6 @@ public class map extends AppCompatActivity implements
                     }
                 }
                 break;
-            case reconnect:
-                bindService(new Intent(this, TCPService.class), mConnection, Context.BIND_AUTO_CREATE);
-                break;
             default:
                 break;
             }
