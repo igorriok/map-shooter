@@ -67,8 +67,17 @@
         map_fragment:uiScrollGestures="true"
         map_fragment:uiTiltGestures="true"
         map_fragment:uiZoomControls="true"
-        map_fragment:uiZoomGestures="true"
-        />
+        map_fragment:uiZoomGestures="true">
+        
+        <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right|top"
+        android:text="Demo Button" 
+        android:padding="10dp"
+        android:layout_marginTop="20dp"
+        android:paddingRight="10dp"/>
+    </fragment>
 
     <LinearLayout
         android:layout_width="match_parent"
