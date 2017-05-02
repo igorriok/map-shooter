@@ -68,6 +68,7 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks,
     boolean mBound = false;
     ArrayList<String> missleArray;
     String shipID;
+    Button fire;
 
 
     private SensorEventListener mListener = new SensorEventListener() {
@@ -137,7 +138,7 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks,
             }
         });
 
-        Button fire = (Button) findViewById(R.id.fire);
+        fire = (Button) findViewById(R.id.fire);
         fire.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -149,6 +150,8 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks,
                 missleArray.add(Double.toString(location.getLongitude()));
                 mService.sendMessage(missleArray);
                 Toast.makeText(getApplicationContext(), "Fire in the hall", Toast.LENGTH_SHORT).show();
+                    fire.setEnabled(false);
+                    fireTimer();
             }
         });
 
@@ -336,6 +339,21 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks,
         if(settings != null) {
             shipName = settings.getString("shipName", "");
         }
+    }
+    
+    private void fireTimer() {
+        int time = 5;
+        new CountDownTimer(5000, 1000) {
+            public void onTick(long millisUntilFinished) {  
+                fire.setText(time);
+                time--;         
+            }
+
+            public void onFinish() {
+                fire.setText(R.string.shoot);
+                    fire.setEnabled(true);
+            }
+        }.start();
     }
 
 }
