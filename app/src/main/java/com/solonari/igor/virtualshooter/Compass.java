@@ -142,6 +142,9 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks,
         fire.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                    fire.setBackgroundColor(Color.GRAY);
+                    fire.setEnabled(false);
+                    fireTimer();
                 missleArray = new ArrayList<>();
                 missleArray.add("missile");
                 missleArray.add(shipID);
@@ -150,8 +153,6 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks,
                 missleArray.add(Double.toString(location.getLongitude()));
                 mService.sendMessage(missleArray);
                 Toast.makeText(getApplicationContext(), "Fire in the hall", Toast.LENGTH_SHORT).show();
-                    fire.setEnabled(false);
-                    fireTimer();
             }
         });
 
