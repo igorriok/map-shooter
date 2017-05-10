@@ -281,7 +281,8 @@ public class map extends AppCompatActivity implements
                                 .position(new LatLng(Double.parseDouble(shipList.get(i+1)), Double.parseDouble(shipList.get(i+2))))
                                 .title(shipList.get(i))
                                 .flat(true)
-                                .icon(BitmapDescriptorFactory.fromResource(R.mipmap.fighter))));
+                                .icon(BitmapDescriptorFactory.fromResource(R.mipmap.fighter))
+						      .anchor(0.5, 0.5)));
                     }
                     for(Marker markerName : shipMarkers) {
                         markerName.showInfoWindow();
@@ -303,7 +304,8 @@ public class map extends AppCompatActivity implements
                                 .position(new LatLng(Double.parseDouble(missleList.get(i+1)), Double.parseDouble(missleList.get(i+2))))
                                 .rotation(Float.parseFloat(missleList.get(i)))
                                 .flat(true)
-                                .icon(BitmapDescriptorFactory.fromResource(R.mipmap.missile))));
+                                .icon(BitmapDescriptorFactory.fromResource(R.mipmap.missile))
+							.anchor(0.5, 0.5)));
                     }
                 }
                 break;
@@ -320,7 +322,8 @@ public class map extends AppCompatActivity implements
                         expMarkers.add(mMap.addMarker(new MarkerOptions()
                                 .position(new LatLng(Double.parseDouble(expList.get(1)), Double.parseDouble(expList.get(i+1))))
                                 .flat(true)
-                                .icon(BitmapDescriptorFactory.fromResource(R.mipmap.explosion))));
+                                .icon(BitmapDescriptorFactory.fromResource(R.mipmap.explosion))
+						     .anchor(0.5, 0.5)));
                     }
                 }
                 break;
