@@ -22,6 +22,7 @@
     <string name="cancel">Cancel</string>
     <string name="map">MAP</string>
     <string name="fire">FIRE</string>
+    <string name="myLocation">My Ship</string>
 
     <!-- Sign-in status messages -->
     <string name="signed_in_fmt">Signed in as: %s</string>
