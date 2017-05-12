@@ -147,6 +147,20 @@ public class map extends AppCompatActivity implements
                 }
             }
         });
+	    
+	// Find the View that shows the compass category
+        Button myLocation = (Button) findViewById(R.id.myLocation);
+        // Set a click listener on shoot button
+        myLocation.setOnClickListener(new View.OnClickListener() {
+            // The code in this method will be executed when the shoot View is clicked on.
+            @Override
+            public void onClick(View view) {
+                if (mMap != null && latLng != null) {
+			CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 10);
+			mMap.animateCamera(cameraUpadate);
+		}
+            }
+        });
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -552,7 +566,7 @@ public class map extends AppCompatActivity implements
             }
         } else {
             Toast.makeText(getApplicationContext(),
-                    "Sorry. Location services not available to you", Toast.LENGTH_LONG).show();
+                    "Sorry. Location services not available", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -635,13 +649,11 @@ public class map extends AppCompatActivity implements
                 if (latLng != null) {
                     ArrayList<String> shipArray = new ArrayList<>();
                     shipArray.add("ship");
-			
-		            settings = getSharedPreferences(Pref_file, 0);
+		    settings = getSharedPreferences(Pref_file, 0);
                     String ID = settings.getString("ID", "");
                     shipArray.add(ID);
                     String shipName = settings.getString("shipName", "");
                     shipArray.add(shipName);
-
                     shipArray.add(Double.toString(latLng.latitude));
                     shipArray.add(Double.toString(latLng.longitude));
                     Log.d(TAG, shipArray.toString());
