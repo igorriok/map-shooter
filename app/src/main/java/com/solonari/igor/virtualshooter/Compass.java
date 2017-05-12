@@ -324,6 +324,7 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks,
             mService = binder.getService();
             mService.setHandler(getHandler());
             mBound = true;
+            sendShip();
         }
 
         public void onServiceDisconnected(ComponentName className) {
@@ -356,5 +357,27 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks,
             }
         }.start();
     }
+    
+    private void sendShip() {
+            if (location != null) {
+                    ArrayList<String> shipArray = new ArrayList<>();
+                    shipArray.add("ship");
+		    settings = getSharedPreferences(Pref_file, 0);
+                    String ID = settings.getString("ID", "");
+                    shipArray.add(ID);
+                    String shipName = settings.getString("shipName", "");
+                    shipArray.add(shipName);
+                    shipArray.add(Double.toString(location.getLatitude()));
+                    shipArray.add(Double.toString(location.getLongitude());
+                    Log.d(TAG, shipArray.toString());
 
+                    if (!shipName.equals("") && !ID.equals("")) {
+                        try {
+                            mService.sendMessage(shipArray);
+                        } catch (Exception e) {
+                            Log.e(TAG, "cant send location", e);
+                        }
+                    }
+                }
+    }
 }
