@@ -99,6 +99,7 @@ public class map extends AppCompatActivity implements
     protected static final int CAMERA_PERMISSION_REQUEST_CODE = 2;
     private GoogleApiClient client;
     boolean mBound = false;
+    View dView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -149,7 +150,7 @@ public class map extends AppCompatActivity implements
         });
 	    
 	// Find the View that shows the compass category
-        Button myLocation = (Button) findViewById(R.id.myLocation);
+        Button myLocation = (Button) findViewById(R.id.myLocationButton);
         // Set a click listener on shoot button
         myLocation.setOnClickListener(new View.OnClickListener() {
             // The code in this method will be executed when the shoot View is clicked on.
@@ -157,7 +158,7 @@ public class map extends AppCompatActivity implements
             public void onClick(View view) {
                 if (mMap != null && latLng != null) {
 			CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 10);
-			mMap.animateCamera(cameraUpadate);
+			mMap.animateCamera(cameraUpdate);
 		}
             }
         });
@@ -174,12 +175,21 @@ public class map extends AppCompatActivity implements
             goToSignIn();
         }
 
+        dView = getWindow().getDecorView();
+
         final View settingsMenu = findViewById(R.id.settings);
         settingsMenu.setOnClickListener(new View.OnClickListener() {
             // The code in this method will be executed when the settings View is clicked on.
             @Override
             public void onClick(View view) {
-            showMenu(settingsMenu);
+                showMenu(settingsMenu);
+                dView.setSystemUiVisibility(
+                        View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                                | View.SYSTEM_UI_FLAG_FULLSCREEN
+                                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
             }
         });
     }
@@ -208,14 +218,7 @@ public class map extends AppCompatActivity implements
 
 	@Override
 	public boolean onMenuItemClick(MenuItem item) {
-		getWindow().getDecorView().setSystemUiVisibility(
-                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                            | View.SYSTEM_UI_FLAG_FULLSCREEN
-                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
-		
+
 	    switch (item.getItemId()) {
 		case R.id.shipName:
             		showNoticeDialog();
@@ -304,7 +307,7 @@ public class map extends AppCompatActivity implements
                                 .title(shipList.get(i))
                                 .flat(true)
                                 .icon(BitmapDescriptorFactory.fromResource(R.mipmap.fighter))
-						      .anchor(0.5, 0.5)));
+						      .anchor(0.5f, 0.5f)));
                     }
                     for(Marker markerName : shipMarkers) {
                         markerName.showInfoWindow();
@@ -327,7 +330,7 @@ public class map extends AppCompatActivity implements
                                 .rotation(Float.parseFloat(missleList.get(i)))
                                 .flat(true)
                                 .icon(BitmapDescriptorFactory.fromResource(R.mipmap.missile))
-							.anchor(0.5, 0.5)));
+							.anchor(0.5f, 0.5f)));
                     }
                 }
                 break;
@@ -345,7 +348,7 @@ public class map extends AppCompatActivity implements
                                 .position(new LatLng(Double.parseDouble(expList.get(1)), Double.parseDouble(expList.get(i+1))))
                                 .flat(true)
                                 .icon(BitmapDescriptorFactory.fromResource(R.mipmap.explosion))
-						     .anchor(0.5, 0.5)));
+						     .anchor(0.5f, 0.5f)));
                     }
                 }
                 break;
@@ -380,6 +383,7 @@ public class map extends AppCompatActivity implements
         if (mMap != null) {
             // Now that map has loaded, let's get our location
             enableMyLocation();
+            mMap.getUiSettings().setMapToolbarEnabled(false);
         }
     }
 

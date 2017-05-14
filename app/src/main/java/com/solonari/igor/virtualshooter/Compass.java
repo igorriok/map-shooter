@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.hardware.GeomagneticField;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -13,6 +14,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -344,13 +346,10 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks,
     }
     
     private void fireTimer() {
-        int time = 5;
         new CountDownTimer(5000, 1000) {
             public void onTick(long millisUntilFinished) {  
-                fire.setText(time);
-                time--;         
+                fire.setText(Long.toString(millisUntilFinished / 1000));
             }
-
             public void onFinish() {
                 fire.setText(R.string.shoot);
                     fire.setEnabled(true);
@@ -359,25 +358,25 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks,
     }
     
     private void sendShip() {
-            if (location != null) {
-                    ArrayList<String> shipArray = new ArrayList<>();
-                    shipArray.add("ship");
-		    settings = getSharedPreferences(Pref_file, 0);
-                    String ID = settings.getString("ID", "");
-                    shipArray.add(ID);
-                    String shipName = settings.getString("shipName", "");
-                    shipArray.add(shipName);
-                    shipArray.add(Double.toString(location.getLatitude()));
-                    shipArray.add(Double.toString(location.getLongitude());
-                    Log.d(TAG, shipArray.toString());
+        if (location != null) {
+            ArrayList<String> shipArray = new ArrayList<>();
+            shipArray.add("ship");
+            settings = getSharedPreferences(Pref_file, 0);
+            String ID = settings.getString("ID", "");
+            shipArray.add(ID);
+            String shipName = settings.getString("shipName", "");
+            shipArray.add(shipName);
+            shipArray.add(Double.toString(location.getLatitude()));
+            shipArray.add(Double.toString(location.getLongitude()));
+            Log.d(TAG, shipArray.toString());
 
-                    if (!shipName.equals("") && !ID.equals("")) {
-                        try {
-                            mService.sendMessage(shipArray);
-                        } catch (Exception e) {
-                            Log.e(TAG, "cant send location", e);
-                        }
-                    }
+            if (!shipName.equals("") && !ID.equals("")) {
+                try {
+                    mService.sendMessage(shipArray);
+                } catch (Exception e) {
+                    Log.e(TAG, "cant send location", e);
                 }
+            }
+        }
     }
 }
