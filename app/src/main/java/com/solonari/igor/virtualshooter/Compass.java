@@ -147,16 +147,16 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks,
                     fire.setBackgroundColor(Color.GRAY);
                     fire.setEnabled(false);
                     fireTimer();
-                missleArray = new ArrayList<>();
-                missleArray.add("missile");
-                missleArray.add(shipID);
-                missleArray.add(Float.toString(mHeading));
-                missleArray.add(Double.toString(location.getLatitude()));
-                missleArray.add(Double.toString(location.getLongitude()));
-                mService.sendMessage(missleArray);
-                Toast.makeText(getApplicationContext(), "Fire in the hall", Toast.LENGTH_SHORT).show();
-            }
-        });
+                    missleArray = new ArrayList<>();
+                    missleArray.add("missile");
+                    missleArray.add(shipID);
+                    missleArray.add(Float.toString(mHeading));
+                    missleArray.add(Double.toString(location.getLatitude()));
+                    missleArray.add(Double.toString(location.getLongitude()));
+                    mService.sendMessage(missleArray);
+                    Toast.makeText(getApplicationContext(), "Fire in the hall", Toast.LENGTH_SHORT).show();
+                }
+            });
 
         buildGoogleApiClient();
 
@@ -353,6 +353,7 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks,
             public void onFinish() {
                 fire.setText(R.string.shoot);
                     fire.setEnabled(true);
+                    fire.setBackgroundColor(Color.parseColor("#e53935"));
             }
         }.start();
     }
