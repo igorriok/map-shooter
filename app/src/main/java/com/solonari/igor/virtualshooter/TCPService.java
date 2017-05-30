@@ -1,6 +1,7 @@
 package com.solonari.igor.virtualshooter;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Binder;
@@ -9,6 +10,7 @@ import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
+import android.os.Vibrator;
 import android.util.Log;
 
 import java.io.ObjectInputStream;
@@ -33,6 +35,7 @@ public class TCPService extends Service {
     final static String missileArray = "missileArray";
     final static String points = "points";
     final static String exp = "exp";
+    final static String hit = "hit";
     private Handler handler;
     // Binder given to clients
     private final IBinder mBinder = new LocalBinder();
@@ -138,6 +141,11 @@ public class TCPService extends Service {
                             case exp:
                                 handler.obtainMessage(6, line).sendToTarget();
                                 //Log.d(TAG, "Received exp:" + line);
+                                break;
+                            case hit:
+                                Vibrator v = (Vibrator) getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
+                                // Vibrate for 500 milliseconds
+                                v.vibrate(500);
                                 break;
                             default:
                                 break;

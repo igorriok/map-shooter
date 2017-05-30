@@ -154,7 +154,7 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks,
                     missleArray.add(Double.toString(location.getLatitude()));
                     missleArray.add(Double.toString(location.getLongitude()));
                     mService.sendMessage(missleArray);
-                    Toast.makeText(getApplicationContext(), "Fire in the hall", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Recharging", Toast.LENGTH_SHORT).show();
                 }
             });
 

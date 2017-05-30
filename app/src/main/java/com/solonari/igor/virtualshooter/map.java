@@ -213,45 +213,45 @@ public class map extends AppCompatActivity implements
                             | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);}
     }
 	
-		public void showMenu(View v) {
-				PopupMenu popup = new PopupMenu(this, v);
-				// This activity implements OnMenuItemClickListener
-				popup.setOnMenuItemClickListener(this);
-				popup.inflate(R.menu.settings_menu);
-				popup.show();
-		}
+    public void showMenu(View v) {
+            PopupMenu popup = new PopupMenu(this, v);
+            // This activity implements OnMenuItemClickListener
+            popup.setOnMenuItemClickListener(this);
+            popup.inflate(R.menu.settings_menu);
+            popup.show();
+    }
 
-		@Override
-		public boolean onMenuItemClick(MenuItem item) {
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
 
-            switch (item.getItemId()) {
-                case R.id.shipName:
-                    showNoticeDialog();
-                    return true;
-                case R.id.signOut:
-                    Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
-                                    new ResultCallback<Status>() {
-                                            @Override
-                                            public void onResult(@NonNull Status status) {
-                                                    SharedPreferences settings = getSharedPreferences(Pref_file, 0);
-                                                    SharedPreferences.Editor editor = settings.edit();
-                                                    editor.putString("Token", "");
-                                                    editor.apply();
-                                                    Intent signInIntent = new Intent(map.this, SignInActivity.class);
-                                                    startActivity(signInIntent);
-                                            }
-                                    });
-                    return true;
-                case R.id.exit:
-                    Intent intent = new Intent(Intent.ACTION_MAIN);
-                    intent.addCategory(Intent.CATEGORY_HOME);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                    return true;
-                default:
-                    return false;
-            }
-		}
+        switch (item.getItemId()) {
+            case R.id.shipName:
+                showNoticeDialog();
+                return true;
+            case R.id.signOut:
+                Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
+                                new ResultCallback<Status>() {
+                                        @Override
+                                        public void onResult(@NonNull Status status) {
+                                                SharedPreferences settings = getSharedPreferences(Pref_file, 0);
+                                                SharedPreferences.Editor editor = settings.edit();
+                                                editor.putString("Token", "");
+                                                editor.apply();
+                                                Intent signInIntent = new Intent(map.this, SignInActivity.class);
+                                                startActivity(signInIntent);
+                                        }
+                                });
+                return true;
+            case R.id.exit:
+                Intent intent = new Intent(Intent.ACTION_MAIN);
+                intent.addCategory(Intent.CATEGORY_HOME);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                return true;
+            default:
+                return false;
+        }
+    }
 
     public void showNoticeDialog() {
         // Create an instance of the dialog fragment and show it
@@ -298,23 +298,33 @@ public class map extends AppCompatActivity implements
                 Log.d("Display Points", message);
                 break;
             case ship:
+                String shipName = settings.getString("shipName", "");
                 shipList = (ArrayList) msg.obj;
-                if(shipMarkers != null) {
-                    for(Marker markerName : shipMarkers) {
+                if (shipMarkers != null) {
+                    for (Marker markerName : shipMarkers) {
                         markerName.remove();
                     }
                 }
                 shipMarkers = new ArrayList<>();
-                if(mMap != null) {
+                if (mMap != null) {
                     for(int i = 1; i < shipList.size(); i = i + 3) {
+                        if (shipList.get(i).equals(shipName)) {
+                                shipMarkers.add(mMap.addMarker(new MarkerOptions()
+                                .position(new LatLng(Double.parseDouble(shipList.get(i+1)), Double.parseDouble(shipList.get(i+2))))
+                                .title(shipList.get(i))
+                                .flat(true)
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.fighter))
+                                .anchor(0.5f, 0.5f)));
+                                continue;
+												}
                         shipMarkers.add(mMap.addMarker(new MarkerOptions()
                                 .position(new LatLng(Double.parseDouble(shipList.get(i+1)), Double.parseDouble(shipList.get(i+2))))
                                 .title(shipList.get(i))
                                 .flat(true)
-                                .icon(BitmapDescriptorFactory.fromResource(R.mipmap.fighter))
-						      							.anchor(0.5f, 0.5f)));
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.enemy))
+                                .anchor(0.5f, 0.5f)));
                     }
-                    for(Marker markerName : shipMarkers) {
+                    for (Marker markerName : shipMarkers) {
                         markerName.showInfoWindow();
                     }
                 }
@@ -322,14 +332,14 @@ public class map extends AppCompatActivity implements
                 break;
             case missleArray:
                 missleList = (ArrayList) msg.obj;
-                if(missleMarkers != null) {
-                    for(Marker missleMarker : missleMarkers) {
+                if (missleMarkers != null) {
+                    for (Marker missleMarker : missleMarkers) {
                         missleMarker.remove();
                     }
                 }
                 missleMarkers = new ArrayList<>();
-                if(mMap != null) {
-                    for(int i = 1; i < missleList.size(); i = i + 3) {
+                if (mMap != null) {
+                    for (int i = 1; i < missleList.size(); i = i + 3) {
                         missleMarkers.add(mMap.addMarker(new MarkerOptions()
                                 .position(new LatLng(Double.parseDouble(missleList.get(i+1)), Double.parseDouble(missleList.get(i+2))))
                                 .rotation(Float.parseFloat(missleList.get(i)))
@@ -341,14 +351,14 @@ public class map extends AppCompatActivity implements
                 break;
             case exp:
                 expList = (ArrayList) msg.obj;
-                if(expMarkers != null) {
-                    for(Marker expMarker : expMarkers) {
+                if (expMarkers != null) {
+                    for (Marker expMarker : expMarkers) {
                         expMarker.remove();
                     }
                 }
                 expMarkers = new ArrayList<>();
-                if(mMap != null) {
-                    for(int i = 1; i < expList.size(); i = i + 2) {
+                if (mMap != null) {
+                    for (int i = 1; i < expList.size(); i = i + 2) {
                         expMarkers.add(mMap.addMarker(new MarkerOptions()
                                 .position(new LatLng(Double.parseDouble(expList.get(1)), Double.parseDouble(expList.get(i+1))))
                                 .flat(true)
@@ -399,7 +409,7 @@ public class map extends AppCompatActivity implements
             CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 17);
             mMap.animateCamera(cameraUpdate);
         } else {
-            Toast.makeText(this, "Current location was not found, enable GPS", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Current location was not found, please enable GPS", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -568,7 +578,7 @@ public class map extends AppCompatActivity implements
     }
 
     public void onLocationChanged(Location location) {
-        Toast.makeText(this, location.toString(), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, location.toString(), Toast.LENGTH_SHORT).show();
 	    latLng = new LatLng(location.getLatitude(), location.getLongitude());
     }
 
@@ -580,7 +590,7 @@ public class map extends AppCompatActivity implements
     @Override
     public void onConnectionSuspended(int i) {
         if (i == CAUSE_SERVICE_DISCONNECTED) {
-            Toast.makeText(this, "Disconnected. Please re-connect.", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "Disconnected. Please re-connect.", Toast.LENGTH_SHORT).show();
         } else if (i == CAUSE_NETWORK_LOST) {
             Toast.makeText(this, "Network lost. Please re-connect.", Toast.LENGTH_SHORT).show();
         }
@@ -609,8 +619,7 @@ public class map extends AppCompatActivity implements
                 e.printStackTrace();
             }
         } else {
-            Toast.makeText(getApplicationContext(),
-                    "Sorry. Location services not available", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "Sorry. Location services not available", Toast.LENGTH_LONG).show();
         }
     }
 
