@@ -317,9 +317,6 @@ public class map extends AppCompatActivity implements
                                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.enemy))
                                 .anchor(0.5f, 0.5f)));
                     }
-                    for (Marker markerName : shipMarkers) {
-                        markerName.showInfoWindow();
-                    }
                 }
                 Log.d(TAG, "Adding shipMarkers on map");
                 break;
@@ -677,14 +674,14 @@ public class map extends AppCompatActivity implements
         shipHandler.post(new Runnable() {
             @Override
             public void run() {
-            ArrayList<String> idArray = new ArrayList<>();
-            idArray.add("id");
-            idArray.add(idToken);
-            try {
-                mService.sendMessage(idArray);
-            } catch (Exception e) {
-                Log.e(TAG, "cant send message", e);
-            }
+								ArrayList<String> idArray = new ArrayList<>();
+								idArray.add("id");
+								idArray.add(idToken);
+								try {
+										mService.sendMessage(idArray);
+								} catch (Exception e) {
+										Log.e(TAG, "cant send message", e);
+								}
             }
         });
 
@@ -720,14 +717,14 @@ public class map extends AppCompatActivity implements
         shipHandler.post(new Runnable() {
             @Override
             public void run() {
-            ArrayList<String> missileArray = new ArrayList<>();
-            missileArray.add("missileArray");
-            try {
-                mService.sendMessage(missileArray);
-            } catch (Exception e) {
-                Log.e(TAG, "cant send location", e);
-            }
-            shipHandler.postDelayed(this, 1000);
+								ArrayList<String> missileArray = new ArrayList<>();
+								missileArray.add("missileArray");
+								try {
+										mService.sendMessage(missileArray);
+								} catch (Exception e) {
+										Log.e(TAG, "cant send location", e);
+								}
+								shipHandler.postDelayed(this, 1000);
             }
         });
     }
