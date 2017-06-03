@@ -53,16 +53,6 @@
             android:background="#03A9F4"
             android:textStyle="bold" />
         <ImageButton
-            android:id="@+id/shipName"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:src="@drawable/ship"
-            android:contentDescription="@string/desc_settings"
-            android:background="#03A9F4"
-            android:layout_gravity="end"
-            android:scaleType="fitCenter" />
-        <ImageButton
             android:id="@+id/signOut"
             android:layout_width="0dp"
             android:layout_height="match_parent"

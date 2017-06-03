@@ -34,6 +34,7 @@ import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -56,7 +57,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 
 public class map extends AppCompatActivity implements
@@ -114,19 +114,24 @@ public class map extends AppCompatActivity implements
 
         setContentView(R.layout.content_map);
 
-        findViewById(R.id.shipName).setOnClickListener(this);
         findViewById(R.id.signOut).setOnClickListener(this);
         findViewById(R.id.exit).setOnClickListener(this);
         findViewById(R.id.shootButton).setOnClickListener(this);
         findViewById(R.id.myLocationButton).setOnClickListener(this);
+        findViewById(R.id.ship).setOnClickListener(this);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_fragment);
 
         mapFragment.getMapAsync(this);
 
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestId()
+                .build();
+
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(LocationServices.API)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .build();
@@ -164,7 +169,7 @@ public class map extends AppCompatActivity implements
     public void onClick(View v) {
 
         switch (v.getId()) {
-            case R.id.shipName:
+            case R.id.ship:
                 showNoticeDialog();
                 break;
             case R.id.signOut:
@@ -215,13 +220,18 @@ public class map extends AppCompatActivity implements
         // Create an instance of the dialog fragment and show it
         DialogFragment ShipDialog = new ShipNameFragment();
         ShipDialog.show(getFragmentManager(), "shipNameFragment");
+        settings = getSharedPreferences(Pref_file, 0);
+        String shipName = settings.getString("shipName", "");
+        Bundle ship = new Bundle();
+        ship.putString("shipName", shipName);
+        ShipDialog.setArguments(ship);
     }
 
     @Override
     public void onDialogPositiveClick(DialogFragment dialog, String shipName) {
         // User touched the dialog's positive button
         if(!shipName.equals("")) {
-            SharedPreferences settings = getSharedPreferences(Pref_file, 0);
+            settings = getSharedPreferences(Pref_file, 0);
             SharedPreferences.Editor editor = settings.edit();
             editor.putString("shipName", shipName);
             editor.apply();
@@ -235,7 +245,9 @@ public class map extends AppCompatActivity implements
     @Override
     public void onDialogNegativeClick(DialogFragment dialog, String shipName) {
         // User touched the dialog's negative button
-        if(Objects.equals(shipName, "")){
+        settings = getSharedPreferences(Pref_file, 0);
+        shipName = settings.getString("shipName", "");
+        if(shipName.equals("")){
             showNoticeDialog();
         }
     }

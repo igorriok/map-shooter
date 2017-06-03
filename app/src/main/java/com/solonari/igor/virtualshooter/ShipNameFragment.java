@@ -6,9 +6,9 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.EditText;
 
 
@@ -16,7 +16,6 @@ public class ShipNameFragment extends DialogFragment {
 
     // Use this instance of the interface to deliver action events
     NoticeDialogListener mListener;
-    public static final String Pref_file = "Pref_file";
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -24,9 +23,12 @@ public class ShipNameFragment extends DialogFragment {
         // Get the layout inflater
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
+        String ship = getArguments().getString("shipName");
+
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
-        builder.setView(inflater.inflate(R.layout.ship_name, null))
+        final View myLayout = inflater.inflate(R.layout.ship_name, null);
+        builder.setView(myLayout)
                 // Add action buttons
                 .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
@@ -43,7 +45,13 @@ public class ShipNameFragment extends DialogFragment {
                         ShipNameFragment.this.getDialog().cancel();
                     }
                 });
-        return builder.create();
+        //builder.create();
+        Dialog dialog = builder.create();
+
+        EditText shipName = (EditText) myLayout.findViewById(R.id.newShipName);
+        shipName.setText(ship);
+
+        return dialog;
     }
 
     // Override the Fragment.onAttach() method to instantiate the NoticeDialogListener
