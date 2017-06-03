@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:map_fragment="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -24,7 +25,8 @@
             android:textAllCaps="true"
             android:textStyle="bold"
             android:padding="5dp"
-            android:gravity="center|end" />
+            android:gravity="center|end"
+            tools:ignore="NestedWeights" />
         <TextView
             android:id="@+id/rating"
             android:layout_width="0dp"
@@ -51,20 +53,39 @@
             android:background="#03A9F4"
             android:textStyle="bold" />
         <ImageButton
-            android:id="@+id/settings"
+            android:id="@+id/shipName"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:src="@drawable/gears"
+            android:src="@drawable/ship"
+            android:contentDescription="@string/desc_settings"
+            android:background="#03A9F4"
+            android:layout_gravity="end"
+            android:scaleType="fitCenter" />
+        <ImageButton
+            android:id="@+id/signOut"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:src="@drawable/sign_out"
+            android:contentDescription="@string/desc_settings"
+            android:background="#03A9F4"
+            android:layout_gravity="end"
+            android:scaleType="fitCenter" />
+        <ImageButton
+            android:id="@+id/exit"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:src="@drawable/exit"
             android:contentDescription="@string/desc_settings"
             android:background="#03A9F4"
             android:layout_gravity="end"
             android:scaleType="fitCenter" />
     </LinearLayout>
 
-    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+    <fragment
         android:id="@+id/map_fragment"
-        xmlns:map_fragment="http://schemas.android.com/apk/res-auto"
         class="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -76,9 +97,7 @@
         map_fragment:uiScrollGestures="true"
         map_fragment:uiTiltGestures="true"
         map_fragment:uiZoomControls="true"
-        map_fragment:uiZoomGestures="true"
-        >
-    </fragment>
+        map_fragment:uiZoomGestures="true"></fragment>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -99,7 +118,9 @@
             android:text="@string/shoot"
             android:textColor="#E3F2FD"
             android:background="#0097A7"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            tools:ignore="NestedWeights"/>
         <Button
             android:id="@+id/myLocationButton"
             android:layout_width="0dp"
@@ -112,7 +133,8 @@
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:layout_marginBottom="5dp"
-            android:layout_marginTop="5dp"/>
+            android:layout_marginTop="5dp"
+            style="@style/Widget.AppCompat.Button.Borderless"/>
     </LinearLayout>
 
 </LinearLayout>
