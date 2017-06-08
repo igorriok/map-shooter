@@ -10,10 +10,11 @@ import android.content.IntentSender;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
@@ -27,12 +28,10 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.appindexing.Action;
-import com.google.android.gms.appindexing.AppIndex;
-import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
@@ -82,6 +81,7 @@ public class map extends AppCompatActivity implements
     private static final int missleArray = 5;
     private static final int exp = 6;
     private static final int startCom = 1;
+		private static final int hit = 7;
     ArrayList<String> shipList;
     ArrayList<Marker> shipMarkers;
     ArrayList<Marker> missleMarkers;
@@ -100,6 +100,8 @@ public class map extends AppCompatActivity implements
     boolean mBound = false;
     View dView;
     protected static final int REQUEST_CHECK_SETTINGS = 0x1;
+    ArrayList<String> shieldArray;
+    Button shieldButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,6 +121,7 @@ public class map extends AppCompatActivity implements
         findViewById(R.id.shootButton).setOnClickListener(this);
         findViewById(R.id.myLocationButton).setOnClickListener(this);
         findViewById(R.id.ship).setOnClickListener(this);
+				findViewById(R.id.shieldButton).setOnClickListener(this);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_fragment);
@@ -137,10 +140,6 @@ public class map extends AppCompatActivity implements
                 .build();
         mGoogleApiClient.connect();
 
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
-
         SharedPreferences settings = getSharedPreferences(Pref_file, 0);
         String id = settings.getString("Token", "");
         if (!id.equals("")) {
@@ -148,7 +147,9 @@ public class map extends AppCompatActivity implements
         } else {
             goToSignIn();
         }
-
+				shieldArray = new ArrayList<>();
+				shieldArray.add("shield");
+				shieldButton = (Button) findViewById(R.id.shieldButton);
     }
 
 
@@ -212,7 +213,18 @@ public class map extends AppCompatActivity implements
                     mMap.animateCamera(cameraUpdate);
                 }
                 break;
-
+						case R.id.shieldButton:
+                if (shieldArray != null) {
+                    try {
+												mService.sendMessage(shieldArray);
+										} catch (Exception e) {
+												Log.e(TAG, "cant send shield", e);
+										};
+                }
+								shieldButton.setBackgroundColor(Color.parseColor("#00c853"));
+								shieldButton.setEnabled(false);
+								shieldTimer();
+                break;
         }
     }
 
@@ -262,10 +274,11 @@ public class map extends AppCompatActivity implements
 
         switch (msg.what) {
             case points:
-                String message = (String) msg.obj;
+                ArrayList<String> message = (ArrayList) msg.obj;
                 TextView Rating = (TextView) findViewById(R.id.rating);
-                Rating.setText(message);
-                Log.d("Display Points", message);
+                Rating.setText(message.get(1));
+                Log.d("Display Points", message.toString());
+								Toast.makeText(this, "You hited " + message.get(2), Toast.LENGTH_SHORT).show();
                 break;
             case ship:
                 String shipName = settings.getString("shipName", "");
@@ -277,12 +290,13 @@ public class map extends AppCompatActivity implements
                 }
                 shipMarkers = new ArrayList<>();
                 if (mMap != null) {
-                    for(int i = 1; i < shipList.size(); i = i + 3) {
+                    for(int i = 1; i < shipList.size(); i = i + 4) {
                         if (shipList.get(i).equals(shipName)) {
                             shipMarkers.add(mMap.addMarker(new MarkerOptions()
                                     .position(new LatLng(Double.parseDouble(shipList.get(i+1)), Double.parseDouble(shipList.get(i+2))))
                                     .title(shipList.get(i))
                                     .flat(true)
+																		.rotation(Float.parseFloat(missleList.get(i+3)))
                                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.fighter))
                                     .anchor(0.5f, 0.5f)));
                             continue;
@@ -290,6 +304,7 @@ public class map extends AppCompatActivity implements
                         shipMarkers.add(mMap.addMarker(new MarkerOptions()
                                 .position(new LatLng(Double.parseDouble(shipList.get(i+1)), Double.parseDouble(shipList.get(i+2))))
                                 .title(shipList.get(i))
+																.rotation(Float.parseFloat(missleList.get(i+3)))
                                 .flat(true)
                                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.enemy))
                                 .anchor(0.5f, 0.5f)));
@@ -336,6 +351,11 @@ public class map extends AppCompatActivity implements
                 break;
             case startCom:
                 sendShip();
+								break;
+						case hit:
+								String hitName = (String) msg.obj;
+								Toast.makeText(this, hitName + " hited you!", Toast.LENGTH_SHORT).show();
+								break;
             default:
                 break;
         }
@@ -417,12 +437,6 @@ public class map extends AppCompatActivity implements
     @Override
     protected void onStart() {
         super.onStart();
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client.connect();
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        AppIndex.AppIndexApi.start(client, getIndexApiAction());
         // Bind to the service
         if (mService == null && idToken != null) {
             bindService(new Intent(this, TCPService.class), mConnection, Context.BIND_AUTO_CREATE);
@@ -491,6 +505,7 @@ public class map extends AppCompatActivity implements
             location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
             if(location != null) {
                 latLng = new LatLng(location.getLatitude(), location.getLongitude());
+								this.location = location;
                 enableMyLocation();
             }
             startLocationUpdates();
@@ -547,6 +562,7 @@ public class map extends AppCompatActivity implements
     public void onLocationChanged(Location location) {
         //Toast.makeText(this, location.toString(), Toast.LENGTH_SHORT).show();
         latLng = new LatLng(location.getLatitude(), location.getLongitude());
+				this.location = location;
     }
 
 
@@ -590,22 +606,6 @@ public class map extends AppCompatActivity implements
         }
     }
 
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
-    public Action getIndexApiAction() {
-        Thing object = new Thing.Builder()
-                .setName("map Page") // TODO: Define a title for the content shown.
-                // TODO: Make sure this auto-generated URL is correct.
-                .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
-                .build();
-        return new Action.Builder(Action.TYPE_VIEW)
-                .setObject(object)
-                .setActionStatus(Action.STATUS_TYPE_COMPLETED)
-                .build();
-    }
-
     @Override
     protected void onPause() {
         super.onPause();
@@ -616,11 +616,6 @@ public class map extends AppCompatActivity implements
     @Override
     public void onStop() {
         super.onStop();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        AppIndex.AppIndexApi.end(client, getIndexApiAction());
-        client.disconnect();
     }
 
     @Override
@@ -676,6 +671,7 @@ public class map extends AppCompatActivity implements
                     shipArray.add(shipName);
                     shipArray.add(Double.toString(latLng.latitude));
                     shipArray.add(Double.toString(latLng.longitude));
+										shipArray.add(Float.toString(location.getBearing()));
                     Log.d(TAG, shipArray.toString());
 
                     if (!shipName.equals("") && !ID.equals("")) {
@@ -701,8 +697,26 @@ public class map extends AppCompatActivity implements
                 } catch (Exception e) {
                     Log.e(TAG, "cant send location", e);
                 }
-                shipHandler.postDelayed(this, 1000);
+                shipHandler.postDelayed(this, 100);
             }
         });
+    }
+		
+		private void shieldTimer() {
+        new CountDownTimer(10000, 1000) {
+            public void onTick(long millisUntilFinished) {
+								if (millisUntilFinished / 1000 >= 7) {
+										shieldButton.setText(R.string.shield_active);
+								} else {
+										shieldButton.setBackgroundColor(Color.GRAY);
+                		shieldButton.setText("Shield Recharging:" + Long.toString(millisUntilFinished / 1000) + "s");
+								}
+            }
+            public void onFinish() {
+                shieldButton.setText(R.string.activate_shield);
+								shieldButton.setEnabled(true);
+								shieldButton.setBackgroundColor(Color.parseColor("#e53935"));
+            }
+        }.start();
     }
 }

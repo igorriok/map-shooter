@@ -97,7 +97,7 @@ public class TCPService extends Service {
                     disconnected = true;
                     Log.d(TAG, "Error on socket", e);
                     try {
-                        cm.sleep(2000);
+                        sleep(2000);
                     } catch (InterruptedException er) {
                         er.printStackTrace();
                     }
@@ -120,7 +120,7 @@ public class TCPService extends Service {
                         switch (head) {
                             case points:
                                 //update points
-                                handler.obtainMessage(2, line.get(1)).sendToTarget();
+                                handler.obtainMessage(2, line).sendToTarget();
                                 break;
                             case id:
                                 //update ID
@@ -145,7 +145,8 @@ public class TCPService extends Service {
                             case hit:
                                 Vibrator v = (Vibrator) getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
                                 // Vibrate for 500 milliseconds
-                                v.vibrate(500);
+                                v.vibrate(200);
+                                handler.obtainMessage(7, line.get(2)).sendToTarget();
                                 break;
                             default:
                                 break;

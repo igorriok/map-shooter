@@ -346,7 +346,7 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks,
     }
     
     private void fireTimer() {
-        new CountDownTimer(5000, 1000) {
+        new CountDownTimer(10000, 1000) {
             public void onTick(long millisUntilFinished) {  
                 fire.setText(Long.toString(millisUntilFinished / 1000));
             }
@@ -369,6 +369,7 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks,
             shipArray.add(shipName);
             shipArray.add(Double.toString(location.getLatitude()));
             shipArray.add(Double.toString(location.getLongitude()));
+            shipArray.add(Float.toString(location.getBearing()));
             Log.d(TAG, shipArray.toString());
 
             if (!shipName.equals("") && !ID.equals("")) {

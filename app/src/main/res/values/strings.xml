@@ -23,6 +23,8 @@
     <string name="map">MAP</string>
     <string name="fire">FIRE</string>
     <string name="myLocation">My Ship</string>
+    <string name="shield_active">Shield Active</string>
+    <string name="activate_shield">  Activate shield  </string>
 
     <!-- Sign-in status messages -->
     <string name="signed_in_fmt">Signed in as: %s</string>
