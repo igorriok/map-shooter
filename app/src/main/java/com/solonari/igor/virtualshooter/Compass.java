@@ -187,7 +187,7 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks,
                     case ship:
                         line = (ArrayList) msg.obj;
                         props = new ArrayList<>();
-                        for (int i = 1; i < line.size(); i = i + 3) {
+                        for (int i = 1; i < line.size(); i = i + 4) {
                             if (line.get(i).equals(shipName))
                                 continue;
                             props.add(new Point(Double.parseDouble(line.get(i + 1)), Double.parseDouble(line.get(i + 2)), line.get(i)));

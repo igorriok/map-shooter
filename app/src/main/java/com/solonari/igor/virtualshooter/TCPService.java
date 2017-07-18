@@ -91,8 +91,12 @@ public class TCPService extends Service {
                     socket = new Socket();
                     socket.connect(sockaddr);
                     disconnected = false;
-                    Log.d(TAG, "Connected");
-
+                    Log.d(TAG, "Socket connected");
+                    // Create PrintWriter object for sending messages to server.
+                    out = new ObjectOutputStream(socket.getOutputStream());
+                    //Create BufferedReader object for receiving messages from server.
+                    in = new ObjectInputStream(socket.getInputStream());
+                    Log.d(TAG, "In/Out created");
                 } catch (Exception e) {
                     disconnected = true;
                     Log.d(TAG, "Error on socket", e);
@@ -103,14 +107,8 @@ public class TCPService extends Service {
                     }
                 }
             } while (disconnected);
-            
+
             try {
-                
-                // Create PrintWriter object for sending messages to server.
-                out = new ObjectOutputStream(socket.getOutputStream());
-                //Create BufferedReader object for receiving messages from server.
-                in = new ObjectInputStream(socket.getInputStream());
-                Log.d(TAG, "In/Out created");
 
                 handler.obtainMessage(1, null).sendToTarget();
 

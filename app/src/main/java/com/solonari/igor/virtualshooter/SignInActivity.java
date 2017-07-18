@@ -30,7 +30,7 @@ public class SignInActivity extends AppCompatActivity implements
     private GoogleApiClient sGoogleApiClient;
     private TextView mStatusTextView;
     private ProgressDialog mProgressDialog;
-    String ID;
+    String token;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +49,7 @@ public class SignInActivity extends AppCompatActivity implements
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestId()
+                .requestIdToken("271455468141-r4lrggg5mh2knhq777k64m3ju784qkr5.apps.googleusercontent.com")
                 .build();
         // [END configure_signin]
 
@@ -117,10 +117,12 @@ public class SignInActivity extends AppCompatActivity implements
             startActivity(new Intent(SignInActivity.this, map.class));
             SharedPreferences settings = getSharedPreferences("Pref_file", 0);
             SharedPreferences.Editor editor = settings.edit();
-            ID = result.getSignInAccount().getId();
-            editor.putString("Token", ID);
-            editor.apply();
-            updateUI(true);
+            token = result.getSignInAccount().getIdToken();
+            if (token != null) {
+                editor.putString("Token", token);
+                editor.apply();
+                updateUI(true);
+            }
         } else {
             // Signed out, show unauthenticated UI.
             updateUI(false);

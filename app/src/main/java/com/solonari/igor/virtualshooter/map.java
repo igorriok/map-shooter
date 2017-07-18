@@ -121,7 +121,7 @@ public class map extends AppCompatActivity implements
         findViewById(R.id.shootButton).setOnClickListener(this);
         findViewById(R.id.myLocationButton).setOnClickListener(this);
         findViewById(R.id.ship).setOnClickListener(this);
-				findViewById(R.id.shieldButton).setOnClickListener(this);
+        findViewById(R.id.shieldButton).setOnClickListener(this);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_fragment);
@@ -213,17 +213,17 @@ public class map extends AppCompatActivity implements
                     mMap.animateCamera(cameraUpdate);
                 }
                 break;
-						case R.id.shieldButton:
+            case R.id.shieldButton:
                 if (shieldArray != null) {
                     try {
-												mService.sendMessage(shieldArray);
-										} catch (Exception e) {
-												Log.e(TAG, "cant send shield", e);
-										};
+                            mService.sendMessage(shieldArray);
+                    } catch (Exception e) {
+                            Log.e(TAG, "cant send shield", e);
+                    }
                 }
-								shieldButton.setBackgroundColor(Color.parseColor("#00c853"));
-								shieldButton.setEnabled(false);
-								shieldTimer();
+                shieldButton.setBackgroundColor(Color.parseColor("#00c853"));
+                shieldButton.setEnabled(false);
+                shieldTimer();
                 break;
         }
     }
@@ -278,7 +278,9 @@ public class map extends AppCompatActivity implements
                 TextView Rating = (TextView) findViewById(R.id.rating);
                 Rating.setText(message.get(1));
                 Log.d("Display Points", message.toString());
-								Toast.makeText(this, "You hited " + message.get(2), Toast.LENGTH_SHORT).show();
+                if (message.size() > 2) {
+                    Toast.makeText(this, "You hited " + message.get(2), Toast.LENGTH_SHORT).show();
+                }
                 break;
             case ship:
                 String shipName = settings.getString("shipName", "");
@@ -296,7 +298,7 @@ public class map extends AppCompatActivity implements
                                     .position(new LatLng(Double.parseDouble(shipList.get(i+1)), Double.parseDouble(shipList.get(i+2))))
                                     .title(shipList.get(i))
                                     .flat(true)
-																		.rotation(Float.parseFloat(missleList.get(i+3)))
+                                    .rotation(Float.parseFloat(shipList.get(i+3)))
                                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.fighter))
                                     .anchor(0.5f, 0.5f)));
                             continue;
@@ -304,7 +306,7 @@ public class map extends AppCompatActivity implements
                         shipMarkers.add(mMap.addMarker(new MarkerOptions()
                                 .position(new LatLng(Double.parseDouble(shipList.get(i+1)), Double.parseDouble(shipList.get(i+2))))
                                 .title(shipList.get(i))
-																.rotation(Float.parseFloat(missleList.get(i+3)))
+                                .rotation(Float.parseFloat(shipList.get(i+3)))
                                 .flat(true)
                                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.enemy))
                                 .anchor(0.5f, 0.5f)));
@@ -351,11 +353,11 @@ public class map extends AppCompatActivity implements
                 break;
             case startCom:
                 sendShip();
-								break;
-						case hit:
-								String hitName = (String) msg.obj;
-								Toast.makeText(this, hitName + " hited you!", Toast.LENGTH_SHORT).show();
-								break;
+                break;
+            case hit:
+                String hitName = (String) msg.obj;
+                Toast.makeText(this, hitName + " hited you!", Toast.LENGTH_SHORT).show();
+                break;
             default:
                 break;
         }
@@ -369,7 +371,6 @@ public class map extends AppCompatActivity implements
             mBound = true;
             mService.setHandler(getHandler());
         }
-
         public void onServiceDisconnected(ComponentName className) {
             mService = null;
         }
@@ -438,7 +439,7 @@ public class map extends AppCompatActivity implements
     protected void onStart() {
         super.onStart();
         // Bind to the service
-        if (mService == null && idToken != null) {
+        if (mService == null && !idToken.equals("")) {
             bindService(new Intent(this, TCPService.class), mConnection, Context.BIND_AUTO_CREATE);
         } else {
             Log.d(TAG, "no idToken!!!");
@@ -702,20 +703,22 @@ public class map extends AppCompatActivity implements
         });
     }
 		
-		private void shieldTimer() {
+    private void shieldTimer() {
         new CountDownTimer(10000, 1000) {
+
             public void onTick(long millisUntilFinished) {
-								if (millisUntilFinished / 1000 >= 7) {
-										shieldButton.setText(R.string.shield_active);
-								} else {
-										shieldButton.setBackgroundColor(Color.GRAY);
-                		shieldButton.setText("Shield Recharging:" + Long.toString(millisUntilFinished / 1000) + "s");
-								}
+                if (millisUntilFinished / 1000 >= 7) {
+                    shieldButton.setText(R.string.shield_active);
+                } else {
+                    shieldButton.setBackgroundColor(Color.GRAY);
+                    shieldButton.setText("Shield Recharging:" + Long.toString(millisUntilFinished / 1000) + "s");
+                }
             }
+
             public void onFinish() {
                 shieldButton.setText(R.string.activate_shield);
-								shieldButton.setEnabled(true);
-								shieldButton.setBackgroundColor(Color.parseColor("#e53935"));
+                shieldButton.setEnabled(true);
+                shieldButton.setBackgroundColor(Color.parseColor("#E3F2FD"));
             }
         }.start();
     }
