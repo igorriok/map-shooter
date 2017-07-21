@@ -2,59 +2,66 @@ package com.solonari.igor.virtualshooter;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
-import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.appindexing.Action;
-import com.google.android.gms.appindexing.AppIndex;
-import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResult;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
-import java.util.Objects;
+import java.util.ArrayList;
 
 
 public class map extends AppCompatActivity implements
-        OnMapReadyCallback,
-        GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener,
-        LocationListener, Handler.Callback, PopupMenu.OnMenuItemClickListener,
-        ShipNameFragment.NoticeDialogListener {
+        OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener, LocationListener,
+        Handler.Callback, View.OnClickListener, ShipNameFragment.NoticeDialogListener {
 
     private GoogleMap mMap;
     protected GoogleApiClient mGoogleApiClient;
@@ -62,28 +69,39 @@ public class map extends AppCompatActivity implements
     private long UPDATE_INTERVAL = 5000;  /* 5 secs */
     private long FASTEST_INTERVAL = 1000; /* 1 secs */
     private static String TAG = "Map";
-    private Handler mHandler = new Handler(this);
-    protected TCPClient tcpClient;
+    private Handler mHandler = new Handler(Looper.getMainLooper(), this);
     final String mTag = "Handler";
-    private ChatManager chatManager;
     private String idToken;
     protected static final String Pref_file = "Pref_file";
     protected SharedPreferences settings;
     HandlerThread shipThread;
-	LatLng latLng;
-
-    /*
-     * Define a request code to send to Google Play services This code is
-	 * returned in Activity.onActivityResult
-	 */
+    LatLng latLng;
+    private static final int points = 2;
+    private static final int ship = 3;
+    private static final int missleArray = 5;
+    private static final int exp = 6;
+    private static final int startCom = 1;
+		private static final int hit = 7;
+    ArrayList<String> shipList;
+    ArrayList<Marker> shipMarkers;
+    ArrayList<Marker> missleMarkers;
+    ArrayList<Marker> expMarkers;
+    AppCompatActivity thisActivity = this;
+    Intent shootIntent;
+    TCPService mService;
+    ArrayList<String> missleList;
+    ArrayList<String> expList;
+    private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
+    private boolean mLocationPermissionGranted;
+    Location location;
     protected final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
-    protected static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
-    protected boolean mPermissionDenied = false;
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
+    protected static final int CAMERA_PERMISSION_REQUEST_CODE = 2;
     private GoogleApiClient client;
+    boolean mBound = false;
+    View dView;
+    protected static final int REQUEST_CHECK_SETTINGS = 0x1;
+    ArrayList<String> shieldArray;
+    Button shieldButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,59 +116,42 @@ public class map extends AppCompatActivity implements
 
         setContentView(R.layout.content_map);
 
+        findViewById(R.id.signOut).setOnClickListener(this);
+        findViewById(R.id.exit).setOnClickListener(this);
+        findViewById(R.id.shootButton).setOnClickListener(this);
+        findViewById(R.id.myLocationButton).setOnClickListener(this);
+        findViewById(R.id.ship).setOnClickListener(this);
+        findViewById(R.id.shieldButton).setOnClickListener(this);
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_fragment);
 
         mapFragment.getMapAsync(this);
-	
+
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestId()
+                .build();
+
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(LocationServices.API)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .build();
         mGoogleApiClient.connect();
-	
-        // Find the View that shows the compass category
-        Button Compass = (Button) findViewById(R.id.shootButton);
-
-        // Set a click listener on shoot button
-        Compass.setOnClickListener(new View.OnClickListener() {
-            // The code in this method will be executed when the shoot View is clicked on.
-            @Override
-            public void onClick(View view) {
-                Intent shootIntent = new Intent(map.this, Compass.class);
-                startActivity(shootIntent);
-            }
-        });
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
 
         SharedPreferences settings = getSharedPreferences(Pref_file, 0);
-        String id = settings.getString("ID", "");
+        String id = settings.getString("Token", "");
         if (!id.equals("")) {
             idToken = id;
         } else {
             goToSignIn();
         }
-
-        if (tcpClient == null && idToken != null) {
-            tcpClient = new TCPClient(this.getHandler());
-            tcpClient.start();
-            Log.d(TAG, "TCPClient created");
-        } else {
-            Log.d(TAG, "no idToken!!!");
-        }
-        final View settingsMenu = findViewById(R.id.settings);
-        settingsMenu.setOnClickListener(new View.OnClickListener() {
-            // The code in this method will be executed when the settings View is clicked on.
-            @Override
-            public void onClick(View view) {
-            showMenu(settingsMenu);
-            }
-        });
+				shieldArray = new ArrayList<>();
+				shieldArray.add("shield");
+				shieldButton = (Button) findViewById(R.id.shieldButton);
     }
+
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
@@ -164,57 +165,85 @@ public class map extends AppCompatActivity implements
                             | View.SYSTEM_UI_FLAG_FULLSCREEN
                             | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);}
     }
-	
-	public void showMenu(View v) {
-	    PopupMenu popup = new PopupMenu(this, v);
-	    // This activity implements OnMenuItemClickListener
-	    popup.setOnMenuItemClickListener(this);
-	    popup.inflate(R.menu.settings_menu);
-	    popup.show();
-	}
 
-	@Override
-	public boolean onMenuItemClick(MenuItem item) {
-	    switch (item.getItemId()) {
-		case R.id.shipName:
-            showNoticeDialog();
-		    return true;
-		case R.id.signOut:
-		    Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
+    @Override
+    public void onClick(View v) {
+
+        switch (v.getId()) {
+            case R.id.ship:
+                showNoticeDialog();
+                break;
+            case R.id.signOut:
+                Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
                         new ResultCallback<Status>() {
                             @Override
                             public void onResult(@NonNull Status status) {
                                 SharedPreferences settings = getSharedPreferences(Pref_file, 0);
                                 SharedPreferences.Editor editor = settings.edit();
-                                editor.putString("ID", "");
+                                editor.putString("Token", "");
                                 editor.apply();
                                 Intent signInIntent = new Intent(map.this, SignInActivity.class);
                                 startActivity(signInIntent);
                             }
                         });
-		    return true;
-		case R.id.exit:
-		    Intent intent = new Intent(Intent.ACTION_MAIN);
-			intent.addCategory(Intent.CATEGORY_HOME);
-			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-			startActivity(intent);
-		    return true;
-		default:
-		    return false;
-	    }
-	}
+                break;
+            case R.id.exit:
+                Intent intent = new Intent(Intent.ACTION_MAIN);
+                intent.addCategory(Intent.CATEGORY_HOME);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                break;
+            case R.id.shootButton:
+                shootIntent = new Intent(map.this, Compass.class);
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+                        startActivity(shootIntent);
+                    } else {
+                        PermissionUtils.requestPermission(thisActivity, CAMERA_PERMISSION_REQUEST_CODE,
+                                Manifest.permission.CAMERA, false);
+                    }
+                } else {
+                    startActivity(shootIntent);
+                }
+                break;
+            case R.id.myLocationButton:
+                if (mMap != null && latLng != null) {
+                    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 18);
+                    mMap.animateCamera(cameraUpdate);
+                }
+                break;
+            case R.id.shieldButton:
+                if (shieldArray != null) {
+                    try {
+                            mService.sendMessage(shieldArray);
+                    } catch (Exception e) {
+                            Log.e(TAG, "cant send shield", e);
+                    }
+                }
+                shieldButton.setBackgroundColor(Color.parseColor("#00c853"));
+                shieldButton.setEnabled(false);
+                shieldTimer();
+                break;
+        }
+    }
 
     public void showNoticeDialog() {
         // Create an instance of the dialog fragment and show it
         DialogFragment ShipDialog = new ShipNameFragment();
         ShipDialog.show(getFragmentManager(), "shipNameFragment");
+        settings = getSharedPreferences(Pref_file, 0);
+        String shipName = settings.getString("shipName", "");
+        Bundle ship = new Bundle();
+        ship.putString("shipName", shipName);
+        ShipDialog.setArguments(ship);
     }
 
     @Override
     public void onDialogPositiveClick(DialogFragment dialog, String shipName) {
         // User touched the dialog's positive button
         if(!shipName.equals("")) {
-            SharedPreferences settings = getSharedPreferences(Pref_file, 0);
+            settings = getSharedPreferences(Pref_file, 0);
             SharedPreferences.Editor editor = settings.edit();
             editor.putString("shipName", shipName);
             editor.apply();
@@ -228,46 +257,124 @@ public class map extends AppCompatActivity implements
     @Override
     public void onDialogNegativeClick(DialogFragment dialog, String shipName) {
         // User touched the dialog's negative button
-        if(Objects.equals(shipName, "")){
+        settings = getSharedPreferences(Pref_file, 0);
+        shipName = settings.getString("shipName", "");
+        if(shipName.equals("")){
             showNoticeDialog();
         }
     }
-			
-	private void goToSignIn() {
-		Intent signInIntent = new Intent(map.this, SignInActivity.class);
-		startActivity(signInIntent);
-	}
+
+    private void goToSignIn() {
+        Intent signInIntent = new Intent(map.this, SignInActivity.class);
+        startActivity(signInIntent);
+    }
 
     @Override
     public boolean handleMessage(Message msg) {
 
         switch (msg.what) {
-            case 1:
-                String message = (String) msg.obj;
+            case points:
+                ArrayList<String> message = (ArrayList) msg.obj;
                 TextView Rating = (TextView) findViewById(R.id.rating);
-                Rating.setText(message);
-                //Rating.postInvalidate();
-                Toast.makeText(this, message, Toast.LENGTH_LONG).show();
-                Log.d(mTag, message);
+                Rating.setText(message.get(1));
+                Log.d("Display Points", message.toString());
+                if (message.size() > 2) {
+                    Toast.makeText(this, "You hited " + message.get(2), Toast.LENGTH_SHORT).show();
+                }
                 break;
-
-            case 2:
-                Object obj = msg.obj;
-                setChatManager((ChatManager) obj);
-                Log.d(mTag, "ChatManager set");
+            case ship:
+                String shipName = settings.getString("shipName", "");
+                shipList = (ArrayList) msg.obj;
+                if (shipMarkers != null) {
+                    for (Marker markerName : shipMarkers) {
+                        markerName.remove();
+                    }
+                }
+                shipMarkers = new ArrayList<>();
+                if (mMap != null) {
+                    for(int i = 1; i < shipList.size(); i = i + 4) {
+                        if (shipList.get(i).equals(shipName)) {
+                            shipMarkers.add(mMap.addMarker(new MarkerOptions()
+                                    .position(new LatLng(Double.parseDouble(shipList.get(i+1)), Double.parseDouble(shipList.get(i+2))))
+                                    .title(shipList.get(i))
+                                    .flat(true)
+                                    .rotation(Float.parseFloat(shipList.get(i+3)))
+                                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.fighter))
+                                    .anchor(0.5f, 0.5f)));
+                            continue;
+                        }
+                        shipMarkers.add(mMap.addMarker(new MarkerOptions()
+                                .position(new LatLng(Double.parseDouble(shipList.get(i+1)), Double.parseDouble(shipList.get(i+2))))
+                                .title(shipList.get(i))
+                                .rotation(Float.parseFloat(shipList.get(i+3)))
+                                .flat(true)
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.enemy))
+                                .anchor(0.5f, 0.5f)));
+                    }
+                }
+                Log.d(TAG, "Adding shipMarkers on map");
                 break;
-
+            case missleArray:
+                missleList = (ArrayList) msg.obj;
+                if (missleMarkers != null) {
+                    for (Marker missleMarker : missleMarkers) {
+                        missleMarker.remove();
+                    }
+                }
+                missleMarkers = new ArrayList<>();
+                if (mMap != null) {
+                    for (int i = 1; i < missleList.size(); i = i + 3) {
+                        missleMarkers.add(mMap.addMarker(new MarkerOptions()
+                                .position(new LatLng(Double.parseDouble(missleList.get(i+1)), Double.parseDouble(missleList.get(i+2))))
+                                .rotation(Float.parseFloat(missleList.get(i)))
+                                .flat(true)
+                                .icon(BitmapDescriptorFactory.fromResource(R.mipmap.missile))
+                                .anchor(0.5f, 0.5f)));
+                    }
+                }
+                break;
+            case exp:
+                expList = (ArrayList) msg.obj;
+                if (expMarkers != null) {
+                    for (Marker expMarker : expMarkers) {
+                        expMarker.remove();
+                    }
+                }
+                expMarkers = new ArrayList<>();
+                if (mMap != null) {
+                    for (int i = 1; i < expList.size(); i = i + 2) {
+                        expMarkers.add(mMap.addMarker(new MarkerOptions()
+                                .position(new LatLng(Double.parseDouble(expList.get(1)), Double.parseDouble(expList.get(i+1))))
+                                .flat(true)
+                                .icon(BitmapDescriptorFactory.fromResource(R.mipmap.explosion))
+                                .anchor(0.5f, 0.5f)));
+                    }
+                }
+                break;
+            case startCom:
+                sendShip();
+                break;
+            case hit:
+                String hitName = (String) msg.obj;
+                Toast.makeText(this, hitName + " hited you!", Toast.LENGTH_SHORT).show();
+                break;
             default:
                 break;
         }
         return true;
     }
 
-    public void setChatManager(ChatManager obj) {
-        chatManager = obj;
-        new Thread(new IDSend()).start();
-        sendShip();
-    }
+    private ServiceConnection mConnection = new ServiceConnection() {
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            TCPService.LocalBinder binder = (TCPService.LocalBinder) service;
+            mService = binder.getService();
+            mBound = true;
+            mService.setHandler(getHandler());
+        }
+        public void onServiceDisconnected(ComponentName className) {
+            mService = null;
+        }
+    };
 
     private Handler getHandler(){
         return mHandler;
@@ -279,57 +386,51 @@ public class map extends AppCompatActivity implements
         if (mMap != null) {
             // Now that map has loaded, let's get our location
             enableMyLocation();
+            mMap.getUiSettings().setMapToolbarEnabled(false);
         }
     }
 
     protected void enableMyLocation() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-                // Permission to access the location is missing.
-                PermissionUtils.requestPermission(this, LOCATION_PERMISSION_REQUEST_CODE,
-                        Manifest.permission.ACCESS_FINE_LOCATION, true);
-        } else if (mMap != null) {
-            // Access to the location has been granted to the app.
-            mMap.setMyLocationEnabled(true);
-		if (latLng != null) {
-			CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 17);
-		}
+        // Access to the location has been granted to the app.
+        //mMap.setMyLocationEnabled(true);
+        if (latLng != null) {
+            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 17);
+            mMap.animateCamera(cameraUpdate);
+        } else {
+            Toast.makeText(this, "Current location was not found, please enable GPS", Toast.LENGTH_SHORT).show();
         }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
-        if (requestCode != LOCATION_PERMISSION_REQUEST_CODE) {
-            return;
-        }
-
-        if (PermissionUtils.isPermissionGranted(permissions, grantResults,
-                Manifest.permission.ACCESS_FINE_LOCATION)) {
-            // Enable the my location layer if the permission has been granted.
-            enableMyLocation();
-        } else {
-            // Display the missing permission error dialog when the fragments resume.
-            mPermissionDenied = true;
+        mLocationPermissionGranted = false;
+        switch (requestCode) {
+            case PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    mLocationPermissionGranted = true;
+                    startLocationUpdates();
+                }
+            }
+            break;
+            /*case CAMERA_PERMISSION_REQUEST_CODE:
+                if (PermissionUtils.isPermissionGranted(permissions, grantResults, Manifest.permission.CAMERA)) {
+                    startActivity(shootIntent);
+                } else {
+                    PermissionUtils.PermissionDeniedDialog.newInstance(false).show(getSupportFragmentManager(), "dialog");
+                }
+                break;*/
+            default:
+                break;
         }
     }
 
     @Override
     protected void onResumeFragments() {
         super.onResumeFragments();
-        if (mPermissionDenied) {
-            // Permission was not granted, display error dialog.
-            showMissingPermissionError();
-            mPermissionDenied = false;
-        }
     }
 
-    /**
-     * Displays a dialog with error message explaining that the location permission is missing.
-     */
-    private void showMissingPermissionError() {
-        PermissionUtils.PermissionDeniedDialog.newInstance(true).show(getSupportFragmentManager(), "dialog");
-    }
 
     /*
      * Called when the Activity becomes visible.
@@ -337,13 +438,13 @@ public class map extends AppCompatActivity implements
     @Override
     protected void onStart() {
         super.onStart();
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client.connect();
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        AppIndex.AppIndexApi.start(client, getIndexApiAction());
-
+        // Bind to the service
+        if (mService == null && !idToken.equals("")) {
+            bindService(new Intent(this, TCPService.class), mConnection, Context.BIND_AUTO_CREATE);
+        } else {
+            Log.d(TAG, "no idToken!!!");
+        }
+        Log.d(TAG, "onStart");
     }
 
     @Override
@@ -360,7 +461,10 @@ public class map extends AppCompatActivity implements
         } else {
             showNoticeDialog();
         }
-
+        if (mService != null) {
+            mService.setHandler(getHandler());
+        }
+        Log.d(TAG, "onResume");
     }
 
     protected void displayShipName(){
@@ -376,7 +480,7 @@ public class map extends AppCompatActivity implements
         // Decide what to do based on the original request code
         switch (requestCode) {
             case CONNECTION_FAILURE_RESOLUTION_REQUEST:
-		//If the result code is Activity.RESULT_OK, try to connect again
+                //If the result code is Activity.RESULT_OK, try to connect again
                 switch (resultCode) {
                     case Activity.RESULT_OK:
                         mGoogleApiClient.connect();
@@ -387,26 +491,26 @@ public class map extends AppCompatActivity implements
 
     @Override
     public void onConnected(Bundle dataBundle) {
-	
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            // Permission to access the location is missing.
-            PermissionUtils.requestPermission(this, LOCATION_PERMISSION_REQUEST_CODE,
-                    Manifest.permission.ACCESS_FINE_LOCATION, true);
-        }
-        // Display the connection status
-        Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        if (location != null) {
-            Toast.makeText(this, "GPS location was found!", Toast.LENGTH_SHORT).show();
-            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 17);
-            if (mMap != null) {
-		mMap.animateCamera(cameraUpdate);
-	    }
+
+        if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
+                android.Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            mLocationPermissionGranted = true;
         } else {
-            Toast.makeText(this, "Current location was not found, enable GPS", Toast.LENGTH_SHORT).show();
+            ActivityCompat.requestPermissions(this,
+                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                    PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
         }
-        startLocationUpdates();
+
+        if (mLocationPermissionGranted) {
+            location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+            if(location != null) {
+                latLng = new LatLng(location.getLatitude(), location.getLongitude());
+								this.location = location;
+                enableMyLocation();
+            }
+            startLocationUpdates();
+        }
     }
 
     protected void startLocationUpdates() {
@@ -415,23 +519,51 @@ public class map extends AppCompatActivity implements
         mLocationRequest.setInterval(UPDATE_INTERVAL);
         mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            // Permission to access the location is missing.
-            PermissionUtils.requestPermission(this, LOCATION_PERMISSION_REQUEST_CODE,
-                    Manifest.permission.ACCESS_FINE_LOCATION, true);
+        if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
+                android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            mLocationPermissionGranted = true;
+        } else {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                    PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
         }
-        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder().addLocationRequest(mLocationRequest);
+        builder.setAlwaysShow(true);
+
+        PendingResult<LocationSettingsResult> result = LocationServices.SettingsApi.checkLocationSettings(mGoogleApiClient, builder.build());
+        result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
+            @Override
+            public void onResult(LocationSettingsResult result) {
+                final Status status = result.getStatus();
+                switch (status.getStatusCode()) {
+                    case LocationSettingsStatusCodes.SUCCESS:
+                        Log.i(TAG, "All location settings are satisfied.");
+                        break;
+                    case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                        Log.i(TAG, "Location settings are not satisfied. Show the user a dialog to upgrade location settings");
+                        try {
+                            // Show the dialog by calling startResolutionForResult(), and check the result
+                            // in onActivityResult().
+                            status.startResolutionForResult(map.this, REQUEST_CHECK_SETTINGS);
+                        } catch (IntentSender.SendIntentException e) {
+                            Log.i(TAG, "PendingIntent unable to execute request.");
+                        }
+                        break;
+                    case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                        Log.i(TAG, "Location settings are inadequate, and cannot be fixed here. Dialog not created.");
+                        break;
+                }
+            }
+        });
+        if (mLocationPermissionGranted) {
+            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+        }
     }
 
     public void onLocationChanged(Location location) {
-        // Report to the UI that the location was updated
-        Toast.makeText(this, location.toString(), Toast.LENGTH_SHORT).show();
-	    latLng = new LatLng(location.getLatitude(), location.getLongitude());
-        String msg = "Updated Location: " +
-                Double.toString(location.getLatitude()) + "," +
-                Double.toString(location.getLongitude());
-        //Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, location.toString(), Toast.LENGTH_SHORT).show();
+        latLng = new LatLng(location.getLatitude(), location.getLongitude());
+				this.location = location;
     }
 
 
@@ -471,44 +603,20 @@ public class map extends AppCompatActivity implements
                 e.printStackTrace();
             }
         } else {
-            Toast.makeText(getApplicationContext(),
-                    "Sorry. Location services not available to you", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "Sorry. Location services not available", Toast.LENGTH_LONG).show();
         }
-    }
-
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
-    public Action getIndexApiAction() {
-        Thing object = new Thing.Builder()
-                .setName("map Page") // TODO: Define a title for the content shown.
-                // TODO: Make sure this auto-generated URL is correct.
-                .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
-                .build();
-        return new Action.Builder(Action.TYPE_VIEW)
-                .setObject(object)
-                .setActionStatus(Action.STATUS_TYPE_COMPLETED)
-                .build();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+
     }
 
-    protected void stopLocationUpdates() {
-        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
-    }
 
     @Override
     public void onStop() {
         super.onStop();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        AppIndex.AppIndexApi.end(client, getIndexApiAction());
-        client.disconnect();
     }
 
     @Override
@@ -522,44 +630,11 @@ public class map extends AppCompatActivity implements
         if(mGoogleApiClient != null) {
             mGoogleApiClient.disconnect();
         }
-    }
-
-    // Define a DialogFragment that displays the error dialog
-    public static class ErrorDialogFragment extends DialogFragment {
-
-        // Global field to contain the error dialog
-        private Dialog mDialog;
-
-        // Default constructor. Sets the dialog field to null
-        public ErrorDialogFragment() {
-            super();
-            mDialog = null;
-        }
-
-        // Set the dialog to display
-        public void setDialog(Dialog dialog) {
-            mDialog = dialog;
-        }
-
-        // Return a Dialog to the DialogFragment.
-        @NonNull
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            return mDialog;
+        if(mBound) {
+            unbindService(mConnection);
         }
     }
 
-    private class IDSend implements Runnable {
-
-        @Override
-        public void run() {
-            try {
-                chatManager.sendMessage(idToken);
-            } catch (Exception e) {
-                Log.e(TAG, "cant send message", e);
-            }
-        }
-    }
 
     public void sendShip() {
 
@@ -568,23 +643,83 @@ public class map extends AppCompatActivity implements
         Looper looper = shipThread.getLooper();
         final Handler shipHandler = new Handler(looper);
 
+        //send token to get ID
         shipHandler.post(new Runnable() {
             @Override
             public void run() {
-                settings = getSharedPreferences(Pref_file, 0);
-                String ship = settings.getString("shipName", "");
-                if(!ship.equals("")) {
-                    try {
-                        chatManager.sendMessage(ship);
-                    } catch (Exception e) {
-                        Log.e(TAG, "cant send location", e);
+                ArrayList<String> idArray = new ArrayList<>();
+                idArray.add("id");
+                idArray.add(idToken);
+                try {
+                    mService.sendMessage(idArray);
+                } catch (Exception e) {
+                    Log.e(TAG, "cant send message", e);
+                }
+            }
+        });
+
+        //send ship location
+        shipHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                if (latLng != null) {
+                    ArrayList<String> shipArray = new ArrayList<>();
+                    shipArray.add("ship");
+                    settings = getSharedPreferences(Pref_file, 0);
+                    String ID = settings.getString("ID", "");
+                    shipArray.add(ID);
+                    String shipName = settings.getString("shipName", "");
+                    shipArray.add(shipName);
+                    shipArray.add(Double.toString(latLng.latitude));
+                    shipArray.add(Double.toString(latLng.longitude));
+										shipArray.add(Float.toString(location.getBearing()));
+                    Log.d(TAG, shipArray.toString());
+
+                    if (!shipName.equals("") && !ID.equals("")) {
+                        try {
+                            mService.sendMessage(shipArray);
+                        } catch (Exception e) {
+                            Log.e(TAG, "cant send location", e);
+                        }
                     }
                 }
                 shipHandler.postDelayed(this, 5000);
             }
         });
 
+        //request missiles
+        shipHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                ArrayList<String> missileArray = new ArrayList<>();
+                missileArray.add("missileArray");
+                try {
+                    mService.sendMessage(missileArray);
+                } catch (Exception e) {
+                    Log.e(TAG, "cant send location", e);
+                }
+                shipHandler.postDelayed(this, 100);
+            }
+        });
     }
+		
+    private void shieldTimer() {
+        new CountDownTimer(10000, 1000) {
 
+            public void onTick(long millisUntilFinished) {
+                if (millisUntilFinished / 1000 >= 7) {
+                    shieldButton.setText(R.string.shield_active);
+                } else {
+                    shieldButton.setBackgroundColor(Color.GRAY);
+                    shieldButton.setText("Shield Recharging:" + Long.toString(millisUntilFinished / 1000) + "s");
+                }
+            }
+
+            public void onFinish() {
+                shieldButton.setText(R.string.activate_shield);
+                shieldButton.setEnabled(true);
+                shieldButton.setBackgroundColor(Color.parseColor("#E3F2FD"));
+            }
+        }.start();
+    }
 }
-

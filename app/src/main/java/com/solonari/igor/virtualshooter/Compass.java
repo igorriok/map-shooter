@@ -1,9 +1,12 @@
 package com.solonari.igor.virtualshooter;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
+import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.hardware.GeomagneticField;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -11,6 +14,10 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -29,11 +36,14 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
+import java.util.ArrayList;
 
 
-public class Compass extends AppCompatActivity implements ConnectionCallbacks, OnConnectionFailedListener, LocationListener {
+public class Compass extends AppCompatActivity implements ConnectionCallbacks,
+        OnConnectionFailedListener, LocationListener {
 
     private static final String TAG = "Compass";
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     private static boolean DEBUG = false;
     private SensorManager mSensorManager;
     private Sensor mSensor;
@@ -49,6 +59,18 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks, O
     private long FASTEST_INTERVAL = 1000; /* 1 secs */
     protected Location location;
     protected static final int REQUEST_CAMERA_PERMISSION = 2;
+    TCPService mService;
+    private Handler mHandler;
+    public ArrayList<Point> props;
+    private final int ship = 3;
+    private ArrayList<String> line;
+    String shipName;
+    SharedPreferences settings;
+    static final String Pref_file = "Pref_file";
+    boolean mBound = false;
+    ArrayList<String> missleArray;
+    String shipID;
+    Button fire;
 
 
     private SensorEventListener mListener = new SensorEventListener() {
@@ -60,8 +82,10 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks, O
 
             if (mDrawView != null) {
                 float magneticHeading = (float) Math.toDegrees(mOrientation[0]);
-                mHeading = MathUtils.mod(computeTrueNorth(magneticHeading), 360.0f)
-                        - ARM_DISPLACEMENT_DEGREES;
+                float axisY = (float) Math.toDegrees(mOrientation[1]);
+                float axisZ = (float) Math.toDegrees(mOrientation[2]);
+                mDrawView.setYZ(axisY, axisZ);
+                mHeading = MathUtils.mod(computeTrueNorth(magneticHeading), 360.0f);
                 mDrawView.setOffset(mHeading);
                 mDrawView.invalidate();
             }
@@ -84,7 +108,6 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks, O
                 location.getTime());
     }
 
-    //@SuppressWarnings("deprecation")
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
@@ -117,7 +140,29 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks, O
             }
         });
 
+        fire = (Button) findViewById(R.id.fire);
+        fire.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                    fire.setBackgroundColor(Color.GRAY);
+                    fire.setEnabled(false);
+                    fireTimer();
+                    missleArray = new ArrayList<>();
+                    missleArray.add("missile");
+                    missleArray.add(shipID);
+                    missleArray.add(Float.toString(mHeading));
+                    missleArray.add(Double.toString(location.getLatitude()));
+                    missleArray.add(Double.toString(location.getLongitude()));
+                    mService.sendMessage(missleArray);
+                    Toast.makeText(getApplicationContext(), "Recharging", Toast.LENGTH_SHORT).show();
+                }
+            });
+
         buildGoogleApiClient();
+
+        setHandler();
+
+        setShipName();
     }
 
     @Override
@@ -133,6 +178,28 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks, O
                             | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);}
     }
 
+    private void setHandler() {
+        mHandler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+
+                switch (msg.what) {
+                    case ship:
+                        line = (ArrayList) msg.obj;
+                        props = new ArrayList<>();
+                        for (int i = 1; i < line.size(); i = i + 4) {
+                            if (line.get(i).equals(shipName))
+                                continue;
+                            props.add(new Point(Double.parseDouble(line.get(i + 1)), Double.parseDouble(line.get(i + 2)), line.get(i)));
+                        }
+                        mDrawView.setPoints(props);
+                        break;
+                }
+            }
+        };
+    }
+
+
     protected synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
@@ -145,12 +212,24 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks, O
     @Override
     protected void onStart() {
         super.onStart();
+        bindService(new Intent(this, TCPService.class), mConnection, Context.BIND_AUTO_CREATE);
+        settings = getSharedPreferences(Pref_file, 0);
+        if(settings != null) {
+            shipID = settings.getString("ID", "");
+        }
     }
 
     @Override
     public void onConnected(Bundle dataBundle) {
         // Display the connection status
         startLocationUpdates();
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Permission to access the location is missing.
+            PermissionUtils.requestPermission(this, LOCATION_PERMISSION_REQUEST_CODE,
+                    android.Manifest.permission.ACCESS_FINE_LOCATION, true);
+        }
+        location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
     }
 
     protected void startLocationUpdates() {
@@ -158,6 +237,12 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks, O
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         mLocationRequest.setInterval(UPDATE_INTERVAL);
         mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Permission to access the location is missing.
+            PermissionUtils.requestPermission(this, LOCATION_PERMISSION_REQUEST_CODE,
+                    android.Manifest.permission.ACCESS_FINE_LOCATION, true);
+        }
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
     }
 
@@ -169,10 +254,11 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks, O
         mDrawView.invalidate();
         updateGeomagneticField();
 
-        String msg = "Updated Location: " +
-                Double.toString(location.getLatitude()) + "," +
-                Double.toString(location.getLongitude());
+        /*String msg = "Updated Location: " +
+        *        Double.toString(location.getLatitude()) + "," +
+        *        Double.toString(location.getLongitude());
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+        */
     }
 
     @Override
@@ -188,7 +274,10 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks, O
             mGoogleApiClient.disconnect();
         }
         mSensorManager.unregisterListener(mListener);
-        super.onStop();
+        if (mBound) {
+            unbindService(mConnection);
+            mBound = false;
+        }
     }
 
     @Override
@@ -231,4 +320,65 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks, O
         }
     }
 
+    private ServiceConnection mConnection = new ServiceConnection() {
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            TCPService.LocalBinder binder = (TCPService.LocalBinder) service;
+            mService = binder.getService();
+            mService.setHandler(getHandler());
+            mBound = true;
+            sendShip();
+        }
+
+        public void onServiceDisconnected(ComponentName className) {
+            mService = null;
+        }
+    };
+
+    private Handler getHandler(){
+        return mHandler;
+    }
+
+    private void setShipName() {
+        settings = getSharedPreferences(Pref_file, 0);
+        if(settings != null) {
+            shipName = settings.getString("shipName", "");
+        }
+    }
+    
+    private void fireTimer() {
+        new CountDownTimer(10000, 1000) {
+            public void onTick(long millisUntilFinished) {  
+                fire.setText(Long.toString(millisUntilFinished / 1000));
+            }
+            public void onFinish() {
+                fire.setText(R.string.shoot);
+                    fire.setEnabled(true);
+                    fire.setBackgroundColor(Color.parseColor("#e53935"));
+            }
+        }.start();
+    }
+    
+    private void sendShip() {
+        if (location != null) {
+            ArrayList<String> shipArray = new ArrayList<>();
+            shipArray.add("ship");
+            settings = getSharedPreferences(Pref_file, 0);
+            String ID = settings.getString("ID", "");
+            shipArray.add(ID);
+            String shipName = settings.getString("shipName", "");
+            shipArray.add(shipName);
+            shipArray.add(Double.toString(location.getLatitude()));
+            shipArray.add(Double.toString(location.getLongitude()));
+            shipArray.add(Float.toString(location.getBearing()));
+            Log.d(TAG, shipArray.toString());
+
+            if (!shipName.equals("") && !ID.equals("")) {
+                try {
+                    mService.sendMessage(shipArray);
+                } catch (Exception e) {
+                    Log.e(TAG, "cant send location", e);
+                }
+            }
+        }
+    }
 }
