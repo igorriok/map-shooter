@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/virtual_shooter.iml" filepath="$PROJECT_DIR$/virtual_shooter.iml" />
+      <module fileurl="file://$PROJECT_DIR$/map-shooter.iml" filepath="$PROJECT_DIR$/map-shooter.iml" />
+      <module fileurl="file://$PROJECT_DIR$/mapshooter/mapshooter.iml" filepath="$PROJECT_DIR$/mapshooter/mapshooter.iml" />
     </modules>
   </component>
 </project>

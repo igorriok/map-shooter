@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "653188213597",
+    "project_id": "firebase-map-shooter"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:653188213597:android:019917e88c4f42cc",
+        "android_client_info": {
+          "package_name": "com.solonari.igor.mapshooter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "653188213597-040iphvtre8jc7kcql1vi9gum0vrbuf5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.solonari.igor.mapshooter",
+            "certificate_hash": "519b876768cbb97dca2f4a4a89d7d06b39abd23f"
+          }
+        },
+        {
+          "client_id": "653188213597-jll3ngrpn5b91b1ghn1vdnqhs3bi45s0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDW07FVgddSioQq5eCXyh5H2F4aPpuIqlw"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
