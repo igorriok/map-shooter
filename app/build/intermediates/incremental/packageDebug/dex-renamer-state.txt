@@ -1,0 +1,7 @@
+#Sun May 14 14:39:30 EEST 2017
+base.0=/Users/igor/AndroidStudioProjects/virtualshooter/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run_02d9024e0e7a1d123540c761b6128279ecbd492d
+renamed.1=classes.dex
+renamed.0=classes2.dex
+file.1=/Users/igor/AndroidStudioProjects/virtualshooter/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run-bootstrap_2911ac1a04c3ebe1c99991da9f7ff397b3c4cf5b/classes.dex
+base.1=/Users/igor/AndroidStudioProjects/virtualshooter/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run-bootstrap_2911ac1a04c3ebe1c99991da9f7ff397b3c4cf5b
+file.0=/Users/igor/AndroidStudioProjects/virtualshooter/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run_02d9024e0e7a1d123540c761b6128279ecbd492d/classes.dex

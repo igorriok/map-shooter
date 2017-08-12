@@ -1,0 +1,26 @@
+[
+    {
+        "merged": "/Users/igor/AndroidStudioProjects/virtualshooter/app/build/intermediates/res/merged/debug/drawable-hdpi/gears.png",
+        "source": "/Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/res/drawable-hdpi/gears.png"
+    },
+    {
+        "merged": "/Users/igor/AndroidStudioProjects/virtualshooter/app/build/intermediates/res/merged/debug/drawable-hdpi/dot.png",
+        "source": "/Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/res/drawable-hdpi/dot.png"
+    },
+    {
+        "merged": "/Users/igor/AndroidStudioProjects/virtualshooter/app/build/intermediates/res/merged/debug/drawable-hdpi/exit.png",
+        "source": "/Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/res/drawable-hdpi/exit.png"
+    },
+    {
+        "merged": "/Users/igor/AndroidStudioProjects/virtualshooter/app/build/intermediates/res/merged/debug/drawable-hdpi/ship.png",
+        "source": "/Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/res/drawable-hdpi/ship.png"
+    },
+    {
+        "merged": "/Users/igor/AndroidStudioProjects/virtualshooter/app/build/intermediates/res/merged/debug/drawable-hdpi/googleg_color.png",
+        "source": "/Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/res/drawable-hdpi/googleg_color.png"
+    },
+    {
+        "merged": "/Users/igor/AndroidStudioProjects/virtualshooter/app/build/intermediates/res/merged/debug/drawable-hdpi/sign_out.png",
+        "source": "/Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/res/drawable-hdpi/sign_out.png"
+    }
+]

@@ -1,0 +1,18 @@
+[
+    {
+        "merged": "/Users/igor/AndroidStudioProjects/virtualshooter/app/build/intermediates/res/merged/debug/mipmap-xxxhdpi/missile.png",
+        "source": "/Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/res/mipmap-xxxhdpi/missile.png"
+    },
+    {
+        "merged": "/Users/igor/AndroidStudioProjects/virtualshooter/app/build/intermediates/res/merged/debug/mipmap-xxxhdpi/ic_launcher.png",
+        "source": "/Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "/Users/igor/AndroidStudioProjects/virtualshooter/app/build/intermediates/res/merged/debug/mipmap-xxxhdpi/fighter.png",
+        "source": "/Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/res/mipmap-xxxhdpi/fighter.png"
+    },
+    {
+        "merged": "/Users/igor/AndroidStudioProjects/virtualshooter/app/build/intermediates/res/merged/debug/mipmap-xxxhdpi/explosion.png",
+        "source": "/Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/res/mipmap-xxxhdpi/explosion.png"
+    }
+]

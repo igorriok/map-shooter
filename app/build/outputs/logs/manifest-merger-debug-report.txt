@@ -1,0 +1,514 @@
+-- Merging decision tree log ---
+manifest
+ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:2:1-82:12
+	package
+		ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:3:5-47
+		INJECTED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml
+		INJECTED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml
+	android:versionName
+		INJECTED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml
+		INJECTED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml
+	xmlns:android
+		ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:2:11-69
+	android:versionCode
+		INJECTED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml
+		INJECTED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml
+permission#com.solonari.igor.virtualshooter.permission.MAPS_RECEIVE
+ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:5:5-7:47
+	android:protectionLevel
+		ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:7:9-44
+	android:name
+		ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:6:9-80
+permission#android.permission.ACCESS_FINE_LOCATION
+ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:8:5-10:47
+	android:protectionLevel
+		ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:10:9-44
+	android:name
+		ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:9:9-63
+permission#android.permission.ACCESS_COARSE_LOCATION
+ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:11:5-13:47
+	android:protectionLevel
+		ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:13:9-44
+	android:name
+		ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:12:9-65
+permission#android.permission.CAMERA
+ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:14:5-16:47
+	android:protectionLevel
+		ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:16:9-44
+	android:name
+		ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:15:9-49
+uses-permission#android.permission.CAMERA
+ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:18:5-65
+	android:name
+		ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:18:22-62
+uses-permission#com.example.mapdemo.permission.MAPS_RECEIVE
+ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:19:5-83
+	android:name
+		ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:19:22-80
+uses-permission#android.permission.ACCESS_NETWORK_STATE
+ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:20:5-79
+MERGED from [com.google.android.gms:play-services-ads-lite:10.0.1] /Users/igor/.android/build-cache/1f0b736efce94f4d804282a948f516a938ace5a6/output/AndroidManifest.xml:20:5-78
+MERGED from [com.google.android.gms:play-services-analytics:10.0.1] /Users/igor/.android/build-cache/fdfee4fb8373d435425f40e67fbeb8e0e3b271ec/output/AndroidManifest.xml:21:5-78
+MERGED from [com.google.android.gms:play-services-nearby:10.0.1] /Users/igor/.android/build-cache/81c9a46c4d240cc9a33d0f819450ae5ec4653635/output/AndroidManifest.xml:4:5-78
+MERGED from [com.google.android.gms:play-services-tagmanager-api:10.0.1] /Users/igor/.android/build-cache/5483e37b87d64475611005583311068de143a44b/output/AndroidManifest.xml:21:5-78
+MERGED from [com.google.firebase:firebase-analytics:10.0.1] /Users/igor/.android/build-cache/148c7be58b6a5cf8bef5acf7b1e2f51370a3cd6c/output/AndroidManifest.xml:21:5-78
+MERGED from [com.google.firebase:firebase-analytics-impl:10.0.1] /Users/igor/.android/build-cache/e67c383653d08d7b149613f7714ad23c38c8df2a/output/AndroidManifest.xml:21:5-78
+MERGED from [com.google.firebase:firebase-iid:10.0.1] /Users/igor/.android/build-cache/1567985223664df32568f92ebbe045052ec0a537/output/AndroidManifest.xml:19:5-78
+MERGED from [com.google.android.gms:play-services-analytics-impl:10.0.1] /Users/igor/.android/build-cache/03a8609647444bba15ee42443bdfc7391d72bd96/output/AndroidManifest.xml:21:5-78
+MERGED from [com.google.android.gms:play-services-maps:10.0.1] /Users/igor/.android/build-cache/f80b0fd38e084cd9cea28f79806f20f5606450cf/output/AndroidManifest.xml:19:5-78
+	android:name
+		ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:20:22-76
+uses-permission#android.permission.INTERNET
+ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:22:5-67
+MERGED from [com.google.android.gms:play-services-ads-lite:10.0.1] /Users/igor/.android/build-cache/1f0b736efce94f4d804282a948f516a938ace5a6/output/AndroidManifest.xml:19:5-66
+MERGED from [com.google.android.gms:play-services-analytics:10.0.1] /Users/igor/.android/build-cache/fdfee4fb8373d435425f40e67fbeb8e0e3b271ec/output/AndroidManifest.xml:20:5-66
+MERGED from [com.google.android.gms:play-services-appinvite:10.0.1] /Users/igor/.android/build-cache/663f481cd9142fbe0e7f86aff8da492b5d3cb116/output/AndroidManifest.xml:18:5-66
+MERGED from [com.google.firebase:firebase-crash:10.0.1] /Users/igor/.android/build-cache/992d8b180b44b20289b3cbabe64ecc60ccbc2bef/output/AndroidManifest.xml:18:5-66
+MERGED from [com.google.android.gms:play-services-gcm:10.0.1] /Users/igor/.android/build-cache/f3a6a2f87dbcadd44f63c62602c3697c01369efc/output/AndroidManifest.xml:21:5-66
+MERGED from [com.google.android.gms:play-services-iid:10.0.1] /Users/igor/.android/build-cache/2284eab7ec7b8228a5a2225dd885fee6f8c83a2a/output/AndroidManifest.xml:21:5-66
+MERGED from [com.google.android.gms:play-services-tagmanager-api:10.0.1] /Users/igor/.android/build-cache/5483e37b87d64475611005583311068de143a44b/output/AndroidManifest.xml:20:5-66
+MERGED from [com.google.firebase:firebase-analytics:10.0.1] /Users/igor/.android/build-cache/148c7be58b6a5cf8bef5acf7b1e2f51370a3cd6c/output/AndroidManifest.xml:20:5-66
+MERGED from [com.google.firebase:firebase-analytics-impl:10.0.1] /Users/igor/.android/build-cache/e67c383653d08d7b149613f7714ad23c38c8df2a/output/AndroidManifest.xml:20:5-66
+MERGED from [com.google.firebase:firebase-iid:10.0.1] /Users/igor/.android/build-cache/1567985223664df32568f92ebbe045052ec0a537/output/AndroidManifest.xml:20:5-66
+MERGED from [com.google.android.gms:play-services-analytics-impl:10.0.1] /Users/igor/.android/build-cache/03a8609647444bba15ee42443bdfc7391d72bd96/output/AndroidManifest.xml:20:5-66
+MERGED from [com.google.android.gms:play-services-maps:10.0.1] /Users/igor/.android/build-cache/f80b0fd38e084cd9cea28f79806f20f5606450cf/output/AndroidManifest.xml:20:5-66
+	android:name
+		ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:22:22-64
+uses-permission#android.permission.WRITE_EXTERNAL_STORAGE
+ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:23:5-81
+	android:name
+		ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:23:22-78
+uses-permission#com.google.android.providers.gsf.permission.READ_GSERVICES
+ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:24:5-98
+	android:name
+		ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:24:22-95
+uses-permission#android.permission.ACCESS_FINE_LOCATION
+ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:25:5-79
+	android:name
+		ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:25:22-76
+uses-permission#android.permission.ACCESS_COARSE_LOCATION
+ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:26:5-81
+	android:name
+		ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:26:22-78
+uses-feature#android.hardware.camera
+ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:28:5-30:35
+	android:required
+		ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:30:9-32
+	android:name
+		ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:29:9-47
+uses-feature#android.hardware.camera.autofocus
+ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:31:5-33:35
+	android:required
+		ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:33:9-32
+	android:name
+		ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:32:9-57
+uses-feature#0x00020000
+ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:34:5-36:35
+MERGED from [com.google.android.gms:play-services-maps:10.0.1] /Users/igor/.android/build-cache/f80b0fd38e084cd9cea28f79806f20f5606450cf/output/AndroidManifest.xml:21:5-77
+	android:glEsVersion
+		ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:35:9-41
+	android:required
+		ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:36:9-32
+application
+ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:38:5-80:19
+MERGED from [com.android.support:design:23.3.0] /Users/igor/.android/build-cache/85fe25b74955574d51d900b06c7e626d713f7014/output/AndroidManifest.xml:22:5-20
+MERGED from [com.google.android.gms:play-services:10.0.1] /Users/igor/.android/build-cache/b2d330fa99b513dc9aa8ec2a9db83d36c458e95f/output/AndroidManifest.xml:5:5-20
+MERGED from [com.google.android.gms:play-services-ads-lite:10.0.1] /Users/igor/.android/build-cache/1f0b736efce94f4d804282a948f516a938ace5a6/output/AndroidManifest.xml:23:5-27:19
+MERGED from [com.google.android.gms:play-services-analytics:10.0.1] /Users/igor/.android/build-cache/fdfee4fb8373d435425f40e67fbeb8e0e3b271ec/output/AndroidManifest.xml:26:5-19
+MERGED from [com.google.android.gms:play-services-appinvite:10.0.1] /Users/igor/.android/build-cache/663f481cd9142fbe0e7f86aff8da492b5d3cb116/output/AndroidManifest.xml:19:5-26:19
+MERGED from [com.google.android.gms:play-services-cast-framework:10.0.1] /Users/igor/.android/build-cache/383de50648d2b665d44244fa37bc34527d9efcae/output/AndroidManifest.xml:4:5-8:19
+MERGED from [com.google.android.gms:play-services-cast:10.0.1] /Users/igor/.android/build-cache/fe6e659a8926bfd2242ada4234b6f062b8978f43/output/AndroidManifest.xml:18:5-19
+MERGED from [com.android.support:mediarouter-v7:24.0.0] /Users/igor/.android/build-cache/a3925b28cd49d9878245b740fc98a8b2f7fef0b9/output/AndroidManifest.xml:22:5-20
+MERGED from [com.android.support:palette-v7:24.0.0] /Users/igor/.android/build-cache/f7d83867456649e12447023a36bd51575dc199f9/output/AndroidManifest.xml:22:5-23:19
+MERGED from [com.android.support:appcompat-v7:24.0.0] /Users/igor/.android/build-cache/4ad89db2b37c2c92754bbe992e0300203bcf9ba7/output/AndroidManifest.xml:25:5-20
+MERGED from [com.android.support:animated-vector-drawable:24.0.0] /Users/igor/.android/build-cache/e3a611e3f84e048fbd7828f5ad93726929262d16/output/AndroidManifest.xml:22:5-20
+MERGED from [com.android.support:support-vector-drawable:24.0.0] /Users/igor/.android/build-cache/4fb17eb71d748404078514b60fe1a85f72ea950f/output/AndroidManifest.xml:23:5-20
+MERGED from [com.google.android.gms:play-services-clearcut:10.0.1] /Users/igor/.android/build-cache/99c71f942c3f896c7ff045387f5df3792e03bab5/output/AndroidManifest.xml:18:5-19
+MERGED from [com.google.firebase:firebase-config:10.0.1] /Users/igor/.android/build-cache/fdd9ecc3539598cdcf7f61d846655193e4c3f523/output/AndroidManifest.xml:18:5-19
+MERGED from [com.google.android.gms:play-services-awareness:10.0.1] /Users/igor/.android/build-cache/c591f776b2328225e3273632e2ec87720ccbdd4c/output/AndroidManifest.xml:18:5-19
+MERGED from [com.google.firebase:firebase-crash:10.0.1] /Users/igor/.android/build-cache/992d8b180b44b20289b3cbabe64ecc60ccbc2bef/output/AndroidManifest.xml:22:5-23:19
+MERGED from [com.google.firebase:firebase-auth:10.0.1] /Users/igor/.android/build-cache/2fc8d752a985b9deaaa75cc4fd46b0d5acddb499/output/AndroidManifest.xml:19:5-20:19
+MERGED from [com.google.firebase:firebase-messaging:10.0.1] /Users/igor/.android/build-cache/ded84820213fcdccb26b4deeacab54eeb3e94f2a/output/AndroidManifest.xml:19:5-29:19
+MERGED from [com.google.android.gms:play-services-fitness:10.0.1] /Users/igor/.android/build-cache/29feca6458559f3396db2aafcc2bbb51545940dc/output/AndroidManifest.xml:18:5-19
+MERGED from [com.google.android.gms:play-services-games:10.0.1] /Users/igor/.android/build-cache/1ce90da14f4ed31498e4bb7b62d32e0cdbe61bc9/output/AndroidManifest.xml:18:5-19
+MERGED from [com.google.android.gms:play-services-drive:10.0.1] /Users/igor/.android/build-cache/d4d8d2ca1342b0eeb370c944d60817aa85f21172/output/AndroidManifest.xml:18:5-19
+MERGED from [com.google.android.gms:play-services-gass:10.0.1] /Users/igor/.android/build-cache/d316897258e86e70442c64ad8e304590086f9ce7/output/AndroidManifest.xml:4:5-19
+MERGED from [com.google.android.gms:play-services-gcm:10.0.1] /Users/igor/.android/build-cache/f3a6a2f87dbcadd44f63c62602c3697c01369efc/output/AndroidManifest.xml:23:5-19
+MERGED from [com.google.firebase:firebase-appindexing:10.0.1] /Users/igor/.android/build-cache/306aab4507cd7b1623028789600ca0a60108d803/output/AndroidManifest.xml:18:5-19
+MERGED from [com.google.android.gms:play-services-iid:10.0.1] /Users/igor/.android/build-cache/2284eab7ec7b8228a5a2225dd885fee6f8c83a2a/output/AndroidManifest.xml:23:5-19
+MERGED from [com.google.android.gms:play-services-location:10.0.1] /Users/igor/.android/build-cache/c0bd390c15651c7348c12fad2fec37285a3adab0/output/AndroidManifest.xml:4:5-19
+MERGED from [com.google.android.gms:play-services-nearby:10.0.1] /Users/igor/.android/build-cache/81c9a46c4d240cc9a33d0f819450ae5ec4653635/output/AndroidManifest.xml:5:5-19
+MERGED from [com.google.android.gms:play-services-panorama:10.0.1] /Users/igor/.android/build-cache/b769a090c00e42bcbcc80cf3e7b1b1222a9eb2b2/output/AndroidManifest.xml:18:5-19
+MERGED from [com.google.android.gms:play-services-places:10.0.1] /Users/igor/.android/build-cache/a2420d169f82aff44d95cc29bad3ae23ea876c4d/output/AndroidManifest.xml:18:5-19
+MERGED from [com.google.android.gms:play-services-plus:10.0.1] /Users/igor/.android/build-cache/fb481e358f3ed811aa9faaa4c3668a7d1461975c/output/AndroidManifest.xml:18:5-19
+MERGED from [com.google.android.gms:play-services-safetynet:10.0.1] /Users/igor/.android/build-cache/3ced44d1024374f0ba4cca840049993a44db0f3d/output/AndroidManifest.xml:18:5-19
+MERGED from [com.google.android.gms:play-services-tagmanager-api:10.0.1] /Users/igor/.android/build-cache/5483e37b87d64475611005583311068de143a44b/output/AndroidManifest.xml:23:5-33:19
+MERGED from [com.google.firebase:firebase-analytics:10.0.1] /Users/igor/.android/build-cache/148c7be58b6a5cf8bef5acf7b1e2f51370a3cd6c/output/AndroidManifest.xml:24:5-33:19
+MERGED from [com.google.firebase:firebase-analytics-impl:10.0.1] /Users/igor/.android/build-cache/e67c383653d08d7b149613f7714ad23c38c8df2a/output/AndroidManifest.xml:24:5-28:19
+MERGED from [com.google.firebase:firebase-iid:10.0.1] /Users/igor/.android/build-cache/1567985223664df32568f92ebbe045052ec0a537/output/AndroidManifest.xml:28:5-50:19
+MERGED from [com.google.firebase:firebase-common:10.0.1] /Users/igor/.android/build-cache/ee4b240ccfc031ec10aae33f7d0774ea7d744b10/output/AndroidManifest.xml:4:5-7:19
+MERGED from [com.google.android.gms:play-services-tagmanager-v4-impl:10.0.1] /Users/igor/.android/build-cache/75d79c816eb28d8908c3a9104c5211cb8b8f284f/output/AndroidManifest.xml:19:5-19
+MERGED from [com.google.android.gms:play-services-analytics-impl:10.0.1] /Users/igor/.android/build-cache/03a8609647444bba15ee42443bdfc7391d72bd96/output/AndroidManifest.xml:26:5-19
+MERGED from [com.google.android.gms:play-services-vision:10.0.1] /Users/igor/.android/build-cache/e9c192423fe1b808bdd2966c4e005b0c0ba85546/output/AndroidManifest.xml:4:5-19
+MERGED from [com.google.android.gms:play-services-identity:10.0.1] /Users/igor/.android/build-cache/8262f3ebcc21c8567c22ca4d47cd83a6dc1289fa/output/AndroidManifest.xml:18:5-19
+MERGED from [com.google.android.gms:play-services-maps:10.0.1] /Users/igor/.android/build-cache/f80b0fd38e084cd9cea28f79806f20f5606450cf/output/AndroidManifest.xml:24:5-19
+MERGED from [com.google.android.gms:play-services-wearable:10.0.1] /Users/igor/.android/build-cache/285767e753a70b26387bc760b1bb2bcfdaff2050/output/AndroidManifest.xml:18:5-19
+MERGED from [com.google.android.gms:play-services-auth:10.0.1] /Users/igor/.android/build-cache/69b5a079320f77c525df2f86d20e282f3f598508/output/AndroidManifest.xml:19:5-25:19
+MERGED from [com.google.android.gms:play-services-base:10.0.1] /Users/igor/.android/build-cache/c6a1f11564124ad2a49bbbd2e09bfbb12e0afe28/output/AndroidManifest.xml:18:5-20:19
+MERGED from [com.google.android.gms:play-services-tasks:10.0.1] /Users/igor/.android/build-cache/c307836a2b55f4ff1b7e975af7a7cab67b081d98/output/AndroidManifest.xml:4:5-19
+MERGED from [com.google.android.gms:play-services-basement:10.0.1] /Users/igor/.android/build-cache/5d99b19c84a5883f127dc3997f2f5632a9050591/output/AndroidManifest.xml:19:5-21:19
+MERGED from [com.android.support:support-v4:24.0.0] /Users/igor/.android/build-cache/ac06792ad68ec7c1305a980a7862c02bb692ad7e/output/AndroidManifest.xml:25:5-20
+	android:label
+		ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:41:9-41
+	android:supportsRtl
+		ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:42:9-35
+	android:allowBackup
+		ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:39:9-35
+	android:icon
+		ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:40:9-43
+	android:theme
+		ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:43:9-52
+activity#com.solonari.igor.virtualshooter.map
+ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:45:9-55:20
+	android:screenOrientation
+		ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:48:13-56
+	android:label
+		ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:47:13-45
+	android:theme
+		ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:49:13-56
+	android:name
+		ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:46:13-32
+intent-filter#android.intent.action.MAIN+android.intent.category.LAUNCHER
+ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:50:13-54:29
+action#android.intent.action.MAIN
+ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:51:17-69
+	android:name
+		ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:51:25-66
+category#android.intent.category.LAUNCHER
+ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:53:17-77
+	android:name
+		ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:53:27-74
+activity#com.solonari.igor.virtualshooter.Compass
+ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:56:9-59:20
+	android:screenOrientation
+		ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:58:13-56
+	android:name
+		ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:57:13-36
+activity#com.solonari.igor.virtualshooter.SignInActivity
+ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:60:9-62:20
+	android:name
+		ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:61:13-43
+uses-library#com.google.android.maps
+ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:64:9-66:39
+	android:required
+		ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:66:13-36
+	android:name
+		ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:65:13-51
+meta-data#com.google.android.gms.version
+ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:68:9-70:69
+MERGED from [com.google.android.gms:play-services-basement:10.0.1] /Users/igor/.android/build-cache/5d99b19c84a5883f127dc3997f2f5632a9050591/output/AndroidManifest.xml:20:9-121
+	android:value
+		ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:70:13-66
+	android:name
+		ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:69:13-58
+meta-data#com.google.android.maps.v2.API_KEY
+ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:71:9-73:71
+	android:value
+		ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:73:13-68
+	android:name
+		ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:72:13-62
+service#com.solonari.igor.virtualshooter.TCPService
+ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:75:9-79:19
+	android:enabled
+		ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:77:13-35
+	android:exported
+		ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:78:13-37
+	android:name
+		ADDED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml:76:13-39
+uses-sdk
+INJECTED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml reason: use-sdk injection requested
+MERGED from [com.android.support:design:23.3.0] /Users/igor/.android/build-cache/85fe25b74955574d51d900b06c7e626d713f7014/output/AndroidManifest.xml:20:5-43
+MERGED from [com.android.support:recyclerview-v7:23.3.0] /Users/igor/.android/build-cache/b6255771c1b8885158c2bc0e27ba6c530075a282/output/AndroidManifest.xml:20:5-43
+MERGED from [com.google.android.gms:play-services:10.0.1] /Users/igor/.android/build-cache/b2d330fa99b513dc9aa8ec2a9db83d36c458e95f/output/AndroidManifest.xml:4:5-42
+MERGED from [com.google.android.gms:play-services-ads:10.0.1] /Users/igor/.android/build-cache/44b2f1980704b6c14e5460a502258994317a0c26/output/AndroidManifest.xml:17:5-42
+MERGED from [com.google.android.gms:play-services-ads-lite:10.0.1] /Users/igor/.android/build-cache/1f0b736efce94f4d804282a948f516a938ace5a6/output/AndroidManifest.xml:22:5-42
+MERGED from [com.google.android.gms:play-services-analytics:10.0.1] /Users/igor/.android/build-cache/fdfee4fb8373d435425f40e67fbeb8e0e3b271ec/output/AndroidManifest.xml:17:5-42
+MERGED from [com.google.android.gms:play-services-appinvite:10.0.1] /Users/igor/.android/build-cache/663f481cd9142fbe0e7f86aff8da492b5d3cb116/output/AndroidManifest.xml:17:5-42
+MERGED from [com.google.android.gms:play-services-cast-framework:10.0.1] /Users/igor/.android/build-cache/383de50648d2b665d44244fa37bc34527d9efcae/output/AndroidManifest.xml:3:5-42
+MERGED from [com.google.android.gms:play-services-cast:10.0.1] /Users/igor/.android/build-cache/fe6e659a8926bfd2242ada4234b6f062b8978f43/output/AndroidManifest.xml:17:5-42
+MERGED from [com.android.support:mediarouter-v7:24.0.0] /Users/igor/.android/build-cache/a3925b28cd49d9878245b740fc98a8b2f7fef0b9/output/AndroidManifest.xml:20:5-43
+MERGED from [com.android.support:palette-v7:24.0.0] /Users/igor/.android/build-cache/f7d83867456649e12447023a36bd51575dc199f9/output/AndroidManifest.xml:20:5-43
+MERGED from [com.android.support:appcompat-v7:24.0.0] /Users/igor/.android/build-cache/4ad89db2b37c2c92754bbe992e0300203bcf9ba7/output/AndroidManifest.xml:21:5-23:78
+MERGED from [com.android.support:animated-vector-drawable:24.0.0] /Users/igor/.android/build-cache/e3a611e3f84e048fbd7828f5ad93726929262d16/output/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-vector-drawable:24.0.0] /Users/igor/.android/build-cache/4fb17eb71d748404078514b60fe1a85f72ea950f/output/AndroidManifest.xml:21:5-43
+MERGED from [com.google.android.gms:play-services-clearcut:10.0.1] /Users/igor/.android/build-cache/99c71f942c3f896c7ff045387f5df3792e03bab5/output/AndroidManifest.xml:17:5-42
+MERGED from [com.google.firebase:firebase-config:10.0.1] /Users/igor/.android/build-cache/fdd9ecc3539598cdcf7f61d846655193e4c3f523/output/AndroidManifest.xml:17:5-42
+MERGED from [com.google.android.gms:play-services-awareness:10.0.1] /Users/igor/.android/build-cache/c591f776b2328225e3273632e2ec87720ccbdd4c/output/AndroidManifest.xml:17:5-42
+MERGED from [com.google.firebase:firebase-crash:10.0.1] /Users/igor/.android/build-cache/992d8b180b44b20289b3cbabe64ecc60ccbc2bef/output/AndroidManifest.xml:20:5-42
+MERGED from [com.google.firebase:firebase-auth:10.0.1] /Users/igor/.android/build-cache/2fc8d752a985b9deaaa75cc4fd46b0d5acddb499/output/AndroidManifest.xml:17:5-42
+MERGED from [com.google.firebase:firebase-database:10.0.1] /Users/igor/.android/build-cache/ad0d56bede150d685e7521968eb27b8b90bd4361/output/AndroidManifest.xml:3:5-42
+MERGED from [com.google.firebase:firebase-database-connection:10.0.1] /Users/igor/.android/build-cache/cac5299bff9f05c337740e4bee7e6c4e41858976/output/AndroidManifest.xml:3:5-42
+MERGED from [com.google.firebase:firebase-messaging:10.0.1] /Users/igor/.android/build-cache/ded84820213fcdccb26b4deeacab54eeb3e94f2a/output/AndroidManifest.xml:17:5-42
+MERGED from [com.google.firebase:firebase-storage:10.0.1] /Users/igor/.android/build-cache/35360b18a45568a53309a36b5ccf5601f238aa9a/output/AndroidManifest.xml:3:5-42
+MERGED from [com.google.firebase:firebase-storage-common:10.0.1] /Users/igor/.android/build-cache/26fa24f0280f59b339a9b57aea36bcd0a302e823/output/AndroidManifest.xml:3:5-42
+MERGED from [com.google.android.gms:play-services-fitness:10.0.1] /Users/igor/.android/build-cache/29feca6458559f3396db2aafcc2bbb51545940dc/output/AndroidManifest.xml:17:5-42
+MERGED from [com.google.android.gms:play-services-games:10.0.1] /Users/igor/.android/build-cache/1ce90da14f4ed31498e4bb7b62d32e0cdbe61bc9/output/AndroidManifest.xml:17:5-42
+MERGED from [com.google.android.gms:play-services-drive:10.0.1] /Users/igor/.android/build-cache/d4d8d2ca1342b0eeb370c944d60817aa85f21172/output/AndroidManifest.xml:17:5-42
+MERGED from [com.google.android.gms:play-services-gass:10.0.1] /Users/igor/.android/build-cache/d316897258e86e70442c64ad8e304590086f9ce7/output/AndroidManifest.xml:3:5-42
+MERGED from [com.google.android.gms:play-services-gcm:10.0.1] /Users/igor/.android/build-cache/f3a6a2f87dbcadd44f63c62602c3697c01369efc/output/AndroidManifest.xml:17:5-42
+MERGED from [com.google.firebase:firebase-appindexing:10.0.1] /Users/igor/.android/build-cache/306aab4507cd7b1623028789600ca0a60108d803/output/AndroidManifest.xml:17:5-42
+MERGED from [com.google.android.gms:play-services-iid:10.0.1] /Users/igor/.android/build-cache/2284eab7ec7b8228a5a2225dd885fee6f8c83a2a/output/AndroidManifest.xml:17:5-42
+MERGED from [com.google.android.gms:play-services-instantapps:10.0.1] /Users/igor/.android/build-cache/e47b5e088debf910c0ffbfe7e74fd9cb8b6c40b0/output/AndroidManifest.xml:3:5-42
+MERGED from [com.google.android.gms:play-services-location:10.0.1] /Users/igor/.android/build-cache/c0bd390c15651c7348c12fad2fec37285a3adab0/output/AndroidManifest.xml:3:5-42
+MERGED from [com.google.android.gms:play-services-nearby:10.0.1] /Users/igor/.android/build-cache/81c9a46c4d240cc9a33d0f819450ae5ec4653635/output/AndroidManifest.xml:3:5-42
+MERGED from [com.google.android.gms:play-services-panorama:10.0.1] /Users/igor/.android/build-cache/b769a090c00e42bcbcc80cf3e7b1b1222a9eb2b2/output/AndroidManifest.xml:17:5-42
+MERGED from [com.google.android.gms:play-services-places:10.0.1] /Users/igor/.android/build-cache/a2420d169f82aff44d95cc29bad3ae23ea876c4d/output/AndroidManifest.xml:17:5-42
+MERGED from [com.google.android.gms:play-services-plus:10.0.1] /Users/igor/.android/build-cache/fb481e358f3ed811aa9faaa4c3668a7d1461975c/output/AndroidManifest.xml:17:5-42
+MERGED from [com.google.android.gms:play-services-safetynet:10.0.1] /Users/igor/.android/build-cache/3ced44d1024374f0ba4cca840049993a44db0f3d/output/AndroidManifest.xml:17:5-42
+MERGED from [com.google.android.gms:play-services-tagmanager:10.0.1] /Users/igor/.android/build-cache/1a0c141c1e8b0659796159d3f3339b722ad1291f/output/AndroidManifest.xml:17:5-42
+MERGED from [com.google.android.gms:play-services-tagmanager-api:10.0.1] /Users/igor/.android/build-cache/5483e37b87d64475611005583311068de143a44b/output/AndroidManifest.xml:17:5-42
+MERGED from [com.google.firebase:firebase-analytics:10.0.1] /Users/igor/.android/build-cache/148c7be58b6a5cf8bef5acf7b1e2f51370a3cd6c/output/AndroidManifest.xml:17:5-42
+MERGED from [com.google.firebase:firebase-analytics-impl:10.0.1] /Users/igor/.android/build-cache/e67c383653d08d7b149613f7714ad23c38c8df2a/output/AndroidManifest.xml:17:5-42
+MERGED from [com.google.firebase:firebase-iid:10.0.1] /Users/igor/.android/build-cache/1567985223664df32568f92ebbe045052ec0a537/output/AndroidManifest.xml:17:5-42
+MERGED from [com.google.firebase:firebase-common:10.0.1] /Users/igor/.android/build-cache/ee4b240ccfc031ec10aae33f7d0774ea7d744b10/output/AndroidManifest.xml:3:5-42
+MERGED from [com.google.android.gms:play-services-tagmanager-v4-impl:10.0.1] /Users/igor/.android/build-cache/75d79c816eb28d8908c3a9104c5211cb8b8f284f/output/AndroidManifest.xml:17:5-42
+MERGED from [com.google.android.gms:play-services-analytics-impl:10.0.1] /Users/igor/.android/build-cache/03a8609647444bba15ee42443bdfc7391d72bd96/output/AndroidManifest.xml:17:5-42
+MERGED from [com.google.android.gms:play-services-vision:10.0.1] /Users/igor/.android/build-cache/e9c192423fe1b808bdd2966c4e005b0c0ba85546/output/AndroidManifest.xml:3:5-42
+MERGED from [com.google.android.gms:play-services-wallet:10.0.1] /Users/igor/.android/build-cache/607ee1166dcd5cd0a3e2c03d29f4e39a7cf3721c/output/AndroidManifest.xml:18:5-42
+MERGED from [com.google.android.gms:play-services-identity:10.0.1] /Users/igor/.android/build-cache/8262f3ebcc21c8567c22ca4d47cd83a6dc1289fa/output/AndroidManifest.xml:17:5-42
+MERGED from [com.google.android.gms:play-services-maps:10.0.1] /Users/igor/.android/build-cache/f80b0fd38e084cd9cea28f79806f20f5606450cf/output/AndroidManifest.xml:23:5-42
+MERGED from [com.google.android.gms:play-services-wearable:10.0.1] /Users/igor/.android/build-cache/285767e753a70b26387bc760b1bb2bcfdaff2050/output/AndroidManifest.xml:17:5-42
+MERGED from [com.google.android.gms:play-services-auth:10.0.1] /Users/igor/.android/build-cache/69b5a079320f77c525df2f86d20e282f3f598508/output/AndroidManifest.xml:17:5-42
+MERGED from [com.google.android.gms:play-services-auth-base:10.0.1] /Users/igor/.android/build-cache/29aac560127677f056fedf02c8fb4df1e2e3ce84/output/AndroidManifest.xml:4:5-42
+MERGED from [com.google.android.gms:play-services-base:10.0.1] /Users/igor/.android/build-cache/c6a1f11564124ad2a49bbbd2e09bfbb12e0afe28/output/AndroidManifest.xml:17:5-42
+MERGED from [com.google.android.gms:play-services-tasks:10.0.1] /Users/igor/.android/build-cache/c307836a2b55f4ff1b7e975af7a7cab67b081d98/output/AndroidManifest.xml:3:5-42
+MERGED from [com.google.android.gms:play-services-basement:10.0.1] /Users/igor/.android/build-cache/5d99b19c84a5883f127dc3997f2f5632a9050591/output/AndroidManifest.xml:17:5-42
+MERGED from [com.android.support:support-v4:24.0.0] /Users/igor/.android/build-cache/ac06792ad68ec7c1305a980a7862c02bb692ad7e/output/AndroidManifest.xml:21:5-23:54
+	tools:overrideLibrary
+		ADDED from [com.android.support:appcompat-v7:24.0.0] /Users/igor/.android/build-cache/4ad89db2b37c2c92754bbe992e0300203bcf9ba7/output/AndroidManifest.xml:23:9-75
+	android:targetSdkVersion
+		INJECTED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml
+		INJECTED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml
+		INJECTED from /Users/igor/AndroidStudioProjects/virtualshooter/app/src/main/AndroidManifest.xml
+activity#com.google.android.gms.ads.AdActivity
+ADDED from [com.google.android.gms:play-services-ads-lite:10.0.1] /Users/igor/.android/build-cache/1f0b736efce94f4d804282a948f516a938ace5a6/output/AndroidManifest.xml:25:9-232
+	android:configChanges
+		ADDED from [com.google.android.gms:play-services-ads-lite:10.0.1] /Users/igor/.android/build-cache/1f0b736efce94f4d804282a948f516a938ace5a6/output/AndroidManifest.xml:25:72-181
+	android:theme
+		ADDED from [com.google.android.gms:play-services-ads-lite:10.0.1] /Users/igor/.android/build-cache/1f0b736efce94f4d804282a948f516a938ace5a6/output/AndroidManifest.xml:25:182-230
+	android:name
+		ADDED from [com.google.android.gms:play-services-ads-lite:10.0.1] /Users/igor/.android/build-cache/1f0b736efce94f4d804282a948f516a938ace5a6/output/AndroidManifest.xml:25:19-71
+activity#com.google.android.gms.ads.purchase.InAppPurchaseActivity
+ADDED from [com.google.android.gms:play-services-ads-lite:10.0.1] /Users/igor/.android/build-cache/1f0b736efce94f4d804282a948f516a938ace5a6/output/AndroidManifest.xml:26:9-131
+	android:theme
+		ADDED from [com.google.android.gms:play-services-ads-lite:10.0.1] /Users/igor/.android/build-cache/1f0b736efce94f4d804282a948f516a938ace5a6/output/AndroidManifest.xml:26:92-129
+	android:name
+		ADDED from [com.google.android.gms:play-services-ads-lite:10.0.1] /Users/igor/.android/build-cache/1f0b736efce94f4d804282a948f516a938ace5a6/output/AndroidManifest.xml:26:19-91
+uses-permission#android.permission.WAKE_LOCK
+ADDED from [com.google.android.gms:play-services-analytics:10.0.1] /Users/igor/.android/build-cache/fdfee4fb8373d435425f40e67fbeb8e0e3b271ec/output/AndroidManifest.xml:24:5-67
+MERGED from [com.google.firebase:firebase-analytics:10.0.1] /Users/igor/.android/build-cache/148c7be58b6a5cf8bef5acf7b1e2f51370a3cd6c/output/AndroidManifest.xml:22:5-67
+MERGED from [com.google.firebase:firebase-analytics-impl:10.0.1] /Users/igor/.android/build-cache/e67c383653d08d7b149613f7714ad23c38c8df2a/output/AndroidManifest.xml:22:5-67
+MERGED from [com.google.firebase:firebase-iid:10.0.1] /Users/igor/.android/build-cache/1567985223664df32568f92ebbe045052ec0a537/output/AndroidManifest.xml:21:5-67
+MERGED from [com.google.android.gms:play-services-analytics-impl:10.0.1] /Users/igor/.android/build-cache/03a8609647444bba15ee42443bdfc7391d72bd96/output/AndroidManifest.xml:24:5-67
+	android:name
+		ADDED from [com.google.android.gms:play-services-analytics:10.0.1] /Users/igor/.android/build-cache/fdfee4fb8373d435425f40e67fbeb8e0e3b271ec/output/AndroidManifest.xml:24:22-65
+activity#com.google.android.gms.appinvite.PreviewActivity
+ADDED from [com.google.android.gms:play-services-appinvite:10.0.1] /Users/igor/.android/build-cache/663f481cd9142fbe0e7f86aff8da492b5d3cb116/output/AndroidManifest.xml:20:9-25:20
+	android:exported
+		ADDED from [com.google.android.gms:play-services-appinvite:10.0.1] /Users/igor/.android/build-cache/663f481cd9142fbe0e7f86aff8da492b5d3cb116/output/AndroidManifest.xml:20:51-74
+	android:theme
+		ADDED from [com.google.android.gms:play-services-appinvite:10.0.1] /Users/igor/.android/build-cache/663f481cd9142fbe0e7f86aff8da492b5d3cb116/output/AndroidManifest.xml:20:75-121
+	android:name
+		ADDED from [com.google.android.gms:play-services-appinvite:10.0.1] /Users/igor/.android/build-cache/663f481cd9142fbe0e7f86aff8da492b5d3cb116/output/AndroidManifest.xml:20:19-50
+intent-filter#android.intent.category.DEFAULT+com.google.android.gms.appinvite.ACTION_PREVIEW
+ADDED from [com.google.android.gms:play-services-appinvite:10.0.1] /Users/igor/.android/build-cache/663f481cd9142fbe0e7f86aff8da492b5d3cb116/output/AndroidManifest.xml:21:13-24:29
+action#com.google.android.gms.appinvite.ACTION_PREVIEW
+ADDED from [com.google.android.gms:play-services-appinvite:10.0.1] /Users/igor/.android/build-cache/663f481cd9142fbe0e7f86aff8da492b5d3cb116/output/AndroidManifest.xml:22:17-89
+	android:name
+		ADDED from [com.google.android.gms:play-services-appinvite:10.0.1] /Users/igor/.android/build-cache/663f481cd9142fbe0e7f86aff8da492b5d3cb116/output/AndroidManifest.xml:22:25-87
+category#android.intent.category.DEFAULT
+ADDED from [com.google.android.gms:play-services-appinvite:10.0.1] /Users/igor/.android/build-cache/663f481cd9142fbe0e7f86aff8da492b5d3cb116/output/AndroidManifest.xml:23:17-75
+	android:name
+		ADDED from [com.google.android.gms:play-services-appinvite:10.0.1] /Users/igor/.android/build-cache/663f481cd9142fbe0e7f86aff8da492b5d3cb116/output/AndroidManifest.xml:23:27-73
+receiver#com.google.android.gms.cast.framework.media.MediaIntentReceiver
+ADDED from [com.google.android.gms:play-services-cast-framework:10.0.1] /Users/igor/.android/build-cache/383de50648d2b665d44244fa37bc34527d9efcae/output/AndroidManifest.xml:5:9-99
+	android:name
+		ADDED from [com.google.android.gms:play-services-cast-framework:10.0.1] /Users/igor/.android/build-cache/383de50648d2b665d44244fa37bc34527d9efcae/output/AndroidManifest.xml:5:19-97
+service#com.google.android.gms.cast.framework.media.MediaNotificationService
+ADDED from [com.google.android.gms:play-services-cast-framework:10.0.1] /Users/igor/.android/build-cache/383de50648d2b665d44244fa37bc34527d9efcae/output/AndroidManifest.xml:6:9-103
+	android:name
+		ADDED from [com.google.android.gms:play-services-cast-framework:10.0.1] /Users/igor/.android/build-cache/383de50648d2b665d44244fa37bc34527d9efcae/output/AndroidManifest.xml:6:18-101
+service#com.google.android.gms.cast.framework.ReconnectionService
+ADDED from [com.google.android.gms:play-services-cast-framework:10.0.1] /Users/igor/.android/build-cache/383de50648d2b665d44244fa37bc34527d9efcae/output/AndroidManifest.xml:7:9-92
+	android:name
+		ADDED from [com.google.android.gms:play-services-cast-framework:10.0.1] /Users/igor/.android/build-cache/383de50648d2b665d44244fa37bc34527d9efcae/output/AndroidManifest.xml:7:18-90
+service#com.google.firebase.messaging.FirebaseMessagingService
+ADDED from [com.google.firebase:firebase-messaging:10.0.1] /Users/igor/.android/build-cache/ded84820213fcdccb26b4deeacab54eeb3e94f2a/output/AndroidManifest.xml:23:9-27:19
+	android:exported
+		ADDED from [com.google.firebase:firebase-messaging:10.0.1] /Users/igor/.android/build-cache/ded84820213fcdccb26b4deeacab54eeb3e94f2a/output/AndroidManifest.xml:23:88-111
+	android:name
+		ADDED from [com.google.firebase:firebase-messaging:10.0.1] /Users/igor/.android/build-cache/ded84820213fcdccb26b4deeacab54eeb3e94f2a/output/AndroidManifest.xml:23:18-87
+intent-filter#com.google.firebase.MESSAGING_EVENT
+ADDED from [com.google.firebase:firebase-messaging:10.0.1] /Users/igor/.android/build-cache/ded84820213fcdccb26b4deeacab54eeb3e94f2a/output/AndroidManifest.xml:24:13-26:29
+	android:priority
+		ADDED from [com.google.firebase:firebase-messaging:10.0.1] /Users/igor/.android/build-cache/ded84820213fcdccb26b4deeacab54eeb3e94f2a/output/AndroidManifest.xml:24:28-51
+action#com.google.firebase.MESSAGING_EVENT
+ADDED from [com.google.firebase:firebase-messaging:10.0.1] /Users/igor/.android/build-cache/ded84820213fcdccb26b4deeacab54eeb3e94f2a/output/AndroidManifest.xml:25:17-77
+	android:name
+		ADDED from [com.google.firebase:firebase-messaging:10.0.1] /Users/igor/.android/build-cache/ded84820213fcdccb26b4deeacab54eeb3e94f2a/output/AndroidManifest.xml:25:25-75
+uses-permission#com.google.android.c2dm.permission.RECEIVE
+ADDED from [com.google.android.gms:play-services-gcm:10.0.1] /Users/igor/.android/build-cache/f3a6a2f87dbcadd44f63c62602c3697c01369efc/output/AndroidManifest.xml:20:5-81
+MERGED from [com.google.android.gms:play-services-iid:10.0.1] /Users/igor/.android/build-cache/2284eab7ec7b8228a5a2225dd885fee6f8c83a2a/output/AndroidManifest.xml:20:5-81
+MERGED from [com.google.firebase:firebase-iid:10.0.1] /Users/igor/.android/build-cache/1567985223664df32568f92ebbe045052ec0a537/output/AndroidManifest.xml:22:5-81
+	android:name
+		ADDED from [com.google.android.gms:play-services-gcm:10.0.1] /Users/igor/.android/build-cache/f3a6a2f87dbcadd44f63c62602c3697c01369efc/output/AndroidManifest.xml:20:22-79
+service#com.google.android.gms.tagmanager.TagManagerService
+ADDED from [com.google.android.gms:play-services-tagmanager-api:10.0.1] /Users/igor/.android/build-cache/5483e37b87d64475611005583311068de143a44b/output/AndroidManifest.xml:24:9-134
+	android:enabled
+		ADDED from [com.google.android.gms:play-services-tagmanager-api:10.0.1] /Users/igor/.android/build-cache/5483e37b87d64475611005583311068de143a44b/output/AndroidManifest.xml:24:110-132
+	android:exported
+		ADDED from [com.google.android.gms:play-services-tagmanager-api:10.0.1] /Users/igor/.android/build-cache/5483e37b87d64475611005583311068de143a44b/output/AndroidManifest.xml:24:85-109
+	android:name
+		ADDED from [com.google.android.gms:play-services-tagmanager-api:10.0.1] /Users/igor/.android/build-cache/5483e37b87d64475611005583311068de143a44b/output/AndroidManifest.xml:24:18-84
+activity#com.google.android.gms.tagmanager.TagManagerPreviewActivity
+ADDED from [com.google.android.gms:play-services-tagmanager-api:10.0.1] /Users/igor/.android/build-cache/5483e37b87d64475611005583311068de143a44b/output/AndroidManifest.xml:25:9-32:20
+	android:noHistory
+		ADDED from [com.google.android.gms:play-services-tagmanager-api:10.0.1] /Users/igor/.android/build-cache/5483e37b87d64475611005583311068de143a44b/output/AndroidManifest.xml:25:94-118
+	android:name
+		ADDED from [com.google.android.gms:play-services-tagmanager-api:10.0.1] /Users/igor/.android/build-cache/5483e37b87d64475611005583311068de143a44b/output/AndroidManifest.xml:25:19-93
+intent-filter#android.intent.action.VIEW+android.intent.category.BROWSABLE+android.intent.category.DEFAULT
+ADDED from [com.google.android.gms:play-services-tagmanager-api:10.0.1] /Users/igor/.android/build-cache/5483e37b87d64475611005583311068de143a44b/output/AndroidManifest.xml:26:13-31:29
+data
+ADDED from [com.google.android.gms:play-services-tagmanager-api:10.0.1] /Users/igor/.android/build-cache/5483e37b87d64475611005583311068de143a44b/output/AndroidManifest.xml:27:17-71
+	android:scheme
+		ADDED from [com.google.android.gms:play-services-tagmanager-api:10.0.1] /Users/igor/.android/build-cache/5483e37b87d64475611005583311068de143a44b/output/AndroidManifest.xml:27:23-69
+action#android.intent.action.VIEW
+ADDED from [com.google.android.gms:play-services-tagmanager-api:10.0.1] /Users/igor/.android/build-cache/5483e37b87d64475611005583311068de143a44b/output/AndroidManifest.xml:28:17-68
+	android:name
+		ADDED from [com.google.android.gms:play-services-tagmanager-api:10.0.1] /Users/igor/.android/build-cache/5483e37b87d64475611005583311068de143a44b/output/AndroidManifest.xml:28:25-66
+category#android.intent.category.BROWSABLE
+ADDED from [com.google.android.gms:play-services-tagmanager-api:10.0.1] /Users/igor/.android/build-cache/5483e37b87d64475611005583311068de143a44b/output/AndroidManifest.xml:30:17-77
+	android:name
+		ADDED from [com.google.android.gms:play-services-tagmanager-api:10.0.1] /Users/igor/.android/build-cache/5483e37b87d64475611005583311068de143a44b/output/AndroidManifest.xml:30:27-75
+receiver#com.google.android.gms.measurement.AppMeasurementReceiver
+ADDED from [com.google.firebase:firebase-analytics:10.0.1] /Users/igor/.android/build-cache/148c7be58b6a5cf8bef5acf7b1e2f51370a3cd6c/output/AndroidManifest.xml:25:7-26:18
+MERGED from [com.google.firebase:firebase-analytics-impl:10.0.1] /Users/igor/.android/build-cache/e67c383653d08d7b149613f7714ad23c38c8df2a/output/AndroidManifest.xml:25:7-26:18
+	android:enabled
+		ADDED from [com.google.firebase:firebase-analytics:10.0.1] /Users/igor/.android/build-cache/148c7be58b6a5cf8bef5acf7b1e2f51370a3cd6c/output/AndroidManifest.xml:25:90-112
+	android:exported
+		ADDED from [com.google.firebase:firebase-analytics:10.0.1] /Users/igor/.android/build-cache/148c7be58b6a5cf8bef5acf7b1e2f51370a3cd6c/output/AndroidManifest.xml:25:113-137
+	android:name
+		ADDED from [com.google.firebase:firebase-analytics:10.0.1] /Users/igor/.android/build-cache/148c7be58b6a5cf8bef5acf7b1e2f51370a3cd6c/output/AndroidManifest.xml:25:17-89
+receiver#com.google.android.gms.measurement.AppMeasurementInstallReferrerReceiver
+ADDED from [com.google.firebase:firebase-analytics:10.0.1] /Users/igor/.android/build-cache/148c7be58b6a5cf8bef5acf7b1e2f51370a3cd6c/output/AndroidManifest.xml:27:7-31:18
+	android:enabled
+		ADDED from [com.google.firebase:firebase-analytics:10.0.1] /Users/igor/.android/build-cache/148c7be58b6a5cf8bef5acf7b1e2f51370a3cd6c/output/AndroidManifest.xml:27:162-184
+	android:permission
+		ADDED from [com.google.firebase:firebase-analytics:10.0.1] /Users/igor/.android/build-cache/148c7be58b6a5cf8bef5acf7b1e2f51370a3cd6c/output/AndroidManifest.xml:27:105-161
+	android:name
+		ADDED from [com.google.firebase:firebase-analytics:10.0.1] /Users/igor/.android/build-cache/148c7be58b6a5cf8bef5acf7b1e2f51370a3cd6c/output/AndroidManifest.xml:27:17-104
+intent-filter#com.android.vending.INSTALL_REFERRER
+ADDED from [com.google.firebase:firebase-analytics:10.0.1] /Users/igor/.android/build-cache/148c7be58b6a5cf8bef5acf7b1e2f51370a3cd6c/output/AndroidManifest.xml:28:11-30:27
+action#com.android.vending.INSTALL_REFERRER
+ADDED from [com.google.firebase:firebase-analytics:10.0.1] /Users/igor/.android/build-cache/148c7be58b6a5cf8bef5acf7b1e2f51370a3cd6c/output/AndroidManifest.xml:29:15-76
+	android:name
+		ADDED from [com.google.firebase:firebase-analytics:10.0.1] /Users/igor/.android/build-cache/148c7be58b6a5cf8bef5acf7b1e2f51370a3cd6c/output/AndroidManifest.xml:29:23-74
+service#com.google.android.gms.measurement.AppMeasurementService
+ADDED from [com.google.firebase:firebase-analytics:10.0.1] /Users/igor/.android/build-cache/148c7be58b6a5cf8bef5acf7b1e2f51370a3cd6c/output/AndroidManifest.xml:32:7-137
+MERGED from [com.google.firebase:firebase-analytics-impl:10.0.1] /Users/igor/.android/build-cache/e67c383653d08d7b149613f7714ad23c38c8df2a/output/AndroidManifest.xml:27:7-137
+	android:enabled
+		ADDED from [com.google.firebase:firebase-analytics:10.0.1] /Users/igor/.android/build-cache/148c7be58b6a5cf8bef5acf7b1e2f51370a3cd6c/output/AndroidManifest.xml:32:88-110
+	android:exported
+		ADDED from [com.google.firebase:firebase-analytics:10.0.1] /Users/igor/.android/build-cache/148c7be58b6a5cf8bef5acf7b1e2f51370a3cd6c/output/AndroidManifest.xml:32:111-135
+	android:name
+		ADDED from [com.google.firebase:firebase-analytics:10.0.1] /Users/igor/.android/build-cache/148c7be58b6a5cf8bef5acf7b1e2f51370a3cd6c/output/AndroidManifest.xml:32:16-87
+permission#${applicationId}.permission.C2D_MESSAGE
+ADDED from [com.google.firebase:firebase-iid:10.0.1] /Users/igor/.android/build-cache/1567985223664df32568f92ebbe045052ec0a537/output/AndroidManifest.xml:24:5-109
+	android:protectionLevel
+		ADDED from [com.google.firebase:firebase-iid:10.0.1] /Users/igor/.android/build-cache/1567985223664df32568f92ebbe045052ec0a537/output/AndroidManifest.xml:24:72-107
+	android:name
+		ADDED from [com.google.firebase:firebase-iid:10.0.1] /Users/igor/.android/build-cache/1567985223664df32568f92ebbe045052ec0a537/output/AndroidManifest.xml:24:17-71
+uses-permission#${applicationId}.permission.C2D_MESSAGE
+ADDED from [com.google.firebase:firebase-iid:10.0.1] /Users/igor/.android/build-cache/1567985223664df32568f92ebbe045052ec0a537/output/AndroidManifest.xml:26:5-78
+	android:name
+		ADDED from [com.google.firebase:firebase-iid:10.0.1] /Users/igor/.android/build-cache/1567985223664df32568f92ebbe045052ec0a537/output/AndroidManifest.xml:26:22-76
+receiver#com.google.firebase.iid.FirebaseInstanceIdReceiver
+ADDED from [com.google.firebase:firebase-iid:10.0.1] /Users/igor/.android/build-cache/1567985223664df32568f92ebbe045052ec0a537/output/AndroidManifest.xml:30:9-36:20
+	android:exported
+		ADDED from [com.google.firebase:firebase-iid:10.0.1] /Users/igor/.android/build-cache/1567985223664df32568f92ebbe045052ec0a537/output/AndroidManifest.xml:30:85-108
+	android:permission
+		ADDED from [com.google.firebase:firebase-iid:10.0.1] /Users/igor/.android/build-cache/1567985223664df32568f92ebbe045052ec0a537/output/AndroidManifest.xml:30:109-169
+	android:name
+		ADDED from [com.google.firebase:firebase-iid:10.0.1] /Users/igor/.android/build-cache/1567985223664df32568f92ebbe045052ec0a537/output/AndroidManifest.xml:30:19-84
+intent-filter#${applicationId}+com.google.android.c2dm.intent.RECEIVE+com.google.android.c2dm.intent.REGISTRATION
+ADDED from [com.google.firebase:firebase-iid:10.0.1] /Users/igor/.android/build-cache/1567985223664df32568f92ebbe045052ec0a537/output/AndroidManifest.xml:31:13-35:29
+action#com.google.android.c2dm.intent.RECEIVE
+ADDED from [com.google.firebase:firebase-iid:10.0.1] /Users/igor/.android/build-cache/1567985223664df32568f92ebbe045052ec0a537/output/AndroidManifest.xml:32:17-80
+	android:name
+		ADDED from [com.google.firebase:firebase-iid:10.0.1] /Users/igor/.android/build-cache/1567985223664df32568f92ebbe045052ec0a537/output/AndroidManifest.xml:32:25-78
+action#com.google.android.c2dm.intent.REGISTRATION
+ADDED from [com.google.firebase:firebase-iid:10.0.1] /Users/igor/.android/build-cache/1567985223664df32568f92ebbe045052ec0a537/output/AndroidManifest.xml:33:17-85
+	android:name
+		ADDED from [com.google.firebase:firebase-iid:10.0.1] /Users/igor/.android/build-cache/1567985223664df32568f92ebbe045052ec0a537/output/AndroidManifest.xml:33:25-83
+category#${applicationId}
+ADDED from [com.google.firebase:firebase-iid:10.0.1] /Users/igor/.android/build-cache/1567985223664df32568f92ebbe045052ec0a537/output/AndroidManifest.xml:34:17-60
+	android:name
+		ADDED from [com.google.firebase:firebase-iid:10.0.1] /Users/igor/.android/build-cache/1567985223664df32568f92ebbe045052ec0a537/output/AndroidManifest.xml:34:27-58
+receiver#com.google.firebase.iid.FirebaseInstanceIdInternalReceiver
+ADDED from [com.google.firebase:firebase-iid:10.0.1] /Users/igor/.android/build-cache/1567985223664df32568f92ebbe045052ec0a537/output/AndroidManifest.xml:40:9-119
+	android:exported
+		ADDED from [com.google.firebase:firebase-iid:10.0.1] /Users/igor/.android/build-cache/1567985223664df32568f92ebbe045052ec0a537/output/AndroidManifest.xml:40:93-117
+	android:name
+		ADDED from [com.google.firebase:firebase-iid:10.0.1] /Users/igor/.android/build-cache/1567985223664df32568f92ebbe045052ec0a537/output/AndroidManifest.xml:40:19-92
+service#com.google.firebase.iid.FirebaseInstanceIdService
+ADDED from [com.google.firebase:firebase-iid:10.0.1] /Users/igor/.android/build-cache/1567985223664df32568f92ebbe045052ec0a537/output/AndroidManifest.xml:44:9-48:19
+	android:exported
+		ADDED from [com.google.firebase:firebase-iid:10.0.1] /Users/igor/.android/build-cache/1567985223664df32568f92ebbe045052ec0a537/output/AndroidManifest.xml:44:83-106
+	android:name
+		ADDED from [com.google.firebase:firebase-iid:10.0.1] /Users/igor/.android/build-cache/1567985223664df32568f92ebbe045052ec0a537/output/AndroidManifest.xml:44:18-82
+intent-filter#com.google.firebase.INSTANCE_ID_EVENT
+ADDED from [com.google.firebase:firebase-iid:10.0.1] /Users/igor/.android/build-cache/1567985223664df32568f92ebbe045052ec0a537/output/AndroidManifest.xml:45:13-47:29
+	android:priority
+		ADDED from [com.google.firebase:firebase-iid:10.0.1] /Users/igor/.android/build-cache/1567985223664df32568f92ebbe045052ec0a537/output/AndroidManifest.xml:45:28-51
+action#com.google.firebase.INSTANCE_ID_EVENT
+ADDED from [com.google.firebase:firebase-iid:10.0.1] /Users/igor/.android/build-cache/1567985223664df32568f92ebbe045052ec0a537/output/AndroidManifest.xml:46:17-79
+	android:name
+		ADDED from [com.google.firebase:firebase-iid:10.0.1] /Users/igor/.android/build-cache/1567985223664df32568f92ebbe045052ec0a537/output/AndroidManifest.xml:46:25-77
+provider#com.google.firebase.provider.FirebaseInitProvider
+ADDED from [com.google.firebase:firebase-common:10.0.1] /Users/igor/.android/build-cache/ee4b240ccfc031ec10aae33f7d0774ea7d744b10/output/AndroidManifest.xml:6:9-194
+	android:authorities
+		ADDED from [com.google.firebase:firebase-common:10.0.1] /Users/igor/.android/build-cache/ee4b240ccfc031ec10aae33f7d0774ea7d744b10/output/AndroidManifest.xml:6:19-78
+	android:exported
+		ADDED from [com.google.firebase:firebase-common:10.0.1] /Users/igor/.android/build-cache/ee4b240ccfc031ec10aae33f7d0774ea7d744b10/output/AndroidManifest.xml:6:144-168
+	android:initOrder
+		ADDED from [com.google.firebase:firebase-common:10.0.1] /Users/igor/.android/build-cache/ee4b240ccfc031ec10aae33f7d0774ea7d744b10/output/AndroidManifest.xml:6:169-192
+	android:name
+		ADDED from [com.google.firebase:firebase-common:10.0.1] /Users/igor/.android/build-cache/ee4b240ccfc031ec10aae33f7d0774ea7d744b10/output/AndroidManifest.xml:6:79-143
+activity#com.google.android.gms.auth.api.signin.internal.SignInHubActivity
+ADDED from [com.google.android.gms:play-services-auth:10.0.1] /Users/igor/.android/build-cache/69b5a079320f77c525df2f86d20e282f3f598508/output/AndroidManifest.xml:20:9-189
+	android:excludeFromRecents
+		ADDED from [com.google.android.gms:play-services-auth:10.0.1] /Users/igor/.android/build-cache/69b5a079320f77c525df2f86d20e282f3f598508/output/AndroidManifest.xml:20:129-162
+	android:exported
+		ADDED from [com.google.android.gms:play-services-auth:10.0.1] /Users/igor/.android/build-cache/69b5a079320f77c525df2f86d20e282f3f598508/output/AndroidManifest.xml:20:163-187
+	android:theme
+		ADDED from [com.google.android.gms:play-services-auth:10.0.1] /Users/igor/.android/build-cache/69b5a079320f77c525df2f86d20e282f3f598508/output/AndroidManifest.xml:20:69-128
+	android:name
+		ADDED from [com.google.android.gms:play-services-auth:10.0.1] /Users/igor/.android/build-cache/69b5a079320f77c525df2f86d20e282f3f598508/output/AndroidManifest.xml:20:19-68
+service#com.google.android.gms.auth.api.signin.RevocationBoundService
+ADDED from [com.google.android.gms:play-services-auth:10.0.1] /Users/igor/.android/build-cache/69b5a079320f77c525df2f86d20e282f3f598508/output/AndroidManifest.xml:24:9-184
+	android:exported
+		ADDED from [com.google.android.gms:play-services-auth:10.0.1] /Users/igor/.android/build-cache/69b5a079320f77c525df2f86d20e282f3f598508/output/AndroidManifest.xml:24:64-87
+	android:permission
+		ADDED from [com.google.android.gms:play-services-auth:10.0.1] /Users/igor/.android/build-cache/69b5a079320f77c525df2f86d20e282f3f598508/output/AndroidManifest.xml:24:88-182
+	android:name
+		ADDED from [com.google.android.gms:play-services-auth:10.0.1] /Users/igor/.android/build-cache/69b5a079320f77c525df2f86d20e282f3f598508/output/AndroidManifest.xml:24:18-63
+activity#com.google.android.gms.common.api.GoogleApiActivity
+ADDED from [com.google.android.gms:play-services-base:10.0.1] /Users/igor/.android/build-cache/c6a1f11564124ad2a49bbbd2e09bfbb12e0afe28/output/AndroidManifest.xml:19:9-172
+	android:exported
+		ADDED from [com.google.android.gms:play-services-base:10.0.1] /Users/igor/.android/build-cache/c6a1f11564124ad2a49bbbd2e09bfbb12e0afe28/output/AndroidManifest.xml:19:146-170
+	android:theme
+		ADDED from [com.google.android.gms:play-services-base:10.0.1] /Users/igor/.android/build-cache/c6a1f11564124ad2a49bbbd2e09bfbb12e0afe28/output/AndroidManifest.xml:19:86-145
+	android:name
+		ADDED from [com.google.android.gms:play-services-base:10.0.1] /Users/igor/.android/build-cache/c6a1f11564124ad2a49bbbd2e09bfbb12e0afe28/output/AndroidManifest.xml:19:19-85

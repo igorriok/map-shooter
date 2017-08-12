@@ -1,0 +1,10 @@
+[
+    {
+        "merged": "/Users/igor/AndroidStudioProjects/virtualshooter/app/build/intermediates/res/merged/debug/color-v11/abc_background_cache_hint_selector_material_light.xml",
+        "source": "/Users/igor/.android/build-cache/4ad89db2b37c2c92754bbe992e0300203bcf9ba7/output/res/color-v11/abc_background_cache_hint_selector_material_light.xml"
+    },
+    {
+        "merged": "/Users/igor/AndroidStudioProjects/virtualshooter/app/build/intermediates/res/merged/debug/color-v11/abc_background_cache_hint_selector_material_dark.xml",
+        "source": "/Users/igor/.android/build-cache/4ad89db2b37c2c92754bbe992e0300203bcf9ba7/output/res/color-v11/abc_background_cache_hint_selector_material_dark.xml"
+    }
+]

@@ -1,0 +1,10 @@
+[
+    {
+        "merged": "/Users/igor/AndroidStudioProjects/virtualshooter/app/build/intermediates/res/merged/debug/interpolator/mr_fast_out_slow_in.xml",
+        "source": "/Users/igor/.android/build-cache/a3925b28cd49d9878245b740fc98a8b2f7fef0b9/output/res/interpolator/mr_fast_out_slow_in.xml"
+    },
+    {
+        "merged": "/Users/igor/AndroidStudioProjects/virtualshooter/app/build/intermediates/res/merged/debug/interpolator/mr_linear_out_slow_in.xml",
+        "source": "/Users/igor/.android/build-cache/a3925b28cd49d9878245b740fc98a8b2f7fef0b9/output/res/interpolator/mr_linear_out_slow_in.xml"
+    }
+]
