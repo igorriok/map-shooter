@@ -25,7 +25,7 @@ public class TCPService extends Service {
     
     private static final String TAG = "TCPClient";
     final String ipNumber = "178.168.41.217";
-    final int port = 57349;
+    final int port = 57348;
     SocketAddress sockaddr;
     Socket socket;
     ObjectInputStream in;
