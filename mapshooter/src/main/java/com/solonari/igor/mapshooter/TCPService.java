@@ -25,7 +25,7 @@ public class TCPService extends Service {
     
     private static final String TAG = "TCPClient";
     final String ipNumber = "178.168.41.217";
-    final int port = 57348;
+    final int port = 57349;
     SocketAddress sockaddr;
     Socket socket;
     ObjectInputStream in;
@@ -54,7 +54,7 @@ public class TCPService extends Service {
         mServiceHandler = new ServiceHandler(mServiceLooper);
     }
     
-    public class LocalBinder extends Binder {
+    class LocalBinder extends Binder {
         TCPService getService() {
             // Return this instance of LocalService so clients can call public methods
             return TCPService.this;
@@ -67,7 +67,7 @@ public class TCPService extends Service {
     }
     
     private class ChatManager extends Thread {
-
+        @SuppressWarnings("unchecked")
         @Override
         public void run() {
             
@@ -174,9 +174,10 @@ public class TCPService extends Service {
     }
 
     private final class ServiceHandler extends Handler {
-        public ServiceHandler(Looper looper) {
+        ServiceHandler(Looper looper) {
             super(looper);
         }
+        @SuppressWarnings("unchecked")
         @Override
         public void handleMessage(Message msg) {
             switch(msg.what) {

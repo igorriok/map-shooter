@@ -282,6 +282,7 @@ public class map extends AppCompatActivity implements
         startActivity(signInIntent);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public boolean handleMessage(Message msg) {
 
@@ -549,7 +550,7 @@ public class map extends AppCompatActivity implements
         PendingResult<LocationSettingsResult> result = LocationServices.SettingsApi.checkLocationSettings(mGoogleApiClient, builder.build());
         result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
             @Override
-            public void onResult(LocationSettingsResult result) {
+            public void onResult(@NonNull LocationSettingsResult result) {
                 final Status status = result.getStatus();
                 switch (status.getStatusCode()) {
                     case LocationSettingsStatusCodes.SUCCESS:

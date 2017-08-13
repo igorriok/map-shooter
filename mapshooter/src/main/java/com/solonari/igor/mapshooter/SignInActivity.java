@@ -107,7 +107,6 @@ public class SignInActivity extends AppCompatActivity implements
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             handleSignInResult(result);
         }
-        showProgressDialog();
     }
     // [END onActivityResult]
 
@@ -130,11 +129,13 @@ public class SignInActivity extends AppCompatActivity implements
                     updateUI(true);
                 }
             } else {
+                hideProgressDialog();
                 Toast.makeText(getApplicationContext(), "Could not sign in, please try again later", Toast.LENGTH_LONG).show();
             }
         } else {
             // Signed out, show unauthenticated UI.
             updateUI(false);
+            hideProgressDialog();
             //Toast.makeText(getApplicationContext(), "Could not sign in, please try again later", Toast.LENGTH_LONG).show();
         }
     }
@@ -203,6 +204,7 @@ public class SignInActivity extends AppCompatActivity implements
             findViewById(R.id.sign_in_button).setVisibility(View.GONE);
             //findViewById(R.ID.sign_out_and_disconnect).setVisibility(View.VISIBLE);
         } else {
+            hideProgressDialog();
             mStatusTextView.setText(R.string.signed_out);
             findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
             findViewById(R.id.sign_out_and_disconnect).setVisibility(View.GONE);
@@ -214,6 +216,7 @@ public class SignInActivity extends AppCompatActivity implements
         switch (v.getId()) {
             case R.id.sign_in_button:
                 signIn();
+                showProgressDialog();
                 break;
             case R.id.sign_out_button:
                 signOut();

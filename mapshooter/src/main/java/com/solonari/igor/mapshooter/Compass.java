@@ -18,6 +18,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -42,7 +43,7 @@ import java.util.Calendar;
 
 
 public class Compass extends AppCompatActivity implements ConnectionCallbacks,
-        OnConnectionFailedListener, LocationListener {
+        OnConnectionFailedListener, LocationListener, Handler.Callback {
 
     private static final String TAG = "Compass";
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
@@ -60,10 +61,10 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks,
     protected Location location;
     protected static final int REQUEST_CAMERA_PERMISSION = 2;
     TCPService mService;
-    private Handler mHandler;
+    //private static mHandler;
     public ArrayList<Point> props;
-    private final int SHIP_CODE = 3;
-    private ArrayList<String> line;
+    final int SHIP_CODE = 3;
+    ArrayList<String> line;
     String shipName;
     SharedPreferences settings;
     static final String PREF_FILE = "PREF_FILE";
@@ -77,6 +78,7 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks,
     long time;
     long startTimer;
     private final static String MISSILE = "MISSILE";
+    private Handler mHandler = new Handler(Looper.getMainLooper(), this);
 
 
     private SensorEventListener mListener = new SensorEventListener() {
@@ -163,8 +165,6 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks,
 
         buildGoogleApiClient();
 
-        setHandler();
-
         setShipName();
     }
 
@@ -181,25 +181,24 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks,
                             | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);}
     }
 
-    private void setHandler() {
-        mHandler = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
 
-                switch (msg.what) {
-                    case SHIP_CODE:
-                        line = (ArrayList) msg.obj;
-                        props = new ArrayList<>();
-                        for (int i = 1; i < line.size(); i = i + 4) {
-                            if (line.get(i).equals(shipName))
-                                continue;
-                            props.add(new Point(Double.parseDouble(line.get(i + 1)), Double.parseDouble(line.get(i + 2)), line.get(i)));
-                        }
-                        mDrawView.setPoints(props);
-                        break;
+    @SuppressWarnings("unchecked")
+    @Override
+    public boolean handleMessage(Message msg) {
+
+        switch (msg.what) {
+            case SHIP_CODE:
+                line = (ArrayList) msg.obj;
+                props = new ArrayList<>();
+                for (int i = 1; i < line.size(); i = i + 4) {
+                    if (line.get(i).equals(shipName))
+                        continue;
+                    props.add(new Point(Double.parseDouble(line.get(i + 1)), Double.parseDouble(line.get(i + 2)), line.get(i)));
                 }
-            }
-        };
+                mDrawView.setPoints(props);
+                break;
+        }
+        return true;
     }
 
 
@@ -326,7 +325,7 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks,
     }
 
     @Override
-    public void onConnectionFailed(ConnectionResult result) {
+    public void onConnectionFailed(@NonNull ConnectionResult result) {
         // Refer to the javadoc for ConnectionResult to see what error codes might be returned in
         // onConnectionFailed.
         Log.i(TAG, "Connection failed: ConnectionResult.getErrorCode() = " + result.getErrorCode());
@@ -338,21 +337,6 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks,
             // Permission to access camera is missing.
             PermissionUtils.requestPermission(this, REQUEST_CAMERA_PERMISSION,
                     Manifest.permission.CAMERA, true);
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode != REQUEST_CAMERA_PERMISSION) {
-            return;
-        }
-
-        if (PermissionUtils.isPermissionGranted(permissions, grantResults, Manifest.permission.CAMERA)) {
-            // permission has been granted.
-
-        } else {
-            // Display the missing permission error dialog when the fragments resume.
-            
         }
     }
 
