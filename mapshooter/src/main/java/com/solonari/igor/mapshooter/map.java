@@ -20,8 +20,8 @@ import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
+import android.os.Messenger;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -87,7 +87,7 @@ public class map extends AppCompatActivity implements
     ArrayList<Marker> expMarkers;
     AppCompatActivity thisActivity = this;
     Intent shootIntent;
-    TCPService mService;
+    //TCPService mService;
     ArrayList<String> missileList;
     ArrayList<String> expList;
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
@@ -100,6 +100,10 @@ public class map extends AppCompatActivity implements
     ArrayList<String> shieldArray;
     Button shieldButton;
     private final static String SHIELD = "SHIELD";
+	private int sendShipInterval;
+	private int sendMissileInterval;
+    Messenger mService = null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -186,6 +190,7 @@ public class map extends AppCompatActivity implements
                         });
                 break;
             case R.id.exit:
+                finishAndRemoveTask();
                 Intent intent = new Intent(Intent.ACTION_MAIN);
                 intent.addCategory(Intent.CATEGORY_HOME);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -193,6 +198,7 @@ public class map extends AppCompatActivity implements
                 break;
             case R.id.shootButton:
                 shootIntent = new Intent(map.this, Compass.class);
+								shootIntent.putExtra("location", new double[] {location.getLatitude(), location.getLongitude(), location.getBearing()});
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
@@ -214,7 +220,7 @@ public class map extends AppCompatActivity implements
             case R.id.shieldButton:
                 if (shieldArray != null) {
                     try {
-                        mService.sendMessage(shieldArray);
+                        mService.send(Message.obtain(null, 1, shieldArray));
                     } catch (Exception e) {
                         Log.e(TAG, "cant send shield", e);
                     }
@@ -250,6 +256,7 @@ public class map extends AppCompatActivity implements
             displayShipName();
             Log.d(TAG, "New Ship name: " + shipName);
             sendShip();
+            enableMyLocation();
         } else {
             showNoticeDialog();
         }
@@ -369,7 +376,9 @@ public class map extends AppCompatActivity implements
                 }
                 break;
             case START_COM:
-                sendShip();
+                if (shipThread == null) {
+                    sendShip();
+                }
                 break;
             case HIT:
                 String hitName = (String) msg.obj;
@@ -383,10 +392,12 @@ public class map extends AppCompatActivity implements
 
     private ServiceConnection mConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder service) {
-            TCPService.LocalBinder binder = (TCPService.LocalBinder) service;
-            mService = binder.getService();
+            //TCPService.LocalBinder binder = (TCPService.LocalBinder) service;
+            //mService = binder.getService();
+            mService = new Messenger(service);
             mBound = true;
-            mService.setHandler(getHandler());
+            sendHandler(mHandler);
+            //mService.setHandler(getHandler());
             //sendShip();
         }
         public void onServiceDisconnected(ComponentName className) {
@@ -394,16 +405,12 @@ public class map extends AppCompatActivity implements
         }
     };
 
-    private Handler getHandler(){
-        return mHandler;
-    }
-
     public void onMapReady(GoogleMap googleMap) {
 
         mMap = googleMap;
         if (mMap != null) {
             // Now that map has loaded, let's get our location
-            enableMyLocation();
+            //enableMyLocation();
             mMap.getUiSettings().setMapToolbarEnabled(false);
         }
     }
@@ -426,9 +433,11 @@ public class map extends AppCompatActivity implements
         switch (requestCode) {
             case PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: {
                 // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (PermissionUtils.isPermissionGranted(permissions, grantResults, Manifest.permission.ACCESS_FINE_LOCATION)) {
                     mLocationPermissionGranted = true;
                     startLocationUpdates();
+                } else {
+                    PermissionUtils.PermissionDeniedDialog.newInstance(true, Manifest.permission.ACCESS_FINE_LOCATION).show(getSupportFragmentManager(), "dialog");
                 }
             }
                 break;
@@ -436,7 +445,7 @@ public class map extends AppCompatActivity implements
                 if (PermissionUtils.isPermissionGranted(permissions, grantResults, Manifest.permission.CAMERA)) {
                     startActivity(shootIntent);
                 } else {
-                    PermissionUtils.PermissionDeniedDialog.newInstance(false).show(getSupportFragmentManager(), "dialog");
+                    PermissionUtils.PermissionDeniedDialog.newInstance(false, Manifest.permission.CAMERA).show(getSupportFragmentManager(), "dialog");
                 }
                 break;
             default:
@@ -480,9 +489,19 @@ public class map extends AppCompatActivity implements
     public void onResume() {
         super.onResume();
         if (mService != null) {
-            mService.setHandler(getHandler());
+            sendHandler(mHandler);
         }
+        sendShipInterval = 5000;
+        sendMissileInterval = 1000;
         Log.d(TAG, "onResume");
+    }
+
+    void sendHandler(Handler hn) {
+        try {
+            mService.send(Message.obtain(null, 3, hn));
+        } catch (Exception e){
+            Log.e(TAG, "cant set handler");
+        }
     }
 
     protected void displayShipName(){
@@ -515,9 +534,8 @@ public class map extends AppCompatActivity implements
                 == PackageManager.PERMISSION_GRANTED) {
             mLocationPermissionGranted = true;
         } else {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                    PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+            PermissionUtils.requestPermission(thisActivity, PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_FINE_LOCATION, true);
         }
 
         if (mLocationPermissionGranted) {
@@ -540,9 +558,8 @@ public class map extends AppCompatActivity implements
                 android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             mLocationPermissionGranted = true;
         } else {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                    PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+            PermissionUtils.requestPermission(thisActivity, PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_FINE_LOCATION, true);
         }
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder().addLocationRequest(mLocationRequest);
         builder.setAlwaysShow(true);
@@ -580,7 +597,7 @@ public class map extends AppCompatActivity implements
     public void onLocationChanged(Location location) {
         //Toast.makeText(this, location.toString(), Toast.LENGTH_SHORT).show();
         latLng = new LatLng(location.getLatitude(), location.getLongitude());
-				this.location = location;
+        this.location = location;
     }
 
     /*
@@ -626,7 +643,6 @@ public class map extends AppCompatActivity implements
     @Override
     protected void onPause() {
         super.onPause();
-
     }
 
     @Override
@@ -680,8 +696,9 @@ public class map extends AppCompatActivity implements
                     ArrayList<String> idArray = new ArrayList<>();
                     idArray.add("ID");
                     idArray.add(idToken);
+                        Message msg = Message.obtain(null, 1, idArray);
                         try {
-                            mService.sendMessage(idArray);
+                            mService.send(msg);
                             Log.d(TAG, "sent idtoken: " + idToken);
                         } catch (Exception e) {
                             Log.e(TAG, "cant send ID", e);
@@ -704,20 +721,21 @@ public class map extends AppCompatActivity implements
                     shipArray.add(ID);
                     String shipName = settings.getString("shipName", "");
                     shipArray.add(shipName);
-                    shipArray.add(Double.toString(latLng.latitude));
-                    shipArray.add(Double.toString(latLng.longitude));
+                    shipArray.add(Double.toString(location.getLatitude()));
+                    shipArray.add(Double.toString(location.getLongitude()));
                     shipArray.add(Float.toString(location.getBearing()));
                     Log.d(TAG, shipArray.toString());
 
                     if (!shipName.equals("") && !ID.equals("")) {
+                        Message msg = Message.obtain(null, 1, shipArray);
                         try {
-                            mService.sendMessage(shipArray);
+                            mService.send(msg);
                         } catch (Exception e) {
                             Log.e(TAG, "cant send location", e);
                         }
                     }
                 }
-                shipHandler.postDelayed(this, 5000);
+                shipHandler.postDelayed(this, sendShipInterval);
             }
         });
 
@@ -727,12 +745,13 @@ public class map extends AppCompatActivity implements
             public void run() {
                 ArrayList<String> missileArray = new ArrayList<>();
                 missileArray.add("MISSILE_ARRAY");
+                Message msg = Message.obtain(null, 1, missileArray);
                 try {
-                    mService.sendMessage(missileArray);
+                    mService.send(msg);
                 } catch (Exception e) {
                     Log.e(TAG, "cant send location", e);
                 }
-                shipHandler.postDelayed(this, 1000);
+                shipHandler.postDelayed(this, sendMissileInterval);
             }
         });
     }
@@ -745,7 +764,7 @@ public class map extends AppCompatActivity implements
                     shieldButton.setText(R.string.shield_active);
                 } else {
                     shieldButton.setBackgroundColor(Color.GRAY);
-                    shieldButton.setText("Shield Recharging:" + Long.toString(millisUntilFinished / 1000) + "s");
+                    shieldButton.setText("Shield Recharging: " + Long.toString(millisUntilFinished / 1000) + "s");
                 }
             }
 

@@ -20,6 +20,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
+import android.os.Messenger;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -60,7 +61,7 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks,
     long FASTEST_INTERVAL = 1000; /* 1 secs */
     protected Location location;
     protected static final int REQUEST_CAMERA_PERMISSION = 2;
-    TCPService mService;
+    //TCPService mService;
     //private static mHandler;
     public ArrayList<Point> props;
     final int SHIP_CODE = 3;
@@ -79,6 +80,8 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks,
     long startTimer;
     private final static String MISSILE = "MISSILE";
     private Handler mHandler = new Handler(Looper.getMainLooper(), this);
+    double[] slocation;
+    Messenger mService = null;
 
 
     private SensorEventListener mListener = new SensorEventListener() {
@@ -159,13 +162,19 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks,
                     missleArray.add(Float.toString(mHeading));
                     missleArray.add(Double.toString(location.getLatitude()));
                     missleArray.add(Double.toString(location.getLongitude()));
-                    mService.sendMessage(missleArray);
+                    try {
+                        mService.send(Message.obtain(null, 1, missleArray));
+                    } catch (Exception e) {
+                        Log.e(TAG, "cant send message:" + e);
+                    }
                 }
             });
 
         buildGoogleApiClient();
 
         setShipName();
+      
+        slocation = getIntent().getDoubleArrayExtra("location");
     }
 
     @Override
@@ -200,7 +209,6 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks,
         }
         return true;
     }
-
 
     protected synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -342,9 +350,14 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks,
 
     private ServiceConnection mConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder service) {
-            TCPService.LocalBinder binder = (TCPService.LocalBinder) service;
-            mService = binder.getService();
-            mService.setHandler(getHandler());
+            //TCPService.LocalBinder binder = (TCPService.LocalBinder) service;
+            mService = new Messenger(service);
+            Message msg = Message.obtain(null, 3, mHandler);
+            try {
+                mService.send(msg);
+            } catch (Exception e) {
+                Log.e(TAG, "cant sent handler: " + e);
+            }
             mBound = true;
             sendShip();
         }
@@ -393,14 +406,14 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks,
             shipArray.add(ID);
             String shipName = settings.getString("shipName", "");
             shipArray.add(shipName);
-            shipArray.add(Double.toString(location.getLatitude()));
-            shipArray.add(Double.toString(location.getLongitude()));
-            shipArray.add(Float.toString(location.getBearing()));
+            shipArray.add(Double.toString(slocation[0]));
+            shipArray.add(Double.toString(slocation[1]));
+            shipArray.add(Double.toString(slocation[2]));
             Log.d(TAG, shipArray.toString());
 
             if (!shipName.equals("") && !ID.equals("")) {
                 try {
-                    mService.sendMessage(shipArray);
+                    mService.send(Message.obtain(null, 1, shipArray));
                 } catch (Exception e) {
                     Log.e(TAG, "cant send location", e);
                 }

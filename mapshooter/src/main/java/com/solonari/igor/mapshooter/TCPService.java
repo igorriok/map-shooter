@@ -10,6 +10,7 @@ import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
+import android.os.Messenger;
 import android.os.Vibrator;
 import android.util.Log;
 
@@ -20,6 +21,8 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class TCPService extends Service {
     
@@ -42,16 +45,22 @@ public class TCPService extends Service {
     ChatManager cm;
     Looper mServiceLooper;
     private ServiceHandler mServiceHandler;
+    private boolean connecting = false;
+    private boolean connected = false;
+    ExecutorService clientPool = Executors.newSingleThreadExecutor();
+    Messenger mMessenger;
     
     public TCPService() {}
     
     @Override
     public void onCreate() {
+        //TODO: set THREAD_PRIORITY_BACKGROUND
         HandlerThread thread = new HandlerThread("ServiceThread");
         thread.start();
         // Get the HandlerThread's Looper and use it for our Handler
         mServiceLooper = thread.getLooper();
         mServiceHandler = new ServiceHandler(mServiceLooper);
+        mMessenger = new Messenger(mServiceHandler);
     }
     
     class LocalBinder extends Binder {
@@ -63,51 +72,45 @@ public class TCPService extends Service {
     
     @Override
     public IBinder onBind(Intent intent) {
-        return mBinder;
+        return mMessenger.getBinder();
     }
     
-    private class ChatManager extends Thread {
+    private class ChatManager implements Runnable {
         @SuppressWarnings("unchecked")
         @Override
         public void run() {
+
+            connected = false;
             
             try {
                 // Creating InetAddress object from ipNumber passed via constructor from IpGetter class.
                 InetAddress serverAddress = InetAddress.getByName(ipNumber);
                 sockaddr = new InetSocketAddress(serverAddress, port);
                 Log.d(TAG, "Connecting...");
-
+                //Here the socket is created
+                socket = new Socket();
+                socket.connect(sockaddr);
+                Log.d(TAG, "Socket connected");
+                // Create PrintWriter object for sending messages to server.
+                out = new ObjectOutputStream(socket.getOutputStream());
+                //Create BufferedReader object for receiving messages from server.
+                in = new ObjectInputStream(socket.getInputStream());
+                Log.d(TAG, "In/Out created");
+                connected = true;
             } catch (Exception e) {
-                Log.d(TAG, "Cant creat socket", e);
+                Log.d(TAG, "Cant create in/out", e);
+                connecting = false;
             }
 
-            boolean disconnected;
-            do {
-                try {    
-                    //Here the socket is created
-                    socket = new Socket();
-                    socket.connect(sockaddr);
-                    disconnected = false;
-                    Log.d(TAG, "Socket connected");
-                    // Create PrintWriter object for sending messages to server.
-                    out = new ObjectOutputStream(socket.getOutputStream());
-                    //Create BufferedReader object for receiving messages from server.
-                    in = new ObjectInputStream(socket.getInputStream());
-                    Log.d(TAG, "In/Out created");
-                } catch (Exception e) {
-                    disconnected = true;
-                    Log.d(TAG, "Cant create in/out", e);
-                }
-            } while (disconnected);
-
-            try {
+            if (connected) {
                 handler.obtainMessage(1, 0).sendToTarget();
-            } catch (Exception e) {
-                Log.e(TAG, "can't set Handler", e);
+                Log.d(TAG, "set Handler");
+                connecting = false;
+                Log.d(TAG, "connecting: " + connecting);
             }
 
             try {
-                while (true) {
+                while (connected) {
                     ArrayList<String> line = (ArrayList) in.readObject();
                     String head = line.get(0);
                     switch (head) {
@@ -148,33 +151,47 @@ public class TCPService extends Service {
             } catch (Exception e) {
                 Log.e(TAG, "can't read from socket", e);
             } finally {
-                try {
-                    in.close();
-                    out.close();
-                    socket.close();
-                    //Message restartMsg = mServiceHandler.obtainMessage(2, null);
-                    //mServiceHandler.sendMessageDelayed(restartMsg, 2000);
-                } catch (Exception e) {
-                    Log.e(TAG, "can't close socket", e);
-                }
+                closeSocket();
+                Message restartMsg = mServiceHandler.obtainMessage(2, null);
+                mServiceHandler.sendMessageDelayed(restartMsg, 2000);
             }
+        }
+    }
+  
+    synchronized void closeSocket() {
+        try {
+            in.close();
+        } catch (Exception e) {
+            Log.e(TAG, "can't close in", e);
+        }
+        try {
+            out.close();
+            socket.close();
+        } catch (Exception e) {
+            Log.e(TAG, "can't close out", e);
+        }
+        try {
+            socket.close();
+        } catch (Exception e) {
+            Log.e(TAG, "can't close socket", e);
         }
     }
     
     synchronized public void sendMessage(ArrayList message) {
         mServiceHandler.obtainMessage(1, message).sendToTarget();
+        Log.d(TAG, "mServiceHandler sent");
     }
     
-    public void setHandler(Handler handler) {
+    void setHandler(Handler handler) {
         this.handler = handler;
         if (cm == null) {
             cm = new ChatManager();
-            cm.start();
+            clientPool.execute(cm);
         }
     }
 
-    private final class ServiceHandler extends Handler {
-        ServiceHandler(Looper looper) {
+    private class ServiceHandler extends Handler {
+        private ServiceHandler(Looper looper) {
             super(looper);
         }
         @SuppressWarnings("unchecked")
@@ -184,20 +201,44 @@ public class TCPService extends Service {
                 case 1:
                     ArrayList<String> mess = (ArrayList) msg.obj;
                     try {
+                        Log.d(TAG, "message sent");
                         out.writeObject(mess);
                     } catch (Exception e) {
                         Log.d(TAG, "Cant send message", e);
+                        connected = false;
                         Message restartMsg = mServiceHandler.obtainMessage(2, null);
                         mServiceHandler.sendMessageDelayed(restartMsg, 2000);
+                        closeSocket();
                     }
                     break;
                 case 2:
-                    cm = new ChatManager();
-                    cm.start();
+                    if (!connecting && socket.isClosed()) {
+                        connecting = true;
+                        Log.d(TAG, "connecting: " + connecting);
+                        //cm = new ChatManager();
+                        //cm.run();
+                        clientPool.execute(cm);
+                        Log.d(TAG, "Restart CM");
+                    }
+                    break;
+                case 3:
+                    handler = (Handler) msg.obj;
+                    if (cm == null) {
+                        cm = new ChatManager();
+                        clientPool.execute(cm);
+                        Log.d(TAG, "set Handler");
+                    }
                     break;
                 default:
                     break;
             }
         }
     }
+  
+    @Override
+    public void onDestroy() {
+        clientPool.shutdownNow();
+        connected = false;
+    }
+
 }
