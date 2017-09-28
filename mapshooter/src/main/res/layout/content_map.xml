@@ -11,68 +11,73 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight=".15"
-        android:background="#03A9F4">
+        android:background="@color/blue_grey_800"
+        android:elevation="2dp">
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:maxLines="1"
-            android:text="@string/Points"
-            android:textSize="20sp"
-            android:textColor="#E1F5FE"
-            android:background="#03A9F4"
-            android:textAllCaps="true"
-            android:textStyle="bold"
-            android:padding="5dp"
+            android:elevation="4dp"
             android:gravity="center|end"
+            android:maxLines="1"
+            android:padding="5dp"
+            android:text="@string/Points"
+            android:textColor="#E1F5FE"
+            android:textSize="20sp"
+            android:textStyle="bold"
             tools:ignore="NestedWeights" />
+
         <TextView
             android:id="@+id/rating"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:padding="5dp"
+            android:elevation="4dp"
             android:gravity="center_vertical"
             android:maxLines="1"
+            android:padding="5dp"
             android:text="@string/checking"
-            android:textSize="20sp"
             android:textColor="#E1F5FE"
-            android:background="#03A9F4"
+            android:textSize="20sp"
             android:textStyle="bold" />
+
         <TextView
             android:id="@+id/ship"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:padding="5dp"
-            android:gravity="center"
+            android:layout_height="match_parent"
             android:layout_weight="1"
+            android:elevation="4dp"
+            android:gravity="center"
             android:maxLines="1"
-            android:textSize="20sp"
-            android:textColor="#E1F5FE"
-            android:background="#03A9F4"
+            android:padding="5dp"
             android:text="@string/ship_name"
-            android:textStyle="bold" />
-        <ImageButton
+            android:textColor="@color/int_text"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            />
+
+        <ImageView
             android:id="@+id/signOut"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:src="@drawable/sign_out"
-            android:contentDescription="@string/desc_settings"
-            android:background="#03A9F4"
             android:layout_gravity="end"
-            android:scaleType="fitCenter" />
-        <ImageButton
+            android:layout_weight="1"
+            android:contentDescription="@string/desc_settings"
+            android:elevation="4dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/arrow_back" />
+
+        <ImageView
             android:id="@+id/exit"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:src="@drawable/exit"
-            android:contentDescription="@string/desc_settings"
-            android:background="#03A9F4"
             android:layout_gravity="end"
-            android:scaleType="fitCenter" />
+            android:layout_weight="1"
+            android:contentDescription="@string/desc_settings"
+            android:elevation="4dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_close" />
     </LinearLayout>
 
     <fragment
@@ -95,55 +100,71 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight=".15"
-        android:background="#03A9F4"
-        android:weightSum="2"
-        >
+        android:background="@color/blue_grey_800"
+        android:elevation="2dp"
+        android:weightSum="2">
 
         <Button
             android:id="@+id/shootButton"
-            style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_marginBottom="5dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginBottom="2dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="2dp"
             android:layout_weight="0.6"
-            android:background="#0097A7"
+            android:background="@drawable/int_button"
+            android:elevation="4dp"
+            android:shadowColor="@color/int_text"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:shadowRadius="5"
             android:text="@string/shoot"
-            android:textColor="#E3F2FD"
+            android:textColor="@color/int_text"
+            android:textSize="18sp"
             android:textStyle="bold"
             tools:ignore="NestedWeights" />
 
         <Button
             android:id="@+id/shieldButton"
-            style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_marginBottom="5dp"
+            android:layout_marginBottom="2dp"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="2dp"
             android:layout_weight="0.8"
-            android:background="#0097A7"
+            android:background="@drawable/int_button"
+            android:elevation="4dp"
             android:text="@string/activate_shield"
-            android:textColor="#E3F2FD"
+            android:textColor="@color/int_text"
+            android:textSize="18sp"
             android:textStyle="bold"
+            android:shadowColor="@color/int_text"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:shadowRadius="5"
             tools:ignore="NestedWeights" />
+
         <Button
             android:id="@+id/myLocationButton"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@string/myLocation"
-            android:textColor="#E3F2FD"
-            android:textStyle="bold"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="2dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="2dp"
             android:layout_weight="0.6"
-            android:background="#0097A7"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginBottom="5dp"
-            android:layout_marginTop="5dp"
-            style="@style/Widget.AppCompat.Button.Borderless"/>
+            android:background="@drawable/int_button"
+            android:elevation="4dp"
+            android:text="@string/myLocation"
+            android:textColor="@color/int_text"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:shadowColor="@color/int_text"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:shadowRadius="5"/>
     </LinearLayout>
 
 </LinearLayout>

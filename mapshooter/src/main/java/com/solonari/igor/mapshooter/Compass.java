@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.hardware.GeomagneticField;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -379,7 +378,9 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks,
     }
     
     private void fireTimer() {
-        fire.setBackgroundColor(Color.GRAY);
+        //fire.setBackgroundColor(Color.GRAY);
+        fire.setBackgroundResource(R.drawable.int_button_pre);
+        fire.setTextColor(getResources().getColor(R.color.blue_grey_500));
         fire.setEnabled(false);
         Toast.makeText(getApplicationContext(), getString(R.string.recharging), Toast.LENGTH_SHORT).show();
         new CountDownTimer(startTimer, 1000) {
@@ -391,7 +392,8 @@ public class Compass extends AppCompatActivity implements ConnectionCallbacks,
             public void onFinish() {
                 fire.setText(R.string.fire);
                 fire.setEnabled(true);
-                fire.setBackgroundColor(Color.parseColor("#e53935"));
+                fire.setTextColor(getResources().getColor(R.color.int_text));
+                fire.setBackgroundResource(R.drawable.int_button_def);
                 startTimer = 10000;
             }
         }.start();

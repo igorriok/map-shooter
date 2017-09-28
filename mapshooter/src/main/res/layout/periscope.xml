@@ -47,9 +47,9 @@
                 android:layout_marginRight="20dp"
                 android:layout_marginTop="5dp"
                 android:layout_weight="0.5"
-                android:background="#0097A7"
+                android:background="@drawable/int_button"
                 android:text="@string/map"
-                android:textColor="#E3F2FD"
+                android:textColor="@color/int_text"
                 android:textStyle="bold" />
 
             <LinearLayout
@@ -66,10 +66,10 @@
                 android:layout_marginRight="20dp"
                 android:layout_marginTop="5dp"
                 android:layout_weight="0.5"
-                android:background="#e53935"
+                android:background="@drawable/int_button"
                 android:gravity="center"
                 android:text="@string/fire"
-                android:textColor="#E3F2FD"
+                android:textColor="@color/int_text"
                 android:textStyle="bold" />
         </LinearLayout>
 

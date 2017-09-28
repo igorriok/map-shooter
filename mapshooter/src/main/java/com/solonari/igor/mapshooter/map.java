@@ -10,7 +10,6 @@ import android.content.IntentSender;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
@@ -225,7 +224,9 @@ public class map extends AppCompatActivity implements
                         Log.e(TAG, "cant send shield", e);
                     }
                 }
-                shieldButton.setBackgroundColor(Color.parseColor("#00c853"));
+                //shieldButton.setBackgroundColor(Color.parseColor("#00c853"));
+                shieldButton.setBackgroundResource(R.drawable.int_button_pre);
+                shieldButton.setTextColor(getResources().getColor(R.color.blue_grey_500));
                 shieldButton.setEnabled(false);
                 shieldTimer();
                 break;
@@ -762,8 +763,10 @@ public class map extends AppCompatActivity implements
             public void onTick(long millisUntilFinished) {
                 if (millisUntilFinished / 1000 >= 7) {
                     shieldButton.setText(R.string.shield_active);
+                    shieldButton.setTextColor(getResources().getColor(R.color.blue_grey_500));
                 } else {
-                    shieldButton.setBackgroundColor(Color.GRAY);
+                    //shieldButton.setBackgroundColor(Color.GRAY);
+                    shieldButton.setTextColor(getResources().getColor(R.color.blue_grey_500));
                     shieldButton.setText("Shield Recharging: " + Long.toString(millisUntilFinished / 1000) + "s");
                 }
             }
@@ -771,7 +774,10 @@ public class map extends AppCompatActivity implements
             public void onFinish() {
                 shieldButton.setText(R.string.activate_shield);
                 shieldButton.setEnabled(true);
-                shieldButton.setBackgroundColor(Color.parseColor("#0097A7"));
+                //shieldButton.setBackgroundColor(Color.parseColor("#0097A7"));
+                shieldButton.setBackgroundResource(R.drawable.int_button_def);
+                shieldButton.setTextColor(getResources().getColor(R.color.int_text));
+                shieldButton.setPressed(false);
             }
         }.start();
     }

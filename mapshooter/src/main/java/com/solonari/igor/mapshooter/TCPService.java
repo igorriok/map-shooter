@@ -27,7 +27,7 @@ import java.util.concurrent.Executors;
 public class TCPService extends Service {
     
     private static final String TAG = "TCPClient";
-    final String ipNumber = "178.168.41.217";
+    final String ipNumber = "ec2-54-187-92-130.us-west-2.compute.amazonaws.com";
     final int port = 57349;
     SocketAddress sockaddr;
     Socket socket;
@@ -165,7 +165,6 @@ public class TCPService extends Service {
             Log.e(TAG, "can't close in", e);
         }
         try {
-            out.close();
             socket.close();
         } catch (Exception e) {
             Log.e(TAG, "can't close out", e);

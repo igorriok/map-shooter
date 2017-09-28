@@ -22,7 +22,7 @@ public class AimView extends View {
 
     public AimView(Context context, AttributeSet set) {
         super(context, set);
-        mPaint.setColor(Color.BLUE);
+        mPaint.setColor(Color.GREEN);
         mPaint.setTextSize(40);
         mPaint.setStrokeWidth(DpiUtils.getPxFromDpi(getContext(), 1));
         mPaint.setAntiAlias(true);

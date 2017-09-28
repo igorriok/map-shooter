@@ -1,8 +1,6 @@
 package com.solonari.igor.mapshooter;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -21,7 +19,6 @@ public class DrawSurfaceView extends View {
     private float screenWidth, screenHeight = 0;
     public ArrayList<Point> props = new ArrayList<>();
     private static final String Tag = "DrawSurface";
-    Bitmap spot  = BitmapFactory.decodeResource(getResources(), R.drawable.dot);
     float angle;
     float delta;
     private float axisZ = 0;
@@ -75,8 +72,8 @@ public class DrawSurfaceView extends View {
 
             i.y = screenHeight/2 - axisY/35 * screenHeight/2;
             //canvas.drawBitmap(spot, i.x, i.y, mPaint); //camera spot
-            canvas.drawCircle(i.x, i.y, 20, mPaint);
-            canvas.drawText(i.description, i.x + 10, i.y - 10, mPaint);
+            canvas.drawCircle(i.x, i.y, 30, mPaint);
+            canvas.drawText(i.description, i.x + 20, i.y - 20, mPaint);
         }
         //canvas.drawLine(0, screenHeight/2, screenWidth, screenHeight/2, mPaint);
         canvas.drawText(Double.toString(Math.round(OFFSET * 10.0)/10.0), 10, 100, mPaint);

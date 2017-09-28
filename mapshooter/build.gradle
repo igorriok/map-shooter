@@ -7,8 +7,8 @@ android {
         applicationId "com.solonari.igor.mapshooter"
         minSdkVersion 22
         targetSdkVersion 25
-        versionCode 5
-        versionName "alpha 1.2"
+        versionCode 7
+        versionName "beta 1.4"
         multiDexEnabled true
     }
     buildTypes {

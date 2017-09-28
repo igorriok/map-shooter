@@ -32,7 +32,7 @@
             android:layout_marginBottom="10dp"
             android:text="@string/title_text"
             android:gravity="center"
-            android:textColor="@android:color/white"
+            android:textColor="@color/int_text"
             android:textSize="36sp" />
 
         <TextView
@@ -55,15 +55,6 @@
             android:textColor="@android:color/white"
             android:textSize="14sp" />
 
-        <Button
-            android:id="@+id/button_optional_action"
-            style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            tools:text="Optional Action"
-            tools:visibility="visible" />
-
     </LinearLayout>
 
 
@@ -79,7 +70,8 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:visibility="visible"
-            tools:visibility="gone" />
+            tools:visibility="gone"
+            android:textColor="@color/int_text"/>
 
         <LinearLayout
             android:id="@+id/sign_out_and_disconnect"
@@ -98,7 +90,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/sign_out"
-                android:theme="@style/ThemeOverlay.MyDarkButton" />
+                android:theme="@style/ThemeOverlay.MyDarkButton"
+                android:textColor="@color/int_text"/>
 
             <Button
                 android:id="@+id/disconnect_button"
@@ -106,7 +99,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/disconnect"
-                android:theme="@style/ThemeOverlay.MyDarkButton" />
+                android:theme="@style/ThemeOverlay.MyDarkButton"
+                android:textColor="@color/int_text"/>
         </LinearLayout>
 
     </RelativeLayout>
